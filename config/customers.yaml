@@ -1,0 +1,63 @@
+# Kunden-Overrides. Nur nötig, wenn das Sheet nicht reicht – i. d. R. Auslandskunden und Sonderfälle.
+# Schlüssel = Kundenname wie im Sheet (Spalte "Kunde"), Match ohne Groß/Klein und Leerzeichen.
+# Felder:
+#   country       ISO-Land des Rechnungsempfängers (entscheidet Steuerfall)
+#   vat_id        USt-ID / VAT ID, wenn sie im Adressblock fehlt
+#   lang          de | en  (überschreibt Sheet-Spalte "Sprache")
+#   currency      EUR | USD
+#   contact       Ansprechpartner-Stil: { name, du_sie: du|sie, lang }
+#   reference_label  Pflichtangabe im Empfängerblock (z. B. Bestellnummer, ANID, PO)
+#   notes         Freitext – wird Claude bei der Erstellung gezeigt
+
+_default:
+  country: DE
+  lang: de
+  currency: EUR
+
+MR MARVIS:
+  country: NL
+  vat_id: NL855176374B01
+  lang: en
+  contact: { name: Kristina, lang: en, signature: "Finance Team at Locker & Lauter" }
+  notes: "Fee 20 %. Teilrechnungen."
+
+RAUSCH:
+  country: CH
+  lang: en
+  notes: "Schweiz: ohne USt, KSK-Umlage, § 3a Abs. 2 UStG-Text."
+
+Lindbergh:
+  country: DK
+  vat_id: DK31081610
+  lang: en
+
+Linked Summit:
+  country: DK
+  vat_id: DK-42496502
+  lang: en
+
+Michael Page:
+  country: DE
+  contact: { name: Vivian von Ancken, du_sie: du, lang: de }
+  notes: "Fee 20 %. Zahlungsläufe langsam (über Barcelona)."
+
+Edelman:
+  country: DE
+  contact: { name: Pauline, du_sie: du, lang: de }
+  notes: "Auslagen nur netto weiterberechnen (reklamiert bei KML-2026-013 / EIH-2026-014)."
+
+Union Investment:
+  country: DE
+  reference_label: ["ANID", "Bestellnummer"]
+  notes: "ANID und Bestellnummer müssen im Empfängerblock stehen (siehe EIH-2026-018)."
+
+Whalar:
+  country: GB
+  lang: en
+  currency: USD
+  notes: "Fakturierung in USD, Zahlungseingang in EUR – Fee-Rechnung ebenfalls USD, Verrechnung zum Kurs am Zahlungseingang."
+
+Wiresoft:
+  country: CH
+  lang: de
+  notes: "Kunde von Selina Hehl (AT) – österreichischer Steuertext, keine KSK."

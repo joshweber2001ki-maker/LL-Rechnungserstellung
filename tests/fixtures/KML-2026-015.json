@@ -1,0 +1,53 @@
+{
+  "doc_type": "invoice", "category": "customer", "lang": "de", "currency": "EUR",
+  "number": "KML-2026-015", "date": "01.09.2026", "service_period": "Juli – August 2026",
+  "recipient": {"lines": ["PHD Germany GmbH", "Speicherstraße 59", "60327 Frankfurt am Main", "Deutschland"]},
+  "items": [
+    {"title": "TK Mental Matters – Content & Events (Schlussrechnung)", "lines": ["Kampagne: TK Mental Matters · Go Live: 22.07., 02.08., 04.08., 13.08., 21.08. & 28.08.2026 · Events: Hamburg 18.08.2026, Köln 19.08.2026", "@Kira Marie Cremer (LinkedIn) · @kiramariecremer (Instagram) · @kiramariecremer (TikTok)", "1 × Ankündigungs-Post LinkedIn inkl. Thought Leader Ad Buyout (Add-on) · 1 × Newsletter-Platzierung · 1 × Instagram Story · 2 × Instagram Reel/Post (davon 1 × München, Nachberechnung zu KML-2026-011) · 2 × Recap-Posting LinkedIn · 1 × Eventorganisation & -veranstaltung"], "qty": 1, "unit_price": 18861.30, "amount": 18861.30},
+    {"title": "Rabattausgleich gemäß Angebot O-KML-2025-002", "lines": ["Paketpreisrabatt lt. Angebot pauschal -3.520,00 €; bisherige Abrechnung mit 5 % je Position; Differenz zur Angebotssumme"], "qty": 1, "unit_price": 6.0, "amount": 6.0},
+    {"title": "Management Fee", "qty": 1, "unit_price": 4489.70, "amount": 4489.70},
+    {"title": "Weiterberechnete Auslagen (netto, Belege im Anhang)", "lines": ["Events Hamburg und Köln, Belegbeträge netto (ohne die in den Belegen enthaltene Umsatzsteuer), Anteil innerhalb des vereinbarten Fremdkostenbudgets – Aufstellung siehe Anlage"], "qty": 1, "unit_price": 7951.95, "amount": 7951.95}
+  ],
+  "totals": [
+    {"label": "NETTOSUMME:", "value": 31308.95, "style": "sub"},
+    {"label": "zzgl. MwSt. (19%)", "value": 5948.70},
+    {"label": "BRUTTOSUMME:", "value": 37257.65, "style": "grand"}
+  ],
+  "payment_text": "Bitte begleichen Sie den Rechnungsbetrag bis spätestens 01.10.2026.",
+  "notes": [
+    "Hinweis: Die Rechnung wird im Namen von und auf Rechnung für Kira Marie Löhden, Hudtwalckerstraße 27, 22299 Hamburg, Deutschland, Steuernummer 49/147/04680, USt-IdNr. DE358561136, über die Locker & Lauter UG (haftungsbeschränkt) ausgestellt. Die Locker & Lauter UG (haftungsbeschränkt) ist für den Rechnungsausgleich verantwortlich.",
+    "Bitte beachten Sie, die Künstlersozialabgaben sind in der jeweils festgelegten Höhe (derzeit 4,9%), vom Verwerter bzw. Veranstalter zusätzlich zum oben genannten Nettohonorar an die KSK direkt abzuführen.",
+    {"text": "Zu Position 1: Ein Instagram Reel/Post bezieht sich auf das Event München (09.07.2026) und wurde in KML-2026-011 nicht berücksichtigt. Mit Position 2 ist die Honorarsumme lt. Angebot O-KML-2025-002 (70.000,00 € netto) vollständig abgerechnet.", "plain": true}
+  ],
+  "annexes": [
+    {
+      "title": "Aufstellung der weiterberechneten Auslagen zu Rechnung KML-2026-015 (Position 4)",
+      "intro": "Alle Fremdkostenbelege zu den Events Hamburg (18.08.2026) und Köln (19.08.2026). Weiterberechnet wird der Nettobetrag der Belege (ohne enthaltene Umsatzsteuer) zzgl. 19 % USt.; Belege ohne Umsatzsteuer (Kilometerpauschalen, § 19 UStG) in voller Höhe. Belege vollständig im Anhang.",
+      "rows": [
+        {"title": "Design Offices Hamburg Domplatz – Event Hamburg (Re. DB+HH-DP40023788)", "pages": "S. 3–5", "gross": 5151.93, "net": 4400.03},
+        {"title": "W. Borus – Fahrtkosten PKW 69 km × 0,30 € (ohne USt)", "pages": "S. 6–7", "gross": 20.70, "net": 20.70},
+        {"title": "Steigenberger Hotel Köln – 19.–21.08.2026 (Folio 579065)", "pages": "S. 8", "gross": 162.85, "net": 151.83},
+        {"title": "Uber / Taxenbetrieb Wegmann – Fahrt Hamburg 18.08.2026", "pages": "S. 9", "gross": 30.00, "net": 28.04},
+        {"title": "EasyPark – Parken Hamburg 18.08.2026", "pages": "S. 10", "gross": 10.26, "net": 10.05},
+        {"title": "Design Offices Köln Mediapark – Event Köln (Re. DB+HD-COL40055575)", "pages": "S. 11–12", "gross": 4196.11, "net": 3598.75},
+        {"title": "M. Jeremic – Event-Fotos Köln inkl. Bahn-Auslage (§ 19 UStG)", "pages": "S. 13", "gross": 755.00, "net": 755.00},
+        {"title": "L. Schimming – Fahrtkosten PKW 268 km × 0,30 € (ohne USt)", "pages": "S. 14–15", "gross": 80.40, "net": 80.40},
+        {"title": "DB Fernverkehr – Bahn M. Jeremic Hamburg – Köln – Hamburg", "pages": "S. 16–17", "gross": 109.46, "net": 102.30},
+        {"title": "M. Jeremic – Event-Fotos Hamburg inkl. Expresszuschlag (§ 19 UStG)", "pages": "S. 18", "gross": 1000.00, "net": 1000.00},
+        {"title": "DB Fernverkehr – Bahn K. Löhden Hamburg – Köln 19.08.2026", "pages": "S. 19", "gross": 41.04, "net": 38.36},
+        {"title": "Uber / SafeDriver ennoo – Fahrt Köln 19.08.2026", "pages": "S. 20", "gross": 10.97, "net": 9.22},
+        {"title": "NH Collection Köln Mediapark – 19.–20.08.2026 (Re. DKO1161169)", "pages": "S. 21", "gross": 82.69, "net": 77.28}
+      ],
+      "budget": {
+        "title": "Abgleich mit dem vereinbarten Fremdkostenbudget",
+        "rows": [
+          {"label": "Fremdkostenbudget gemäß Kooperationsvertrag (netto)", "value": 12905.00},
+          {"label": "Bereits abgerechnet mit KML-2026-009, KML-2026-011, KML-2026-012, KML-2026-014", "value": -4953.05},
+          {"label": "Verbleibendes Budget", "value": 7951.95, "style": "sum"},
+          {"label": "Belege zu dieser Rechnung, netto (Summe oben)", "value": 10271.96},
+          {"label": "Davon mit dieser Rechnung berechnet (Position 4)", "value": 7951.95, "style": "sum"}
+        ]
+      }
+    }
+  ]
+}

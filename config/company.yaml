@@ -1,0 +1,48 @@
+# Stammdaten Locker & Lauter UG – einzige Quelle für alle Rechnungsvorlagen
+name: "Locker & Lauter UG (haftungsbeschränkt)"
+name_short: "Locker & Lauter UG"
+name_suffix: "(haftungsbeschränkt)"
+name_en: "Locker & Lauter UG (limited liability)"
+street: "Eschenholt 22a"
+zip: "22525"
+city: "Hamburg"
+country_de: "Deutschland"
+country_en: "Germany"
+register_court: "Amtsgericht Hamburg"
+register_no: "HRB 187235"
+managing_director: "Laura Schimming"
+tax_number: "47/740/01965"
+vat_id: "DE369478827"
+
+bank:
+  holder: "LOCKER & LAUTER UG (HAFTUNGSBESCHRÄNKT)"
+  name: "Hamburger Sparkasse AG"
+  iban: "DE89 2005 0550 1506 8760 67"
+  bic: "HASPDEHHXXX"
+
+# KSK-Satz, der auf Auslandsrechnungen als Umlage ausgewiesen wird
+ksk_rate: 0.049
+vat_rate: 0.19
+
+# Nummernkreise
+numbering:
+  fee_prefix: "LL"            # LL-JJJJ-NNN (3-stellig)
+  fee_digits: 3
+  creator_digits: 3           # DR-JJJJ-NNN
+
+# Standard-Zahlungsziel, wenn im Sheet nichts steht
+default_payment_days: 14
+
+mail:
+  finance_address: "finance@lockerundlauter.com"
+  signature_name: "Josh Weber"
+  signature_role: "Finance Manager"
+  simba_outgoing: "rzmd-iyyam-a@belege.simbadirekt.de"
+  simba_incoming: "RZMD-IYYAM-E@belege.simbadirekt.de"
+
+# Design (aus den Original-PDFs gemessen)
+design:
+  color_customer_band: "#90A4B5"   # grau-blau, Kundenrechnung
+  color_fee_band: "#000000"        # schwarz, Management-Fee-Rechnung
+  color_logo: "#D7F341"
+  font: "DejaVu Sans"

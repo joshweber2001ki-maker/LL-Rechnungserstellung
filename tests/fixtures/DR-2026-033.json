@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice", "category": "customer", "lang": "en", "currency": "EUR",
+  "number": "DR-2026-033", "date": "19.10.2026", "service_period": "October 2026",
+  "recipient": {"lines": ["Lindbergh, PWT Group A/S", "Gøteborgvej 15", "9200 Aalborg SV", "Denmark"], "ids": [{"label": "VAT Number", "value": "DK31081610"}]},
+  "items": [
+    {"title": "AW26 campaign: shooting day, Instagram Reel & Story", "lines": ["Campaign: Lindbergh · Go live: 10. & 11.10.2026", "@daniel.reith (Instagram)", "1 shooting day at Lindbergh Store Hamburg · 1 × Instagram Reel (collaboration post) · 1 × Instagram Story · organic usage rights for 3–4 images · 2 months paid usage from date of posting"], "qty": 1, "unit_price": 2343.75, "amount": 2343.75},
+    {"title": "Management fee", "qty": 1, "unit_price": 781.25, "amount": 781.25},
+    {"kind": "group", "title": "Travel expenses shooting day 15.09.2026 (net)", "lines": []},
+    {"kind": "sub", "title": "Taxi · receipt MQTGKE42-626", "qty": 1, "unit_price": 56.07, "amount": 56.07},
+    {"kind": "sub", "title": "Uber · invoice GFJFCEFC-03-2026-0000452", "qty": 1, "unit_price": 33.64, "amount": 33.64},
+    {"kind": "sub", "title": "Uber · invoice GHEHEIAD-03-2026-10210626", "qty": 1, "unit_price": 41.12, "amount": 41.12}
+  ],
+  "totals": [
+    {"label": "subtotal:", "value": 3125.0},
+    {"label": "KSK (4,9 % of subtotal):", "value": 153.13},
+    {"label": "travel expenses (net):", "value": 130.83},
+    {"label": "net amount:", "value": 3408.96, "style": "sub"},
+    {"label": "VAT (reverse charge):", "value": 0.0},
+    {"label": "total amount:", "value": 3408.96, "style": "grand"}
+  ],
+  "payment_text": "We kindly ask you to settle the invoice by 18.11.2026.",
+  "notes": [
+    "Note: This invoice is issued in the name of and on behalf of Daniel Reith, Rüdesheimer Straße 21, 65197 Wiesbaden, Germany, tax number 04086001559, VAT ID DE311208560, via Locker & Lauter UG (limited liability). Locker & Lauter UG (limited liability) is responsible for the settlement of this invoice.",
+    "Travel expenses are charged at net cost as part of the consideration for the service; receipts attached. Reverse Charge Procedure applies to the full amount. The customer is required to account for the VAT."
+  ]
+}

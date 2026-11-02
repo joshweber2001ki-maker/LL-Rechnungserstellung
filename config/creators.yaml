@@ -1,0 +1,127 @@
+# Creator-Konfiguration. Schlüssel = Name exakt wie im Finanzsheet, Spalte "Creator:in".
+# Adresse, Steuernummer/USt-IdNr. und Hinweistext kommen aus dem Tab "Finance I Creator-Adressen"
+# (address_key = Name dort, falls abweichend). Hier stehen nur Dinge, die das Sheet nicht hergibt.
+#
+# Felder:
+#   prefix          Nummernkreis der Kundenrechnung (DR-2026-NNN)
+#   address_key     Name im Tab Creator-Adressen, wenn er vom Sheet-Namen abweicht
+#   entity          person | ug  (ug: Kundenrechnung und Fee-Rechnung laufen auf die UG)
+#   country         Sitzland der Creatorin (DE/AT/...) – steuert Steuertexte
+#   vat_liable      true = umsatzsteuerpflichtig (Auslagen nur netto weiterberechnen)
+#   fee_default     übliche Management Fee in % – nur für die Plausibilitätsprüfung,
+#                   der Rechnungsbetrag kommt immer aus dem Sheet
+#   daily_limit     max. Rechnungsbetrag netto pro Tag (null = keins)
+#   notes           Besonderheiten in Klartext (werden Claude bei der Erstellung gezeigt)
+
+Daniel Reith:
+  prefix: DR
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25, 20]
+  notes: "MR MARVIS: Fee 20 % (nicht 25 %)."
+
+Alisa Reith:
+  prefix: AR
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25]
+  notes: "Noch nicht im Tab Creator-Adressen – vor der ersten Rechnung Adresse/Steuerdaten nachtragen lassen."
+
+Kira Marie Löhden:
+  prefix: KML
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20, 25]
+  notes: "TK Mental Matters läuft über Kooperationsvertrag mit eigenem Fremdkostenbudget (siehe Regeln)."
+
+Emma-Isadora Hagen:
+  prefix: EIH
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20, 25]
+  notes: "Michael Page: Fee 20 %."
+
+Victoria Effer:
+  prefix: VE
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20]
+
+Katrin Stockinger:
+  prefix: KS
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20, 25]
+  notes: "Im Adress-Tab ohne USt-IdNr. – nur Steuernummer."
+
+Marina Ziblis:
+  prefix: MZ
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20, 25]
+  daily_limit: 5000
+  notes: "Max. eine Rechnung à 5.000 € netto pro Tag – mehrere Rechnungen auf Tage verteilen."
+
+Anastasia Barner:
+  prefix: AB
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [20]
+
+Marco Hausdörfer:
+  prefix: MH
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25, 20]
+
+Elena Noemi Miller:
+  prefix: ENM
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25, 20]
+
+Sophia Tran:
+  prefix: ST
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25]
+
+Tanja Bülter:
+  prefix: TB
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25]
+
+Selina Hehl:
+  prefix: SH
+  entity: person
+  country: AT
+  vat_liable: true
+  fee_default: [20]
+  notes: >-
+    Sitz Wien. Kundenrechnungen tragen österreichischen Steuertext (Leistungsort-Regel § 3a UStG AT),
+    keine KSK-Umlage, Fee ist in der Position enthalten ("inkl. Management Fee").
+    Fee-Rechnung LL-xxx an sie ohne USt (Reverse Charge, UID ATU81172758).
+
+Julie Lepique:
+  prefix: JL
+  address_key: Nina Julie Lepique
+  entity: ug
+  country: DE
+  vat_liable: true
+  fee_default: [20, 25]
+  notes: >-
+    Arbeitet über JL Studio Compound UG (haftungsbeschränkt). Kundenrechnung im Namen der UG,
+    Fee-Rechnung an die UG. SONDERREGEL FOLGT – bis dahin jede JL-Rechnung zur manuellen Prüfung vorlegen.

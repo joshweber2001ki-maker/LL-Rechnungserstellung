@@ -1,0 +1,21 @@
+{
+  "doc_type": "invoice",
+  "category": "fee",
+  "lang": "de",
+  "currency": "EUR",
+  "number": "LL-2026-155",
+  "date": "30.10.2026",
+  "service_period": "Oktober 2026",
+  "recipient": {
+    "lines": ["Kira Marie Löhden", "Hudtwalckerstr. 27", "22299 Hamburg", "Deutschland"]
+  },
+  "items": [
+    {"title": "Management Fee", "lines": ["für Kunde: Jabra", "Leistungszeitraum: Oktober 2026", "Rechnung: KML-2026-023"], "qty": 1, "unit_price": 2375.0, "amount": 2375.0}
+  ],
+  "totals": [
+    {"label": "NETTOSUMME:", "value": 2375.0, "style": "sub"},
+    {"label": "zzgl. Umsatzsteuer (19%)", "value": 451.25},
+    {"label": "BRUTTOSUMME:", "value": 2826.25, "style": "grand"}
+  ],
+  "payment_text": "Hinweis zur Zahlung: Der Rechnungsbetrag wird mit eingehenden Kundenzahlungen verrechnet. Eine gesonderte Zahlung ist nicht erforderlich."
+}

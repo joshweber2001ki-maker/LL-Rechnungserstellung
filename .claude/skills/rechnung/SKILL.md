@@ -1,0 +1,121 @@
+---
+name: rechnung
+description: Rechnungserstellung Locker & Lauter – täglicher Lauf (Kalender → Finanzsheet → Kunden- und Fee-Rechnung → Drive/Gmail) sowie Chat-Befehle erstellen, storno, korrigieren, regel, sonderfall, status. Immer laden, wenn es um L&L-Rechnungen, Rechnungsnummern, Stornos oder die Rechnungsregeln geht.
+---
+
+# Rechnungserstellung Locker & Lauter
+
+Du arbeitest im Repo `ll-rechnungserstellung`. Fachliche Wahrheit ist **`rules/rechnungsregeln.md`** –
+vor jeder Rechnung komplett lesen und anwenden. Bei Zweifel: keine Rechnung, sondern Rückfrage/Befund.
+Das Finanzsheet wird **nie** beschrieben. Nichts wird automatisch per Mail versendet – nur Entwürfe.
+
+## Betriebsmodus
+
+`config/betrieb.yaml` → `modus: schatten | produktiv` (siehe Regel 14). Im Schattenmodus:
+keine Nummernreservierung (Nummer aus dem Finanzsheet übernehmen, sonst `ENTWURF`), PDFs nur in
+`Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/`, keine Gmail-Entwürfe an Kunden/Creator,
+Vergleichsmail an finance@.
+
+## Werkzeuge im Repo
+
+| Schritt | Befehl |
+|---|---|
+| Sheet-Zeile → Befund + Dokument-JSONs (+PDF) | `python3 -m invoice.cli build --kampagnen data/kampagnen.csv --adressen data/finanzsheet.xlsx --nummer <N> --datum JJJJ-MM-TT [--nr-kunde X --nr-fee Y] [--expenses belege.json] [--lang de|en] --out out/<N> --pdf` |
+| Dokument-JSON → PDF | `python3 render/render.py <doc.json> <out.pdf>` |
+| Storno aus bestehendem Dokument-JSON | `python3 -m invoice.cli storno --doc <orig.json> --nummer <Nr> --grund "…" [--ersatz <Nr>] --out out/storno --pdf` |
+| Nächste Nummer | `python3 -m invoice.register next <KREIS> <Jahr>` |
+| Register ↔ Finanzsheet nachziehen | `python3 -m invoice.register import data/kampagnen.csv <Jahr>` |
+
+Exit-Code 3 von `build` = Stopp-Befund, es wurden keine Dokumente erzeugt. `out/<N>/befund.json` enthält
+findings, meta, die Sheet-Zeile und `sheet_max_numbers` (höchste Nummern je Kreis im Finanzsheet).
+
+## Daten holen (jeder Lauf, immer frisch)
+
+1. **Finanzsheet** (Drive-ID `1C6WoZ72bN-nOwY74CN3fjYQem-txyPsaaw26iN5Uobk`):
+   - `download_file_content` mit `exportMimeType: text/csv` → base64 dekodieren → `data/kampagnen.csv`
+     (CSV-Export liefert nur den ersten Tab „Finance | Kampagnen" – genau den brauchen wir).
+   - `download_file_content` mit `exportMimeType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+     → `data/finanzsheet.xlsx` (Tab „Finance I Creator-Adressen").
+   - Große Tool-Ergebnisse werden als Datei gespeichert; dann mit Python `json.load` → `base64.b64decode` schreiben.
+2. **Kalender**: `list_events` mit `fullText: "Rechnungserstellung"` für den Tag (startTime 00:00, endTime 23:59:59,
+   lokale Zeit Europe/Berlin). Titel enthält `🧾 Rechnungserstellung | <KUNDE>` (ggf. führende Leerzeichen),
+   `description` = Sheet-Nummer. Ohne Nummer in der Beschreibung ⇒ Befund, kein Lauf für dieses Event.
+3. **Register**: `register/rechnungsregister.csv` im Repo (vorher `git pull`).
+
+## Täglicher Lauf (geplante Aufgabe, werktags morgens)
+
+Für jedes Event des Tages:
+
+1. `git pull`, Daten holen (oben), `modus` lesen.
+2. Idempotenz: Event-ID schon im Register oder `find_by_sheet(<N>)` liefert eine aktive Kundenrechnung ⇒
+   nur Hinweis in der Zusammenfassung, nichts erzeugen.
+3. `build` mit `--datum <heute>` ohne Nummern laufen lassen → Befund lesen.
+   - Stopp-Befund ⇒ in die Zusammenfassung, weiter mit dem nächsten Event.
+   - Warnungen ⇒ Entwurf trotzdem erzeugen, Warnungen in die Zusammenfassung.
+4. **Leistungsbeschreibung prüfen** (`out/<N>/ENTWURF-customer-<N>.json`, `items[0]`): Titel muss eine
+   kurze, lesbare Leistung sein (z. B. „4 × LinkedIn-Beiträge als Co-Author"), Unterzeilen Kampagne/Go Live,
+   Handles, Deliverables. Ist der automatische Titel unglücklich (zu lang, Füllwörter, „Content-Paket"),
+   formuliere ihn aus den Sheet-Daten besser – **keine** Inhalte erfinden, keine Beträge ändern. JSON anpassen.
+5. Nummern:
+   - `schatten`: Nummer aus `befund.json` → `row.rechnung_creator` / `row.rechnung_ll` (Muster `XX-2026-NNN`)
+     übernehmen; fehlt sie, bleibt `ENTWURF`.
+   - `produktiv`: `register.next_number(prefix, jahr, sheet_max)` für Kreis und `LL`; Konflikt ⇒ Stopp-Befund.
+     `register.reserve(...)` für beide Dokumente mit Status `entwurf`, Event-ID, Modus.
+   - Marina Ziblis: Regel 8 (Tageslimit) – Rechnungsdatum ggf. auf den nächsten freien Tag legen.
+6. `build` erneut mit `--nr-kunde/--nr-fee --pdf` (oder die JSONs mit gesetzten Nummern direkt rendern).
+   PDFs: `Rechnung-<Nr>.pdf`. Immer die fertigen PDFs einmal als Bild prüfen (`pdftoppm -r 60`) – Seitenzahl,
+   nichts abgeschnitten, Summen plausibel.
+7. Ablage in Drive (`create_file`, `contentMimeType: application/pdf`, `disableConversionToGoogleType: true`, base64):
+   - `produktiv`: `Locker & Lauter Finanzen/Rechnungskopien/<Jahr>/<Monat>` (Monat des Rechnungsdatums, deutsch:
+     Januar … Dezember; Ordner-ID über `search_files` `title = '<Monat>' and parentId = '<Jahr-Ordner>'`; fehlt ein
+     Jahr-/Monatsordner: mit `create_file` (`contentMimeType: application/vnd.google-apps.folder`) anlegen).
+     Zusätzlich Kampagnenordner (Regel 13): `search_files` `title = '06_Rechnungen'`, Eltern-Kette prüfen
+     (`get_file_metadata` → `<NN_Kunde_MM/JJJJ>` → `<Jahr>` → `01_Bezahlte Partnerschaften` → `02_Partners` →
+     `<CREATOR> (L&L)`); genau ein Treffer mit passendem Creator + Kunde + Monat ⇒ dort ablegen, sonst nur
+     Rechnungskopien + Hinweis. Drive-IDs ins Register (`drive_kopie`, `drive_kampagne`).
+   - `schatten`: `Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/` (Ordner anlegen).
+     Ordner-ID „Locker & Lauter Finanzen": `188XnxRQFqdpcLZ-Vy3yKXegvaujrVujV`; „Rechnungskopien": `1Rri9WmPNTVKwKNHX9nbE9lt4gY6iCrnf`.
+8. Gmail-Entwürfe (nur `produktiv`, `create_draft` mit `attachments[].content` base64, `mimeType: application/pdf`):
+   - an Kunde (`meta.kontakt`; fehlt er: Entwurf ohne Empfänger + Hinweis), Betreff
+     `Rechnung <Nr> | Locker & Lauter × <Creator>` (EN: `Invoice <Nr> | …`). Text = Standardvorlage aus
+     Regeldatei/Memory (Du/Sie und Sprache laut `customers.yaml` bzw. `meta.lang`), Anhang Kundenrechnung.
+   - an Creatorin (Adresse: Josh fragen bzw. `creators.yaml` `email`, falls gepflegt; sonst ohne Empfänger),
+     Betreff `Management-Fee-Rechnung <LL-Nr> zu <Kundenrechnungs-Nr>`, Anhang Fee-Rechnung.
+   - Draft-IDs ins Register (`gmail_draft`).
+9. Register speichern, `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push`.
+   Push-Konflikt ⇒ `git pull --rebase`, Nummern erneut prüfen (keine Doppelvergabe), nochmal pushen.
+10. Zusammenfassung per `send_message` an `finance@lockerundlauter.com`, Betreff
+    `Rechnungslauf <Datum>: <n> Entwürfe, <m> Rückfragen` – je Event eine Zeile (Nummer, Kunde, Creator,
+    Steuerfall, Netto/Brutto, Status, Drive-Link), danach alle Befunde im Klartext. Im Schattenmodus zusätzlich
+    der Vergleich zur n8n-Rechnung: dieselbe Nummer im Postfach suchen (`search_threads` `"<Nr>" has:attachment`),
+    Anhang lesen, Netto/Steuer/Brutto/Steuerfall/Hinweistexte gegenüberstellen; Abweichungen fett.
+
+Niemals: Finanzsheet schreiben, Mails senden, Nummern raten, bei Stopp-Befund trotzdem rendern.
+
+## Chat-Befehle
+
+- **`rechnung erstellen <N>`** – manueller Lauf für Sheet-Nummer N ohne Kalender-Event (Nachberechnung,
+  Teil-/Schlussrechnung). Ablauf wie oben ab Schritt 3; vor Schritt 5 dem Nutzer Befund + Leistungsbeschreibung
+  zeigen und Freigabe abwarten, außer er hat „direkt" gesagt.
+- **`rechnung storno <Nr> "<Grund>" [neu]`** – Original-JSON aus `out/`-Historie bzw. aus dem Register-Drive-Link
+  rekonstruieren (PDF lesen, falls kein JSON vorliegt), `cli storno` mit nächster Nummer im selben Kreis, Register:
+  Original → `storniert` + `referenz`, Storno-Zeile `typ=storno`. Bei `neu`: Ersatzrechnung (Regel 9) mit
+  `replaces`, Verrechnungstext, neue Nummer; **Fee-Rechnung immer mitziehen** (Storno + Neu). PDFs ablegen,
+  Entwürfe anlegen, zusammenfassen.
+- **`rechnung korrigieren <Nr> "<was>"`** – Status `entwurf`: JSON ändern, neu rendern, PDF in Drive ersetzen
+  (alte Datei `trash_file`), Register aktualisieren. Status `gesendet`: ⇒ Storno + Neu.
+- **`rechnung regel "<Text>"`** – an `rules/rechnungsregeln.md` unter „Änderungsprotokoll" mit Datum anhängen
+  und, wenn es eine bestehende Regel ändert, den betreffenden Abschnitt anpassen. Commit `regel: <Kurzfassung>`.
+  Betrifft die Regel eine Creatorin/einen Kunden ⇒ zusätzlich `creators.yaml` / `customers.yaml`.
+- **`rechnung sonderfall <N> "<Text>"`** – Einzelfall-Anweisung für genau diese Sheet-Nummer (z. B. Netto-Belegliste,
+  abweichende Sprache, Bestellnummer). In `cases/<N>.md` ablegen (Datum, Text) und beim Lauf für N berücksichtigen
+  (`--expenses` aus der Belegliste bauen: `[{"title": "...", "net": 56.07, "gross": 66.72, "pages": "S. 3"}]`).
+- **`rechnung status [<Nr>|offen|heute]`** – Registerauszug; `offen` = Status `entwurf`/`gesendet`.
+- **`rechnung gesendet <Nr>`** – Status auf `gesendet` (Datum), simbadirekt-Entwurf vorbereiten
+  (`create_draft` an `rzmd-iyyam-a@belege.simbadirekt.de`, Anhang PDF, Betreff = Nummer).
+
+## Vergleichsmodus (Schatten) – worauf achten
+
+n8n bleibt führend. Der Wert des Schattenlaufs ist die Abweichungsliste: andere Summe, anderer Steuerfall,
+fehlende/zusätzliche Hinweistexte, andere Sprache, unlesbare Leistungsbeschreibung. Jede Abweichung, die eine
+fehlende Regel zeigt, als Vorschlag formulieren („Regel ergänzen: …"), nicht still beheben.

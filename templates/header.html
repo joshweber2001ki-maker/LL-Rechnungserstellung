@@ -1,0 +1,14 @@
+<div style="-webkit-print-color-adjust: exact; zoom: 1.3333; width: 100%; height: 35.250mm; margin: -3.94mm 0 0 0; background: {{ band_color }}; color: #fff; font-family: 'DejaVu Sans', sans-serif; position: relative;">
+  <img src="{{ logo_src }}" style="position: absolute; left: 11.250mm; top: 6.750mm; width: 19.500mm; height: 19.500mm;">
+  <div style="position: absolute; right: 11.250mm; top: 6.750mm; text-align: right;">
+    <div style="font-size: 20pt; font-weight: bold; letter-spacing: 0.5pt; margin-bottom: 2.250mm;">{{ t.title }}</div>
+    <div style="font-size: 7pt; line-height: 1.5;">
+      {{ t.number }}: {{ d.number }}<br>
+      {{ t.date }}: {{ d.date }}<br>
+      {% if d.service_period %}{{ t.period }}: {{ d.service_period }}<br>{% endif %}
+      {% if d.cancels %}{{ t.cancels }}: {{ d.cancels.number }} {{ t.dated }} {{ d.cancels.date }}<br>{% endif %}
+      {% if d.replaces %}{{ t.replaces }}: {{ d.replaces.number }}<br>{% endif %}
+      {% if multipage %}{{ t.page }} <span class="pageNumber"></span> {{ t.of }} <span class="totalPages"></span>{% endif %}
+    </div>
+  </div>
+</div>

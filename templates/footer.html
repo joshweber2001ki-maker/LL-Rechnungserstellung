@@ -1,0 +1,19 @@
+<div style="-webkit-print-color-adjust: exact; zoom: 1.3333; width: 100%; height: 27.95mm; margin: 0; position: relative; top: 3.94mm; background: {{ band_color }}; color: #fff; font-family: 'DejaVu Sans', sans-serif; font-size: 6.3pt; line-height: 1.45;">
+  <div style="display: flex; justify-content: space-between; padding: 6mm 11.250mm 0 11.250mm;">
+    <div>
+      <b>{{ t.company_info }}:</b><br>
+      {{ company.name }}<br>
+      {{ company.street }}, {{ company.zip }} {{ company.city }}<br>
+      Registergericht: {{ company.register_court }}, {{ company.register_no }}<br>
+      Geschäftsführung: {{ company.managing_director }}<br>
+      Steuernummer: {{ company.tax_number }} | USt-IdNr.: {{ company.vat_id }}
+    </div>
+    <div style="text-align: right;">
+      <b>{{ t.bank_info }}:</b><br>
+      {{ company.bank.holder }}<br>
+      Bank: {{ company.bank.name }}<br>
+      IBAN: {{ company.bank.iban }}<br>
+      BIC: {{ company.bank.bic }}
+    </div>
+  </div>
+</div>

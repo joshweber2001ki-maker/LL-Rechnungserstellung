@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="{{ d.lang }}">
+<head>
+<meta charset="utf-8">
+<title>{{ d.number }}</title>
+<style>
+  @page { size: A4; margin: 47mm 0 37mm 0; }
+  :root {
+    --band: {{ band_color }};
+    --band-text: #ffffff;
+    --logo: {{ company.design.color_logo }};
+    --text: #111111;
+    --muted: #555555;
+    --rule: #333333;
+    --rule-light: #bbbbbb;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "{{ company.design.font }}", "DejaVu Sans", Verdana, sans-serif;
+    font-size: 10pt;
+    color: var(--text);
+    line-height: 1.33;
+  }
+  /* --- Seiteninhalt --- */
+  .page { padding: 10mm 15mm 3mm 15mm; }
+  .page + .page { page-break-before: always; }
+  .parties { display: flex; justify-content: space-between; margin-bottom: 12mm; }
+  .party { width: 48%; }
+  .party.right { text-align: right; }
+  .party h2 { margin: 0 0 2.5mm 0; font-size: 9.4pt; letter-spacing: 1.4pt; font-weight: bold; text-transform: uppercase; }
+  .party .name { font-weight: bold; }
+  .party div { white-space: pre-line; }
+  table.items { width: 100%; border-collapse: collapse; margin-bottom: 4mm; }
+  table.items th {
+    font-size: 8.4pt; letter-spacing: 0.6pt; text-align: left; font-weight: bold; text-transform: uppercase;
+    padding: 0 0 2.2mm 0; border-bottom: 1.2pt solid var(--rule);
+  }
+  table.items th.num, table.items td.num { text-align: right; white-space: nowrap; }
+  table.items th.qty, table.items td.qty { text-align: center; white-space: nowrap; width: 16mm; }
+  table.items th.price, table.items td.price { width: 26mm; }
+  table.items th.sum, table.items td.sum { width: 28mm; }
+  table.items td { padding: 2.2mm 0 2.2mm 0; border-bottom: 0.5pt solid var(--rule-light); vertical-align: middle; }
+  table.items td.desc { padding-right: 6mm; padding-left: 1mm; }
+  table.items tr.group td { border-bottom: none; padding-bottom: 0.6mm; }
+  table.items tr.sub td { border-bottom: none; padding-top: 0.4mm; padding-bottom: 0.4mm; font-size: 9pt; }
+  table.items tr.sub td.desc { padding-left: 5mm; }
+  table.items tr.sub-last td { border-bottom: 0.5pt solid var(--rule-light); padding-bottom: 2.4mm; }
+  .item-title { font-weight: bold; }
+  .item-line { color: var(--text); font-size: 9.2pt; }
+  .item-line.i { font-style: italic; }
+  .totals { width: 100%; margin-top: 2mm; }
+  .totals table { margin-left: auto; border-collapse: collapse; }
+  .totals td { padding: 0.5mm 0 0.5mm 10mm; text-align: right; white-space: nowrap; }
+  .totals td.lbl { text-align: right; padding-left: 0; }
+  .totals tr.grand td { font-weight: bold; border-top: 1.2pt solid var(--rule); padding-top: 1.2mm; }
+  .totals tr.sub td { font-weight: bold; }
+  .payment { margin-top: 8mm; font-weight: bold; }
+  .highlight { margin-top: 4mm; font-weight: bold; }
+  .note { margin-top: 3.5mm; font-size: 8.8pt; font-style: italic; color: var(--text); }
+  .note.plain { font-style: normal; }
+  /* Anlage */
+  .annex h2 { font-size: 8.6pt; letter-spacing: 1.4pt; margin: 0 0 3mm 0; text-transform: uppercase; }
+  .annex h3 { font-size: 9.2pt; margin: 0 0 1.5mm 0; }
+  .annex p { margin: 0 0 4mm 0; font-size: 8.4pt; }
+  table.annex { width: 100%; border-collapse: collapse; margin-bottom: 8mm; }
+  table.annex th { font-size: 7.4pt; letter-spacing: 0.6pt; text-transform: uppercase; text-align: left; border-bottom: 1.2pt solid var(--rule); padding: 0 1mm 1.8mm 1mm; }
+  table.annex td { padding: 1.8mm 1mm; border-bottom: 0.5pt solid var(--rule-light); font-size: 8.4pt; vertical-align: top; }
+  table.annex td.num, table.annex th.num { text-align: right; white-space: nowrap; }
+  table.annex tr.sum td { font-weight: bold; border-top: 1.2pt solid var(--rule); border-bottom: none; }
+  table.kv { border-collapse: collapse; width: 100%; }
+  table.kv td { padding: 1.4mm 1mm; border-bottom: 0.5pt solid var(--rule-light); font-size: 8.4pt; }
+  table.kv td.num { text-align: right; white-space: nowrap; }
+  table.kv tr.sum td { font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="parties">
+    <div class="party">
+      <h2>{{ t.issuer }}</h2>
+      <div class="name">{{ company.name_short }}<br>{{ company.name_suffix }}</div>
+      <div>{{ company.street }}<br>{{ company.zip }} {{ company.city }}<br>{{ company.country_de }}</div>
+    </div>
+    <div class="party right">
+      <h2>{{ t.recipient }}</h2>
+      {% for line in d.recipient.lines %}<div{% if loop.first %} class="name"{% endif %}>{{ line }}</div>{% endfor %}
+      {% for id in d.recipient.ids %}<div>{{ id.label }}: {{ id.value }}</div>{% endfor %}
+      {% for ref in d.recipient.refs %}<div>{{ ref.label }}: {{ ref.value }}</div>{% endfor %}
+    </div>
+  </div>
+
+  <table class="items">
+    <thead>
+      <tr>
+        <th>{{ t.col_desc }}</th>
+        <th class="qty">{{ t.col_qty }}</th>
+        <th class="num price">{{ t.col_price }}</th>
+        <th class="num sum">{{ t.col_sum }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for it in d["items"] %}
+      {% if it.kind == 'group' %}
+      <tr class="group">
+        <td class="desc" colspan="4">
+          <div class="item-title">{{ it.title }}</div>
+          {% for l in it.lines %}<div class="item-line i">{{ l }}</div>{% endfor %}
+        </td>
+      </tr>
+      {% elif it.kind == 'sub' %}
+      <tr class="sub{% if it.last %} sub-last{% endif %}">
+        <td class="desc">{{ it.title }}</td>
+        <td class="qty">{{ it.qty }}</td>
+        <td class="num price">{{ it.unit_price | money(d.currency, d.lang) }}</td>
+        <td class="num sum">{{ it.amount | money(d.currency, d.lang) }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td class="desc">
+          <div class="item-title">{{ it.title }}</div>
+          {% for l in it.lines %}<div class="item-line i">{{ l }}</div>{% endfor %}
+        </td>
+        <td class="qty">{{ it.qty }}</td>
+        <td class="num price">{{ it.unit_price | money(d.currency, d.lang) }}</td>
+        <td class="num sum">{{ it.amount | money(d.currency, d.lang) }}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <table>
+      {% for row in d.totals %}
+      <tr class="{{ row.style or '' }}">
+        <td class="lbl">{{ row.label }}</td>
+        <td>{{ row.value | money(d.currency, d.lang) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  {% if d.payment_text %}<div class="payment">{{ d.payment_text }}</div>{% endif %}
+  {% for h in d.highlights %}<div class="highlight">{{ h }}</div>{% endfor %}
+  {% for n in d.notes %}<div class="note{% if n.plain %} plain{% endif %}">{{ n.text if n.text is defined else n }}</div>{% endfor %}
+</div>
+
+{% for annex in d.annexes %}
+<div class="page annex">
+  <h2>{{ t.annex }}</h2>
+  <h3>{{ annex.title }}</h3>
+  <p>{{ annex.intro }}</p>
+  {% if annex.rows %}
+  <table class="annex">
+    <thead><tr><th>{{ t.col_no }}</th><th>{{ t.col_receipt }}</th><th>{{ t.col_pages }}</th><th class="num">{{ t.col_gross }}</th><th class="num">{{ t.col_net }}</th></tr></thead>
+    <tbody>
+      {% for r in annex.rows %}
+      <tr><td>{{ loop.index }}</td><td>{{ r.title }}</td><td>{{ r.pages or '' }}</td><td class="num">{{ r.gross | money(d.currency, d.lang) }}</td><td class="num">{{ r.net | money(d.currency, d.lang) }}</td></tr>
+      {% endfor %}
+      <tr class="sum"><td></td><td>{{ t.sum_receipts }}</td><td></td><td class="num">{{ annex.rows | sum(attribute='gross') | money(d.currency, d.lang) }}</td><td class="num">{{ annex.rows | sum(attribute='net') | money(d.currency, d.lang) }}</td></tr>
+    </tbody>
+  </table>
+  {% endif %}
+  {% if annex.budget %}
+  <h3>{{ annex.budget.title }}</h3>
+  <table class="kv">
+    {% for row in annex.budget.rows %}
+    <tr class="{{ row.style or '' }}"><td>{{ row.label }}</td><td class="num">{{ row.value | money(d.currency, d.lang) }}</td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</div>
+{% endfor %}
+
+</body>
+</html>

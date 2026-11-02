@@ -1,0 +1,15 @@
+# Betriebsmodus der Rechnungsroutine (siehe rules/rechnungsregeln.md, Abschnitt 14)
+#   schatten  – n8n bleibt führend; Claude erzeugt Vergleichs-PDFs, reserviert keine Nummern,
+#               legt keine Gmail-Entwürfe an, schreibt nur nach _parallelbetrieb/<Datum>/
+#   produktiv – voller Ablauf (Register, Rechnungskopien, Kampagnenordner, Gmail-Entwürfe)
+modus: schatten
+
+# Drive-Ordner (IDs), damit kein Lauf raten muss
+drive:
+  finanzen: "188XnxRQFqdpcLZ-Vy3yKXegvaujrVujV"        # Locker & Lauter Finanzen
+  rechnungskopien: "1Rri9WmPNTVKwKNHX9nbE9lt4gY6iCrnf"  # …/Rechnungskopien/<Jahr>/<Monat>
+  daten: "1TA1pnaak4JTcMtNLNCTRWuoA3QeksJw4"            # …/_daten
+  finanzsheet: "1C6WoZ72bN-nOwY74CN3fjYQem-txyPsaaw26iN5Uobk"
+
+# Benachrichtigung
+summary_to: "finance@lockerundlauter.com"

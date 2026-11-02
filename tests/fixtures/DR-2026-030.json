@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice",
+  "category": "customer",
+  "lang": "de",
+  "currency": "EUR",
+  "number": "DR-2026-030",
+  "date": "30.09.2026",
+  "service_period": "September 2026",
+  "recipient": {
+    "lines": ["CASIO Europe GmbH", "Casio-Platz 1", "22848 Norderstedt", "Deutschland"]
+  },
+  "items": [
+    {"title": "Instagram-Karussellbeitrag", "lines": ["Kampagne: EDIFICE · Go Live: 30.09.2026", "@daniel.reith (Instagram)"], "qty": 1, "unit_price": 1200.0, "amount": 1200.0},
+    {"title": "Management Fee", "qty": 1, "unit_price": 400.0, "amount": 400.0}
+  ],
+  "totals": [
+    {"label": "NETTOSUMME:", "value": 1600.0, "style": "sub"},
+    {"label": "zzgl. MwSt. (19%)", "value": 304.0},
+    {"label": "BRUTTOSUMME:", "value": 1904.0, "style": "grand"}
+  ],
+  "payment_text": "Bitte begleichen Sie den Rechnungsbetrag bis spätestens 19.10.2026.",
+  "notes": [
+    "Hinweis: Die Rechnung wird im Namen von und auf Rechnung für Daniel Reith, Rüdesheimer Straße 21, 65197 Wiesbaden, Deutschland, Steuernummer 04086001559, USt-IdNr. DE311208560, über die Locker & Lauter UG (haftungsbeschränkt) ausgestellt. Die Locker & Lauter UG (haftungsbeschränkt) ist für den Rechnungsausgleich verantwortlich.",
+    "Bitte beachten Sie, die Künstlersozialabgaben sind in der jeweils festgelegten Höhe (derzeit 4,9%), vom Verwerter bzw. Veranstalter zusätzlich zum oben genannten Nettohonorar an die KSK direkt abzuführen."
+  ]
+}

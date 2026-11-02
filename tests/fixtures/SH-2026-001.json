@@ -1,0 +1,19 @@
+{
+  "doc_type": "invoice", "category": "customer", "lang": "de", "currency": "EUR",
+  "number": "SH-2026-001", "date": "06.10.2026", "service_period": "28.09. – 05.10.2026",
+  "recipient": {"lines": ["Wiresoft AG", "Soheil Hosseini", "Oberneuhofstr. 5", "6340 Baar, Schweiz"]},
+  "items": [
+    {"title": "2 × LinkedIn-Beiträge zum Buch „Die Lizenz zum Erfolg“", "lines": ["Kampagne: Die Lizenz zum Erfolg (Soheil Hosseini) · Go Live: 28.09. & 05.10.2026", "@Selina Hehl (LinkedIn)", "inkl. Management Fee"], "qty": 1, "unit_price": 8000.0, "amount": 8000.0}
+  ],
+  "totals": [
+    {"label": "NETTOSUMME:", "value": 8000.0, "style": "sub"},
+    {"label": "UMSATZSTEUER (0 %)*:", "value": 0.0},
+    {"label": "RECHNUNGSBETRAG:", "value": 8000.0, "style": "grand"}
+  ],
+  "payment_text": "Bitte begleichen Sie den Rechnungsbetrag bis spätestens 20.10.2026.",
+  "notes": [
+    "Hinweis: Die Rechnung wird im Namen von und auf Rechnung für Selina Hehl, Rotenturmstraße 5-9, 307, 1010 Wien, Österreich, Steuernummer 12 908/4158, UID-Nr. ATU81172758, über die Locker & Lauter UG (haftungsbeschränkt) ausgestellt. Die Locker & Lauter UG (haftungsbeschränkt) ist für den Rechnungsausgleich verantwortlich.",
+    "* Die Leistung ist in Österreich nicht steuerbar; Leistungsort ist die Schweiz (§ 3a Abs. 6 UStG AT). Die Steuerschuld geht auf den Leistungsempfänger über (Bezugsteuer, Art. 45 MWSTG).",
+    "Service not subject to Austrian VAT (place of supply: Switzerland). The recipient is liable to account for Swiss acquisition tax (reverse charge)."
+  ]
+}

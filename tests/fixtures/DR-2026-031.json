@@ -1,0 +1,20 @@
+{
+  "doc_type": "cancellation", "category": "customer", "lang": "de", "currency": "EUR",
+  "number": "DR-2026-031", "date": "05.10.2026", "service_period": "Juli 2026",
+  "cancels": {"number": "DR-2026-024", "date": "31.07.2026"},
+  "recipient": {"lines": ["RAUSCH AG Kreuzlingen", "Bärenstrasse 12", "8280 Kreuzlingen", "Schweiz"]},
+  "items": [
+    {"title": "Instagram Reel inkl. Co-Autorenschaft & 2 Story-Sets", "lines": ["Kampagne: RAUSCH · Go Live: 24.07.2026", "@daniel.reith (Instagram)", "1 × Reel inkl. Co-Autorenschaft (Daniel & Alisa & RAUSCH) · 1 × Story-Set Alisa @wunder.land (3–4 Sequenzen) · 1 × Story-Set Daniel (3–4 Sequenzen)"], "qty": 1, "unit_price": -2812.5, "amount": -2812.5},
+    {"title": "Management Fee", "qty": 1, "unit_price": -937.5, "amount": -937.5}
+  ],
+  "totals": [
+    {"label": "NETTOSUMME:", "value": -3750.0, "style": "sub"},
+    {"label": "zzgl. MwSt. (19%)", "value": -712.5},
+    {"label": "BRUTTOSUMME:", "value": -4462.5, "style": "grand"}
+  ],
+  "highlights": ["Diese Stornorechnung hebt die Rechnung DR-2026-024 vom 31.07.2026 vollständig auf."],
+  "notes": [
+    {"text": "Grund der Stornierung: Der Leistungsempfänger ist in der Schweiz ansässig, die Leistung ist in Deutschland nicht steuerbar (§ 3a Abs. 2 UStG). Die Umsatzsteuer wurde irrtümlich ausgewiesen. Die Leistung wird mit der Rechnung DR-2026-032 vom 05.10.2026 ohne Umsatzsteuer neu berechnet; die bereits geleistete Zahlung über 4.462,50 € wird damit verrechnet und der Differenzbetrag von 528,75 € erstattet.", "plain": true},
+    "Hinweis: Die Rechnung wird im Namen von und auf Rechnung für Daniel Reith, Rüdesheimer Straße 21, 65197 Wiesbaden, Deutschland, Steuernummer 04086001559, USt-IdNr. DE311208560, über die Locker & Lauter UG (haftungsbeschränkt) ausgestellt."
+  ]
+}

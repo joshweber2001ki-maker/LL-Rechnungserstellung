@@ -1,0 +1,19 @@
+{
+  "doc_type": "invoice", "category": "fee", "lang": "de", "currency": "EUR",
+  "number": "LL-2026-151", "date": "28.10.2026", "service_period": "Juli 2026",
+  "replaces": {"number": "LL-2026-103", "date": "31.07.2026"},
+  "recipient": {"lines": ["Daniel Reith", "Rüdesheimer Straße 21", "65197 Wiesbaden", "Deutschland"]},
+  "items": [
+    {"title": "Management Fee", "lines": ["für Kunde: RAUSCH", "Leistungszeitraum: Juli 2026", "Rechnung: DR-2026-032"], "qty": 1, "unit_price": 937.5, "amount": 937.5},
+    {"title": "KSK (4,9%)", "qty": 1, "unit_price": 183.75, "amount": 183.75}
+  ],
+  "totals": [
+    {"label": "GESAMTNETTOSUMME:", "value": 1121.25, "style": "sub"},
+    {"label": "GESAMTBETRAG:", "value": 1121.25, "style": "grand"}
+  ],
+  "payment_text": "Hinweis zur Zahlung: Der Rechnungsbetrag wird mit der Kundenzahlung zu DR-2026-032 verrechnet. Die Überzahlung aus der Weiterleitung vom 28.08.2026 (534,37 €) wird bei der nächsten Auszahlung einbehalten. Eine gesonderte Zahlung ist nicht erforderlich.",
+  "notes": [
+    {"text": "Steuerfreie Vermittlungsleistung gemäß § 4 Nr. 5 Buchst. c UStG. Der vermittelte Umsatz (Rechnung DR-2026-032) wird im Drittlandsgebiet ausgeführt. Die Position KSK (4,9%) entspricht der in Rechnung DR-2026-032 ausgewiesenen Künstlersozialabgabe.", "plain": true},
+    {"text": "Diese Rechnung ersetzt die Rechnung LL-2026-103 vom 31.07.2026, die mit der Stornorechnung LL-2026-150 storniert wurde.", "plain": true}
+  ]
+}
