@@ -91,9 +91,10 @@ def parse_recipient(raw, customers_cfg, customer_name):
     if cust.get("country"):
         country = cust["country"]
     if country is None:
-        # 5-stellige PLZ in einer der Zeilen ⇒ Deutschland
+        # 5-stellige PLZ in einer der Zeilen ⇒ Deutschland (Landzeile ergänzen, damit alle Rechnungen gleich aussehen)
         if any(re.match(r"^\d{5}\s+\S", l) for l in out_lines):
             country = "DE"
+            out_lines.append("Deutschland")
         else:
             findings.append({"level": "stop", "text": f"Land des Kunden nicht erkennbar (Adresse: {' / '.join(out_lines)}). In customers.yaml hinterlegen."})
     if cust.get("vat_id") and not ids:
