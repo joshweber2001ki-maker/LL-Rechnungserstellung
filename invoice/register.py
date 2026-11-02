@@ -129,10 +129,24 @@ def import_from_sheet(rows, sheet_rows, year):
     return added
 
 
+def mirror(rows=None):
+    """Spiegelt das komplette Register in das Google Sheet (config/bridge.yaml: register_sheet_id)."""
+    from . import bridge
+    rows = rows if rows is not None else load()
+    cfg = bridge.config()
+    if not cfg.get("register_sheet_id"):
+        return None
+    table = [FIELDS] + [[r.get(k, "") for k in FIELDS] for r in sorted(
+        rows, key=lambda r: (r.get("kreis", ""), int(r.get("jahr") or 0), int(r.get("lfd") or 0)))]
+    return bridge.call("replace", spreadsheetId=cfg["register_sheet_id"], rows=table)
+
+
 if __name__ == "__main__":
     import sys
     from . import sheet as sh
-    if len(sys.argv) >= 3 and sys.argv[1] == "import":
+    if len(sys.argv) >= 2 and sys.argv[1] == "mirror":
+        print(mirror())
+    elif len(sys.argv) >= 3 and sys.argv[1] == "import":
         rows = load()
         srows = sh.load_kampagnen(Path(sys.argv[2]).read_text(encoding="utf-8"))
         year = int(sys.argv[3]) if len(sys.argv) > 3 else datetime.now().year
@@ -143,4 +157,4 @@ if __name__ == "__main__":
         rows = load()
         print(next_number(rows, sys.argv[2], int(sys.argv[3])))
     else:
-        print("python3 -m invoice.register import <kampagnen.csv> [jahr] | next <KREIS> <jahr>")
+        print("python3 -m invoice.register import <kampagnen.csv> [jahr] | next <KREIS> <jahr> | mirror")

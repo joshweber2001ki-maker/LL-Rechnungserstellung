@@ -33,6 +33,10 @@ findings, meta, die Sheet-Zeile und `sheet_max_numbers` (höchste Nummern je Kre
 
 **Brücke** (`config/bridge.yaml` vorhanden, `python3 -m invoice.bridge ping` antwortet `ok`): alle Datei- und
 Sheet-Operationen laufen über die Shell (`invoice.bridge`), ohne Base64 im Kontext. Das ist der Normalweg.
+`config/bridge.yaml` (URL + Secret) liegt **nicht** im Repo, sondern in Drive unter
+`Locker & Lauter Finanzen/_daten/bridge.yaml` (Ordner-ID `1TA1pnaak4JTcMtNLNCTRWuoA3QeksJw4`). Zu Beginn jedes Laufs:
+`search_files` `title = 'bridge.yaml' and parentId = '1TA1pnaak4JTcMtNLNCTRWuoA3QeksJw4'` → `read_file_content`
+→ Inhalt nach `config/bridge.yaml` schreiben. Das Secret nie in Zusammenfassungen, Commits oder Mails wiedergeben.
 **Connector-Fallback** (keine Brücke oder `ping` schlägt fehl): Google-Drive-/Gmail-Tools mit base64-Inhalt
 (`create_file` mit `base64Content`, `create_draft` mit `attachments[].content`). Funktioniert, kostet aber
 ~40k Tokens je PDF – im Fallback nur die nötigsten Dateien hochladen und das in der Zusammenfassung vermerken.
@@ -97,6 +101,8 @@ Für jedes Event des Tages:
    - Draft-IDs ins Register (`gmail_draft`).
 9. Register speichern, `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push`.
    Push-Konflikt ⇒ `git pull --rebase`, Nummern erneut prüfen (keine Doppelvergabe), nochmal pushen.
+   Danach `python3 -m invoice.register mirror` – spiegelt die CSV ins Google Sheet „Rechnungsregister L&L"
+   (nur Anzeige für Josh/Laura; die CSV im Repo bleibt die Wahrheit, das Sheet wird bei jedem Lauf überschrieben).
 10. Zusammenfassung per `send_message` an `finance@lockerundlauter.com`, Betreff
     `Rechnungslauf <Datum>: <n> Entwürfe, <m> Rückfragen` – je Event eine Zeile (Nummer, Kunde, Creator,
     Steuerfall, Netto/Brutto, Status, Drive-Link), danach alle Befunde im Klartext. Im Schattenmodus zusätzlich

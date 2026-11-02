@@ -27,6 +27,7 @@ function doPost(e) {
       case 'find':      out = find(req); break;
       case 'list':      out = list(req); break;
       case 'append':    out = appendRows(req); break;
+      case 'replace':   out = replaceRows(req); break;
       case 'trash':     out = trash(req); break;
       default: throw new Error('unknown action: ' + req.action);
     }
@@ -117,6 +118,21 @@ function appendRows(req) {
   if (!sh) throw new Error('tab not found: ' + req.tab);
   if (req.rows && req.rows.length) sh.getRange(sh.getLastRow() + 1, 1, req.rows.length, req.rows[0].length).setValues(req.rows);
   return { ok: true, appended: (req.rows || []).length };
+}
+
+/** {spreadsheetId, tab?, rows:[[...],...]} → Blatt komplett ersetzen (Register-Spiegel = Abbild der CSV im Repo) */
+function replaceRows(req) {
+  var ss = SpreadsheetApp.openById(req.spreadsheetId);
+  var sh = req.tab ? ss.getSheetByName(req.tab) : ss.getSheets()[0];
+  if (!sh) throw new Error('tab not found: ' + req.tab);
+  sh.clearContents();
+  if (req.rows && req.rows.length) {
+    var width = Math.max.apply(null, req.rows.map(function (r) { return r.length; }));
+    var rows = req.rows.map(function (r) { while (r.length < width) r.push(''); return r; });
+    sh.getRange(1, 1, rows.length, width).setValues(rows);
+    sh.setFrozenRows(1);
+  }
+  return { ok: true, rows: (req.rows || []).length };
 }
 
 /** {fileId} → in den Papierkorb (nur für Dateien, die die Brücke selbst angelegt hat) */

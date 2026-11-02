@@ -13,6 +13,9 @@ config/company.yaml          Firmendaten, Bank, Design-Farben
 config/creators.yaml         Nummernkreis, Sitzland, Fee-Plausibilität, Sonderfälle je Creatorin
 config/customers.yaml        Overrides für Auslandskunden/Sonderfälle (Land, USt-ID, Sprache, Ansprechpartner)
 config/betrieb.yaml          Modus schatten|produktiv, Drive-Ordner-IDs
+config/bridge.yaml           URL + Secret der Apps-Script-Brücke – NICHT im Repo; liegt in Drive unter _daten/bridge.yaml
+bridge/Code.gs               Apps-Script-Web-App (läuft als finance@): Sheet lesen, Upload, Gmail-Entwurf, Ordnersuche, Register-Spiegel
+invoice/bridge.py            Client für die Brücke (python3 -m invoice.bridge ping|sheet|upload|draft|find)
 invoice/sheet.py             Finanzsheet lesen (Spalten nach Kopfzeile, Jahresabschnitte, Beträge)
 invoice/build.py             Zeile → Vorprüfung (Befunde) → Dokument-JSON Kunde + Fee, Storno-Ableitung
 invoice/register.py          Rechnungsregister (CSV, versioniert), Nummernvergabe, Import aus dem Sheet
@@ -47,7 +50,8 @@ python3 -m invoice.register next DR 2026
 
 ## Register
 
-`register/rechnungsregister.csv` ist die einzige Stelle, an der Nummern vergeben werden. Jede Vergabe ist ein
+`register/rechnungsregister.csv` ist die einzige Stelle, an der Nummern vergeben werden. Das Google Sheet
+„Rechnungsregister L&L" (Ordner Locker & Lauter Finanzen) ist ein reiner Spiegel davon (`python3 -m invoice.register mirror`). Jede Vergabe ist ein
 Git-Commit (Historie = Nachweis). Nächste Nummer = max(Register, Finanzsheet) + 1; weichen beide ab, stoppt der
 Lauf mit Rückfrage. Verworfene Entwürfe bleiben mit Status `verworfen` stehen (Lücke erklärbar).
 
