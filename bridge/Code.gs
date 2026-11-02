@@ -110,9 +110,10 @@ function list(req) {
   return { ok: true, folders: folders, files: files };
 }
 
-/** {spreadsheetId, tab, rows:[[...],...]} → Zeilen anhängen (Register-Spiegel) */
+/** {spreadsheetId, tab?, rows:[[...],...]} → Zeilen anhängen (Register-Spiegel); ohne tab: erstes Blatt */
 function appendRows(req) {
-  var sh = SpreadsheetApp.openById(req.spreadsheetId).getSheetByName(req.tab);
+  var ss = SpreadsheetApp.openById(req.spreadsheetId);
+  var sh = req.tab ? ss.getSheetByName(req.tab) : ss.getSheets()[0];
   if (!sh) throw new Error('tab not found: ' + req.tab);
   if (req.rows && req.rows.length) sh.getRange(sh.getLastRow() + 1, 1, req.rows.length, req.rows[0].length).setValues(req.rows);
   return { ok: true, appended: (req.rows || []).length };
