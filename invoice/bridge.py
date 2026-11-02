@@ -27,7 +27,17 @@ CFG = ROOT / "config" / "bridge.yaml"
 def config():
     if not CFG.exists():
         raise SystemExit("config/bridge.yaml fehlt – Brücke nicht konfiguriert (siehe bridge/Code.gs).")
-    return yaml.safe_load(CFG.read_text(encoding="utf-8"))
+    # Die Datei kommt aus einem Google Doc: typografische Anführungszeichen und geschützte Leerzeichen entfernen
+    text = CFG.read_text(encoding="utf-8")
+    for ch in "\u201c\u201d\u201e\u201f\u2018\u2019\u00ab\u00bb\"'":
+        text = text.replace(ch, "")
+    text = text.replace("\u00a0", " ")
+    cfg = yaml.safe_load(text) or {}
+    for key in ("url", "secret"):
+        if not str(cfg.get(key, "")).strip():
+            raise SystemExit(f"config/bridge.yaml: '{key}' fehlt.")
+        cfg[key] = str(cfg[key]).strip()
+    return cfg
 
 
 def call(action, **payload):
