@@ -1,5 +1,7 @@
-# Nach config/bridge.yaml kopieren und ausfüllen (siehe bridge/Code.gs, Deployment-Schritte)
-url: "https://script.google.com/macros/s/AKfyc.../exec"
+# Vorlage für config/bridge.yaml (liegt NICHT im Repo). Die echte Datei gehört nach
+# Google Drive: Locker & Lauter Finanzen/_daten/bridge.yaml – die Routine holt sie von dort.
+# Secret: Apps Script „LL Rechnungsbrücke" (finance@) → Projekteinstellungen → Skripteigenschaften → SECRET
+url: "https://script.google.com/macros/s/AKfycbxi_PwMjAohGKez2HQv_no3m-SoyDN4UUg2xgtgcsS83FWhCvkoPIq66dDO6BEV7EMgYA/exec"
 secret: "<SECRET aus den Skript-Eigenschaften>"
-# optional: Google-Sheet „Rechnungsregister L&L" mit Tab "Register" (Spiegel der CSV im Repo)
-register_sheet_id: ""
+# Google-Sheet „Rechnungsregister L&L" (Spiegel der CSV im Repo), erstes Blatt
+register_sheet_id: "12QtPIRt7yBRNXdzdJ1cnTRLYHgKeCqOTDPFlVxAL0fo"
