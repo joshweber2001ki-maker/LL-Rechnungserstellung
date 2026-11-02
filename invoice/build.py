@@ -430,6 +430,10 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         "handles": cinfo.get("handles", []), "due": dmy(due), "issue_date": dmy(issue_date),
         "already_invoiced": {"creator": row.get("rechnung_creator", ""), "ll": row.get("rechnung_ll", "")},
     }
+    sheet_gross = parse_amount(row.get("brutto_sheet"))
+    meta["sheet_gross"] = f(sheet_gross) if sheet_gross is not None else None
+    if sheet_gross is not None and abs(sheet_gross - q(gross)) > Decimal("0.02"):
+        findings.append({"level": "warn", "text": f"Rechnungsbetrag laut Sheet {sheet_gross} €, berechnet {q(gross)} € – Abweichung {q(gross) - sheet_gross:+} € (Steuerfall {tax_case}, Auslagen {expenses_net} €)."})
     if re.search(r"[A-Z]{1,4}-\d{4}-\d{3}", row.get("rechnung_creator", "")):
         findings.append({"level": "warn", "text": f"Im Sheet steht bereits eine Kundenrechnung: {row['rechnung_creator']} – Dublette prüfen."})
     return {"findings": findings, "tax_case": tax_case, "meta": meta, "customer": customer_doc, "fee": fee_doc}

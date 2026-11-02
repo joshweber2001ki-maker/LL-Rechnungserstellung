@@ -1,0 +1,5 @@
+# Nach config/bridge.yaml kopieren und ausfüllen (siehe bridge/Code.gs, Deployment-Schritte)
+url: "https://script.google.com/macros/s/AKfyc.../exec"
+secret: "<SECRET aus den Skript-Eigenschaften>"
+# optional: Google-Sheet „Rechnungsregister L&L" mit Tab "Register" (Spiegel der CSV im Repo)
+register_sheet_id: ""

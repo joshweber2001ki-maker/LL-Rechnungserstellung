@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """CLI: Finanzsheet-Zeile -> Vorprüfung -> Dokument-JSONs -> PDFs.
 
+  python3 -m invoice.cli build --sheet-json data/sheet.json --nummer 288      # Daten über die Brücke
   python3 -m invoice.cli build --kampagnen data/kampagnen.csv --adressen data/finanzsheet.xlsx \
       --nummer 288 [--datum 2026-11-02] [--nr-kunde AR-2026-002 --nr-fee LL-2026-156] \
       [--expenses belege.json] [--out out/288] [--pdf]
@@ -21,7 +22,16 @@ from .build import build_invoices, cancellation_doc
 
 
 def cmd_build(a):
-    rows = sheet.load_kampagnen(Path(a.kampagnen).read_text(encoding="utf-8"))
+    if a.sheet_json:
+        tabs = json.loads(Path(a.sheet_json).read_text(encoding="utf-8"))
+        rows = sheet.load_kampagnen_values(tabs["Finance | Kampagnen"])
+        addr = sheet.load_creator_addresses_values(tabs["Finance I Creator-Adressen"])
+    else:
+        rows = sheet.load_kampagnen(Path(a.kampagnen).read_text(encoding="utf-8"))
+        if a.adressen.endswith(".xlsx"):
+            addr = sheet.load_creator_addresses(a.adressen)
+        else:
+            addr = sheet.load_creator_addresses_csv(Path(a.adressen).read_text(encoding="utf-8"))
     hits = sheet.find_row(rows, a.nummer)
     out = Path(a.out or f"out/{a.nummer}")
     out.mkdir(parents=True, exist_ok=True)
@@ -31,10 +41,6 @@ def cmd_build(a):
         print(json.dumps(res, ensure_ascii=False, indent=2))
         return 3
     row = hits[0]
-    if a.adressen.endswith(".xlsx"):
-        addr = sheet.load_creator_addresses(a.adressen)
-    else:
-        addr = sheet.load_creator_addresses_csv(Path(a.adressen).read_text(encoding="utf-8"))
     expenses = json.loads(Path(a.expenses).read_text(encoding="utf-8")) if a.expenses else None
     issue = date.fromisoformat(a.datum) if a.datum else date.today()
     res = build_invoices(row, addr, issue_date=issue, number_customer=a.nr_kunde or "ENTWURF",
@@ -79,8 +85,9 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
-    b.add_argument("--kampagnen", required=True)
-    b.add_argument("--adressen", required=True)
+    b.add_argument("--kampagnen", help="CSV-Export Tab 'Finance | Kampagnen'")
+    b.add_argument("--adressen", help="XLSX/CSV mit Tab 'Finance I Creator-Adressen'")
+    b.add_argument("--sheet-json", help="JSON der Brücke (action=sheet) mit beiden Tabs – ersetzt --kampagnen/--adressen")
     b.add_argument("--nummer", required=True)
     b.add_argument("--datum")
     b.add_argument("--nr-kunde")

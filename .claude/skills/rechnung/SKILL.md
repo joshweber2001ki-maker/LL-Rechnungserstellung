@@ -29,17 +29,27 @@ Vergleichsmail an finance@.
 Exit-Code 3 von `build` = Stopp-Befund, es wurden keine Dokumente erzeugt. `out/<N>/befund.json` enthält
 findings, meta, die Sheet-Zeile und `sheet_max_numbers` (höchste Nummern je Kreis im Finanzsheet).
 
+## Zwei Wege für Drive/Gmail/Sheet – Brücke bevorzugt
+
+**Brücke** (`config/bridge.yaml` vorhanden, `python3 -m invoice.bridge ping` antwortet `ok`): alle Datei- und
+Sheet-Operationen laufen über die Shell (`invoice.bridge`), ohne Base64 im Kontext. Das ist der Normalweg.
+**Connector-Fallback** (keine Brücke oder `ping` schlägt fehl): Google-Drive-/Gmail-Tools mit base64-Inhalt
+(`create_file` mit `base64Content`, `create_draft` mit `attachments[].content`). Funktioniert, kostet aber
+~40k Tokens je PDF – im Fallback nur die nötigsten Dateien hochladen und das in der Zusammenfassung vermerken.
+
 ## Daten holen (jeder Lauf, immer frisch)
 
-1. **Finanzsheet** (Drive-ID `1C6WoZ72bN-nOwY74CN3fjYQem-txyPsaaw26iN5Uobk`):
-   - `download_file_content` mit `exportMimeType: text/csv` → base64 dekodieren → `data/kampagnen.csv`
-     (CSV-Export liefert nur den ersten Tab „Finance | Kampagnen" – genau den brauchen wir).
-   - `download_file_content` mit `exportMimeType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
-     → `data/finanzsheet.xlsx` (Tab „Finance I Creator-Adressen").
-   - Große Tool-Ergebnisse werden als Datei gespeichert; dann mit Python `json.load` → `base64.b64decode` schreiben.
-2. **Kalender**: `list_events` mit `fullText: "Rechnungserstellung"` für den Tag (startTime 00:00, endTime 23:59:59,
-   lokale Zeit Europe/Berlin). Titel enthält `🧾 Rechnungserstellung | <KUNDE>` (ggf. führende Leerzeichen),
-   `description` = Sheet-Nummer. Ohne Nummer in der Beschreibung ⇒ Befund, kein Lauf für dieses Event.
+1. **Finanzsheet** (ID in `config/betrieb.yaml` → `drive.finanzsheet`):
+   - Brücke: `python3 -m invoice.bridge sheet <ID> "Finance | Kampagnen" "Finance I Creator-Adressen" > data/sheet.json`
+     → `build --sheet-json data/sheet.json`.
+   - Fallback: `download_file_content` mit `exportMimeType: text/csv` → base64 dekodieren → `data/kampagnen.csv`
+     (CSV-Export liefert nur den ersten Tab „Finance | Kampagnen"); `download_file_content` mit
+     `exportMimeType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` → `data/finanzsheet.xlsx`
+     (Tab „Finance I Creator-Adressen"). Große Tool-Ergebnisse landen als Datei; mit Python `json.load` →
+     `base64.b64decode` schreiben. Dann `build --kampagnen … --adressen …`.
+2. **Kalender** (Connector): `list_events` mit `fullText: "Rechnungserstellung"` für den Tag (startTime 00:00,
+   endTime 23:59:59, lokale Zeit Europe/Berlin). Titel enthält `🧾 Rechnungserstellung | <KUNDE>` (ggf. führende
+   Leerzeichen), `description` = Sheet-Nummer. Ohne Nummer in der Beschreibung ⇒ Befund, kein Lauf für dieses Event.
 3. **Register**: `register/rechnungsregister.csv` im Repo (vorher `git pull`).
 
 ## Täglicher Lauf (geplante Aufgabe, werktags morgens)
@@ -65,17 +75,20 @@ Für jedes Event des Tages:
 6. `build` erneut mit `--nr-kunde/--nr-fee --pdf` (oder die JSONs mit gesetzten Nummern direkt rendern).
    PDFs: `Rechnung-<Nr>.pdf`. Immer die fertigen PDFs einmal als Bild prüfen (`pdftoppm -r 60`) – Seitenzahl,
    nichts abgeschnitten, Summen plausibel.
-7. Ablage in Drive (`create_file`, `contentMimeType: application/pdf`, `disableConversionToGoogleType: true`, base64):
-   - `produktiv`: `Locker & Lauter Finanzen/Rechnungskopien/<Jahr>/<Monat>` (Monat des Rechnungsdatums, deutsch:
-     Januar … Dezember; Ordner-ID über `search_files` `title = '<Monat>' and parentId = '<Jahr-Ordner>'`; fehlt ein
-     Jahr-/Monatsordner: mit `create_file` (`contentMimeType: application/vnd.google-apps.folder`) anlegen).
-     Zusätzlich Kampagnenordner (Regel 13): `search_files` `title = '06_Rechnungen'`, Eltern-Kette prüfen
-     (`get_file_metadata` → `<NN_Kunde_MM/JJJJ>` → `<Jahr>` → `01_Bezahlte Partnerschaften` → `02_Partners` →
-     `<CREATOR> (L&L)`); genau ein Treffer mit passendem Creator + Kunde + Monat ⇒ dort ablegen, sonst nur
-     Rechnungskopien + Hinweis. Drive-IDs ins Register (`drive_kopie`, `drive_kampagne`).
-   - `schatten`: `Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/` (Ordner anlegen).
+7. Ablage in Drive:
+   - `produktiv`: `Rechnungskopien/<Jahr>/<Monat>` (Monat des Rechnungsdatums, deutsch: Januar … Dezember).
+     Brücke: `python3 -m invoice.bridge upload out/<N>/Rechnung-<Nr>.pdf Rechnungskopien/<Jahr>/<Monat>` – fehlende
+     Jahr-/Monatsordner legt die Brücke an. Fallback: `search_files` `title = '<Monat>' and parentId = '<Jahr-Ordner>'`,
+     fehlende Ordner mit `create_file` (`contentMimeType: application/vnd.google-apps.folder`), PDF mit `create_file`
+     (`contentMimeType: application/pdf`, `disableConversionToGoogleType: true`, base64).
+     Zusätzlich Kampagnenordner (Regel 13): `python3 -m invoice.bridge find 06_Rechnungen` (liefert je Treffer die
+     Elternkette `<NN_Kunde_MM/JJJJ>` → `<Jahr>` → `01_Bezahlte Partnerschaften` → `02_Partners` → `<CREATOR> (L&L)`);
+     genau ein Treffer mit passendem Creator + Kunde + Monat ⇒ dort ablegen (`upload … --folder-id` bzw. `folderId`),
+     sonst nur Rechnungskopien + Hinweis. Drive-IDs ins Register (`drive_kopie`, `drive_kampagne`).
+   - `schatten`: `_parallelbetrieb/<JJJJ-MM-TT>/` (Brücke legt Ordner an; Fallback: Ordner-ID `1Qih0oENrp5d1Mn4HQzFaj8YnKOx3wAqY`).
      Ordner-ID „Locker & Lauter Finanzen": `188XnxRQFqdpcLZ-Vy3yKXegvaujrVujV`; „Rechnungskopien": `1Rri9WmPNTVKwKNHX9nbE9lt4gY6iCrnf`.
-8. Gmail-Entwürfe (nur `produktiv`, `create_draft` mit `attachments[].content` base64, `mimeType: application/pdf`):
+8. Gmail-Entwürfe (nur `produktiv`; Brücke: `python3 -m invoice.bridge draft --to … --subject … --html mail.html --attach <pdf>`;
+   Fallback: `create_draft` mit `attachments[].content` base64, `mimeType: application/pdf`):
    - an Kunde (`meta.kontakt`; fehlt er: Entwurf ohne Empfänger + Hinweis), Betreff
      `Rechnung <Nr> | Locker & Lauter × <Creator>` (EN: `Invoice <Nr> | …`). Text = Standardvorlage aus
      Regeldatei/Memory (Du/Sie und Sprache laut `customers.yaml` bzw. `meta.lang`), Anhang Kundenrechnung.
@@ -87,8 +100,9 @@ Für jedes Event des Tages:
 10. Zusammenfassung per `send_message` an `finance@lockerundlauter.com`, Betreff
     `Rechnungslauf <Datum>: <n> Entwürfe, <m> Rückfragen` – je Event eine Zeile (Nummer, Kunde, Creator,
     Steuerfall, Netto/Brutto, Status, Drive-Link), danach alle Befunde im Klartext. Im Schattenmodus zusätzlich
-    der Vergleich zur n8n-Rechnung: dieselbe Nummer im Postfach suchen (`search_threads` `"<Nr>" has:attachment`),
-    Anhang lesen, Netto/Steuer/Brutto/Steuerfall/Hinweistexte gegenüberstellen; Abweichungen fett.
+    der Vergleich: `meta.sheet_gross` (Rechnungsbetrag laut Finanzsheet = das, was n8n gestellt hat) gegen
+    `meta.gross`; weicht es ab, steht der Befund bereits in `findings`. Die n8n-PDF selbst ist per Connector nicht
+    lesbar (kein Anhang-Download) – Josh vergleicht das Layout anhand der Freigabe-Mail von n8n.
 
 Niemals: Finanzsheet schreiben, Mails senden, Nummern raten, bei Stopp-Befund trotzdem rendern.
 

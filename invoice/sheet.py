@@ -27,6 +27,7 @@ COLUMNS = {
     "belege": ["Belege"],
     "mwst_creator": ["MwSt 19% #3"],               # Spalte O (nach Belege) – das "Ausland"-Indiz
     "verguetung_ll": ["Vergütung L&L"],
+    "brutto_sheet": ["Vergütung Gesamt (Rechnunsbetrag)", "Vergütung Gesamt (Rechnungsbetrag)"],
     "rechnung_status": ["Rechnung Status"],
     "faellig": ["Rechnung fällig am"],
     "projektnummer": ["Projektnummer"],
@@ -87,8 +88,26 @@ def currency_of(value):
 
 
 def load_kampagnen(csv_text):
-    """Liest den CSV-Export. Gibt (rows, idx) zurück; jede Zeile bekommt zusätzlich 'jahr' und 'csv_row'."""
-    rows = list(csv.reader(io.StringIO(csv_text)))
+    """Liest den CSV-Export (Tab "Finance | Kampagnen"). Jede Zeile bekommt zusätzlich 'jahr' und 'csv_row'."""
+    return load_kampagnen_values(list(csv.reader(io.StringIO(csv_text))))
+
+
+def _cell(c):
+    """Zellwert → String wie im Sheet angezeigt (Brücke liefert bereits Strings; XLSX liefert Zahlen)."""
+    if c is None:
+        return ""
+    if isinstance(c, bool):
+        return str(c)
+    if isinstance(c, int):
+        return str(c)
+    if isinstance(c, float):
+        return str(int(c)) if c.is_integer() else f"{c:.2f}".replace(".", ",")
+    return str(c)
+
+
+def load_kampagnen_values(rows):
+    """Wie load_kampagnen, aber aus einer Liste von Zeilen (z. B. Brücke: action=sheet → getDisplayValues)."""
+    rows = [[_cell(c) for c in r] for r in rows]
     idx = header_map(rows[0])
     out = []
     year = None
@@ -137,7 +156,12 @@ def load_creator_addresses(xlsx_path):
 
 def load_creator_addresses_csv(csv_text):
     """Alternative, falls der Adress-Tab als CSV vorliegt (gleiche Spaltenreihenfolge)."""
-    rows = list(csv.reader(io.StringIO(csv_text)))
+    return load_creator_addresses_values(list(csv.reader(io.StringIO(csv_text))))
+
+
+def load_creator_addresses_values(rows):
+    """Adress-Tab aus einer Liste von Zeilen (Brücke: action=sheet)."""
+    rows = [[_cell(c) for c in r] for r in rows]
     out = {}
     for r in rows[1:]:
         if len(r) < 5:
