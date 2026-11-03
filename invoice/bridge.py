@@ -31,7 +31,7 @@ def config():
     text = CFG.read_text(encoding="utf-8")
     for ch in "\u201c\u201d\u201e\u201f\u2018\u2019\u00ab\u00bb\"'":
         text = text.replace(ch, "")
-    text = text.replace("\u00a0", " ")
+    text = text.replace("\u00a0", " ").replace("\\_", "_").replace("\\-", "-").replace("\\.", ".")
     cfg = yaml.safe_load(text) or {}
     for key in ("url", "secret"):
         if not str(cfg.get(key, "")).strip():
