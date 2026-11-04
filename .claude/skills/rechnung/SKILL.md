@@ -70,10 +70,13 @@ Für jedes Event des Tages:
    kurze, lesbare Leistung sein (z. B. „4 × LinkedIn-Beiträge als Co-Author"), Unterzeilen Kampagne/Go Live,
    Handles, Deliverables. Ist der automatische Titel unglücklich (zu lang, Füllwörter, „Content-Paket"),
    formuliere ihn aus den Sheet-Daten besser – **keine** Inhalte erfinden, keine Beträge ändern. JSON anpassen.
-   **Danach Abgleich mit Vertrag/Angebot (Regel 7a):** `python3 -m invoice.bridge find 01_Vertrag` liefert je Treffer
-   die Elternkette; den Ordner mit passendem Creator + Kunde + Monat wählen. Inhalt per Connector: `search_files`
-   `parentId = '<Ordner-ID>'`, dann `read_file_content`. Leer oder kein Treffer ⇒ übriger Kampagnenordner, dann
-   `search_files` mit `title contains` auf Kunde und Creatorin plus `Vertrag`/`Angebot`/`Contract`/`Offer`/`Kooperation`.
+   **Danach Abgleich mit Vertrag/Angebot (Regel 7a):** Kampagnenordner per Connector suchen: `search_files`
+   `title contains '<Kunde>' and mimeType = 'application/vnd.google-apps.folder'`, auch ohne Leerzeichen im Kundennamen
+   (Sheet „AT World“, Ordner `13_ATWorld_10/2026`). Treffer über `get_file_metadata` (`parentId`) bis zum Ordner
+   `<CREATOR> (L&L)` prüfen; Monat steht im Ordnernamen. Darin `search_files` `parentId = '<Kampagnenordner>'` ⇒
+   `01_Vertrag` ⇒ `parentId = '<01_Vertrag>'`, dann `read_file_content`. `bridge find 01_Vertrag` nicht verwenden: liefert
+   höchstens 50 Treffer und übersieht Ordner. Leer oder kein Treffer ⇒ übriger Kampagnenordner, dann `search_files` mit
+   `title contains` auf Kunde und Creatorin plus `Vertrag`/`Angebot`/`Contract`/`Offer`/`Kooperation`.
    Ergebnis je Event notieren: ok / Unstimmigkeit / kein Dokument / unklar. Kein Stopp, JSON nicht aus dem Vertrag ändern.
 5. Nummern:
    - `schatten`: Nummer aus `befund.json` → `row.rechnung_creator` / `row.rechnung_ll` (Muster `XX-2026-NNN`)
