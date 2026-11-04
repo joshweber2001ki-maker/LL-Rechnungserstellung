@@ -4,7 +4,7 @@ Diese Datei ist die fachliche Wahrheit für die Rechnungserstellung. Claude lies
 komplett und wendet sie an. Neue Regeln werden unten unter „Änderungsprotokoll" mit Datum ergänzt
 (Befehl `rechnung regel "..."`). Bei Widerspruch gilt die jüngere Regel.
 
-Stand: 2026-11-02 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
+Stand: 2026-11-04 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
 
 ---
 
@@ -130,6 +130,25 @@ Regeln:
 - Fee-Rechnung: Position „Management Fee" mit Unterzeilen `für Kunde: <Kunde>` ·
   `Leistungszeitraum: <Monat Jahr>` · `Rechnung: <Kundenrechnungsnummer>` (unverändert zum bisherigen Format).
 
+## 7a. Abgleich mit Vertrag/Angebot (Regel vom 04.11.2026)
+
+Jede Leistungsbeschreibung wird vor dem Rendern einmal mit dem Vertrag oder Angebot des Vorgangs abgeglichen,
+in beiden Betriebsmodi.
+
+- **Suche:** Ordner `01_Vertrag` im Kampagnenordner (Match über Creator + Kunde + Monat wie in Regel 13), danach
+  der übrige Kampagnenordner, zuletzt Drive-weit nach Dateien mit Kunde und Creatorin im Titel (Angebote liegen
+  teils außerhalb, z. B. in `00_KONZEPTE`). Mehrere Fassungen: unterschriebene vor der neuesten.
+- **Abgleich:** Kunde/Kampagne, Art und Anzahl der Deliverables, Plattform, Go Live. Bei Teilrechnungen zählt, ob
+  der berechnete Teil vom Vertrag gedeckt ist; dass nicht alles auf einmal berechnet wird, ist keine Abweichung.
+- **Nur Hinweis, kein Stopp:** Der Entwurf wird trotzdem erzeugt. Die Leistungsbeschreibung kommt weiter aus den
+  Sheet-Daten (Regel 7) und wird nicht automatisch an den Vertrag angepasst.
+- **Kurze Info an Josh** in genau diesen Fällen, jeweils mit Sheet-Nummer und Dateilink, falls vorhanden:
+  1. Unstimmigkeit: was steht im Sheet, was im Dokument
+  2. Kein Vertrag und kein Angebot gefunden
+  3. Mehr als ein passender Kampagnenordner, kein eindeutiger Treffer
+  4. Dokument nicht lesbar (z. B. Scan) oder nur als unterschriebener Entwurf/ohne Unterschrift vorhanden
+- Stimmt alles überein, genügt in der Zusammenfassung „Vertragsabgleich ok“ mit Dokumentname.
+
 ## 8. Rechnungsnummern und Register
 
 - Register = Google Sheet „Rechnungsregister L&L" (Ordner „Locker & Lauter Finanzen"). Eine Zeile je Dokument.
@@ -214,3 +233,5 @@ Regeln:
 - 2026-11-02 · Initialfassung aus Rechnungen 2026, n8n-Workflow und Memory. Entscheidungen Josh:
   Fremdkosten-Ausland nach Variante DR-2026-033; neues Format Leistungsbeschreibung; Rechnungskopien in
   Jahr/Monat-Ordnern; Firmensitz bleibt Eschenholt 22a; Julie-Sonderregel folgt später.
+- 2026-11-04 · Neu Regel 7a: Leistungsbeschreibung immer mit Vertrag/Angebot abgleichen; bei Unstimmigkeit oder
+  fehlendem Dokument kurze Info an Josh, kein Stopp (Josh).

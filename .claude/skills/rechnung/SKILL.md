@@ -70,6 +70,11 @@ Für jedes Event des Tages:
    kurze, lesbare Leistung sein (z. B. „4 × LinkedIn-Beiträge als Co-Author"), Unterzeilen Kampagne/Go Live,
    Handles, Deliverables. Ist der automatische Titel unglücklich (zu lang, Füllwörter, „Content-Paket"),
    formuliere ihn aus den Sheet-Daten besser – **keine** Inhalte erfinden, keine Beträge ändern. JSON anpassen.
+   **Danach Abgleich mit Vertrag/Angebot (Regel 7a):** `python3 -m invoice.bridge find 01_Vertrag` liefert je Treffer
+   die Elternkette; den Ordner mit passendem Creator + Kunde + Monat wählen. Inhalt per Connector: `search_files`
+   `parentId = '<Ordner-ID>'`, dann `read_file_content`. Leer oder kein Treffer ⇒ übriger Kampagnenordner, dann
+   `search_files` mit `title contains` auf Kunde und Creatorin plus `Vertrag`/`Angebot`/`Contract`/`Offer`/`Kooperation`.
+   Ergebnis je Event notieren: ok / Unstimmigkeit / kein Dokument / unklar. Kein Stopp, JSON nicht aus dem Vertrag ändern.
 5. Nummern:
    - `schatten`: Nummer aus `befund.json` → `row.rechnung_creator` / `row.rechnung_ll` (Muster `XX-2026-NNN`)
      übernehmen; fehlt sie, bleibt `ENTWURF`.
@@ -109,6 +114,9 @@ Für jedes Event des Tages:
     der Vergleich: `meta.sheet_gross` (Rechnungsbetrag laut Finanzsheet = das, was n8n gestellt hat) gegen
     `meta.gross`; weicht es ab, steht der Befund bereits in `findings`. Die n8n-PDF selbst ist per Connector nicht
     lesbar (kein Anhang-Download) – Josh vergleicht das Layout anhand der Freigabe-Mail von n8n.
+    Ergebnis des Vertragsabgleichs je Event mit in die Zeile; jede Unstimmigkeit und jedes fehlende Dokument als
+    eigener kurzer Befund und im Betreff als Rückfrage gezählt. Liegt so ein Fall vor, zusätzlich `PushNotification`
+    mit einem Satz je Fall. Beim manuellen `rechnung erstellen` steht das Ergebnis im Chat vor der Freigabe.
 
 Niemals: Finanzsheet schreiben, Mails senden, Nummern raten, bei Stopp-Befund trotzdem rendern.
 
