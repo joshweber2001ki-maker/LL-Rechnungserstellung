@@ -12,7 +12,8 @@ Das Finanzsheet wird **nie** beschrieben. Nichts wird automatisch per Mail verse
 ## Betriebsmodus
 
 `config/betrieb.yaml` → `modus: schatten | produktiv` (siehe Regel 14). Im Schattenmodus:
-keine Nummernreservierung (Nummer aus dem Finanzsheet übernehmen, sonst `ENTWURF`), PDFs nur in
+echte Rechnungsnummern auf den PDFs (`build` vergibt sie automatisch, siehe Schritt 5), aber **keine** Reservierung
+im Register, PDFs nur in
 `Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/`, keine Gmail-Entwürfe an Kunden/Creator,
 Vergleichsmail an finance@.
 
@@ -63,10 +64,10 @@ Für jedes Event des Tages:
 1. `git pull`, Daten holen (oben), `modus` lesen.
 2. Idempotenz: Event-ID schon im Register oder `find_by_sheet(<N>)` liefert eine aktive Kundenrechnung ⇒
    nur Hinweis in der Zusammenfassung, nichts erzeugen.
-3. `build` mit `--datum <heute>` ohne Nummern laufen lassen → Befund lesen.
+3. `build --datum <heute>` laufen lassen (vergibt die Nummern automatisch, siehe Schritt 5) → Befund lesen.
    - Stopp-Befund ⇒ in die Zusammenfassung, weiter mit dem nächsten Event.
    - Warnungen ⇒ Entwurf trotzdem erzeugen, Warnungen in die Zusammenfassung.
-4. **Leistungsbeschreibung prüfen** (`out/<N>/ENTWURF-customer-<N>.json`, `items[0]`): Titel muss eine
+4. **Leistungsbeschreibung prüfen** (`out/<N>/<Kundenrechnungs-Nr>.json`, `items[0]`): Titel muss eine
    kurze, lesbare Leistung sein (z. B. „4 × LinkedIn-Beiträge als Co-Author"), Unterzeilen Kampagne/Go Live,
    Handles, Deliverables. Ist der automatische Titel unglücklich (zu lang, Füllwörter, „Content-Paket"),
    formuliere ihn aus den Sheet-Daten besser – **keine** Inhalte erfinden, keine Beträge ändern. JSON anpassen.
@@ -78,13 +79,22 @@ Für jedes Event des Tages:
    höchstens 50 Treffer und übersieht Ordner. Leer oder kein Treffer ⇒ übriger Kampagnenordner, dann `search_files` mit
    `title contains` auf Kunde und Creatorin plus `Vertrag`/`Angebot`/`Contract`/`Offer`/`Kooperation`.
    Ergebnis je Event notieren: ok / Unstimmigkeit / kein Dokument / unklar. Kein Stopp, JSON nicht aus dem Vertrag ändern.
-5. Nummern:
-   - `schatten`: Nummer aus `befund.json` → `row.rechnung_creator` / `row.rechnung_ll` (Muster `XX-2026-NNN`)
-     übernehmen; fehlt sie, bleibt `ENTWURF`.
-   - `produktiv`: `register.next_number(prefix, jahr, sheet_max)` für Kreis und `LL`; Konflikt ⇒ Stopp-Befund.
-     `register.reserve(...)` für beide Dokumente mit Status `entwurf`, Event-ID, Modus.
+5. Nummern (vergibt `build` selbst, Standard `--nummern auto`; Ergebnis in `befund.json` → `meta.nummern`):
+   - Steht für die Zeile schon eine Nummer im Finanzsheet (`Rechnung Creator:in` / `Rechnung L&L`), wird sie übernommen
+     (`quelle: finanzsheet`).
+   - Sonst nächste freie Nummer je Kreis = max(Register, Finanzsheet, in diesem Lauf bereits vergeben) + 1
+     (`quelle: neu`). `out/_vergeben.json` hält die Vergaben des Laufs fest – mehrere Events am selben Tag bekommen
+     fortlaufende Nummern, ein erneuter Aufruf für dieselbe Sheet-Nummer dieselbe. `out/` daher während des Laufs
+     nicht löschen.
+   - `schatten`: Nummern stehen auf den PDFs, werden aber **nicht** im Register reserviert (n8n vergibt parallel).
+     Weicht die Nummer, die n8n am selben Tag vergibt, ab, ist das ein Befund für die Zusammenfassung des Folgetags.
+   - `produktiv`: Widerspruch Register ↔ Finanzsheet ⇒ Stopp-Befund. Danach `register.reserve(...)` für beide
+     Dokumente mit Status `entwurf`, Event-ID, Modus.
+   - `ENTWURF` erscheint nur noch, wenn die Creatorin unbekannt ist (dann gibt es ohnehin einen Stopp) oder
+     ausdrücklich `--nummern keine` gesetzt wurde.
    - Marina Ziblis: Regel 8 (Tageslimit) – Rechnungsdatum ggf. auf den nächsten freien Tag legen.
-6. `build` erneut mit `--nr-kunde/--nr-fee --pdf` (oder die JSONs mit gesetzten Nummern direkt rendern).
+6. PDFs rendern: `build … --pdf` erneut (gleiche Nummern dank `_vergeben.json`) oder die angepassten JSONs direkt
+   mit `render/render.py` rendern.
    PDFs: `Rechnung-<Nr>.pdf`. Immer die fertigen PDFs einmal als Bild prüfen (`pdftoppm -r 60`) – Seitenzahl,
    nichts abgeschnitten, Summen plausibel.
 7. Ablage in Drive:

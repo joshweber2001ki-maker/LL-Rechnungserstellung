@@ -221,14 +221,18 @@ in beiden Betriebsmodi.
 
 ## 14. Betriebsmodus
 
-- `modus: schatten` – n8n führend. Keine Nummernreservierung (Nummer wird aus dem Finanzsheet übernommen,
-  sonst `ENTWURF`), PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`, keine Gmail-Entwürfe an
+- `modus: schatten` – n8n führend. Die PDFs tragen echte Rechnungsnummern (aus dem Finanzsheet, sonst die nächste
+  freie nach Regel 8), sie werden aber nicht im Register reserviert. PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`, keine Gmail-Entwürfe an
   Kunden, keine Kampagnenordner-Ablage. Vergleichsmail an finance@ mit Abweichungen zur n8n-Rechnung.
 - `modus: produktiv` – voller Ablauf nach Abschnitt 8 und 13.
 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-06 · Summenblock: Bezeichnungen (Netto/zzgl./Brutto) linksbündig untereinander, Beträge rechtsbündig – gilt
+  für Kunden- und Fee-Rechnung. Schattenmodus vergibt echte Rechnungsnummern statt `ENTWURF` (ohne Reservierung im
+  Register). Angabe Josh.
 
 - 2026-11-02 · Initialfassung aus Rechnungen 2026, n8n-Workflow und Memory. Entscheidungen Josh:
   Fremdkosten-Ausland nach Variante DR-2026-033; neues Format Leistungsbeschreibung; Rechnungskopien in
