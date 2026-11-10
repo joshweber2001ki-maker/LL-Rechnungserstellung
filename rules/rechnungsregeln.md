@@ -234,6 +234,15 @@ in beiden Betriebsmodi.
   <Creator> (<Handles>). We kindly ask for payment by <Fälligkeit> …“), danach Signatur Josh Weber, Finance Manager.
   Name = Sheet „Ansprechpartner“ (leer/`pending` ⇒ Anrede ohne Namen). Sprache wie die Rechnung.
   `customers.yaml` `contact.du_sie: sie` ⇒ Sie-Fassung.
+- **Aufbau fest, Wortlaut flexibel:** immer Anrede · Einstieg (Josh, Finance-Team) · Rechnung mit Nummer und
+  Creator · Bitte um Zahlung/Eingangsbestätigung · Dank und Gruß · Signatur. Die Formulierung darf sich je Mail
+  leicht ändern (Varianten im Code, stabil je Rechnungsnummer).
+- **Mehrere Mails am selben Tag an dieselbe Person** (gleiche An-Adresse, andere Rechnungsnummer – im selben Lauf
+  oder heute schon gesendet/als Entwurf in Gmail): ab der zweiten Mail Folgetext, ohne erneute Vorstellung
+  („ich melde mich heute direkt noch einmal – es gibt eine weitere Rechnung“), kürzerer Gruß.
+- **Creator-Handles:** nur die Handles der Plattform, um die es in der Kampagne geht (aus Sheet „Leistungen“:
+  LinkedIn-Kampagne ⇒ nur LinkedIn-Handle, Reel/Story/IG ⇒ nur Instagram). Ist das nicht eindeutig (keine Plattform
+  erkennbar oder kein passender Handle), alle Handles aus Tab „Creator-Adressen“.
 - Ist die Rechnung laut Gmail schon versendet (gesendete Mail mit der Nummer im Betreff), keinen Entwurf anlegen,
   nur Hinweis.
 
@@ -251,6 +260,8 @@ in beiden Betriebsmodi.
 - 2026-11-10 · Neu Regel 13a: zu jeder Kundenrechnung ein Gmail-Entwurf (auch im Schattenmodus, ohne Zusatz im
   Betreff); erste Kontaktadresse = An, alle weiteren = CC; Betreff „Rechnung <Nr>“/„Invoice <Nr>“; Standardvorlage
   DE/EN. Fee-Mail an die Creatorin weiterhin nur produktiv (Josh).
+- 2026-11-10 · Regel 13a ergänzt: Folgetext bei mehreren Mails am selben Tag an dieselbe Person; nur die Handles der
+  Kampagnen-Plattform (unklar ⇒ alle); Wortlaut darf leicht variieren, Aufbau bleibt gleich (Josh).
 
 - 2026-11-06 · Summenblock: Bezeichnungen (Netto/zzgl./Brutto) linksbündig untereinander, Beträge rechtsbündig – gilt
   für Kunden- und Fee-Rechnung. Schattenmodus vergibt echte Rechnungsnummern statt `ENTWURF` (ohne Reservierung im

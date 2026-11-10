@@ -112,8 +112,11 @@ Für jedes Event des Tages:
      Ordner-ID „Locker & Lauter Finanzen": `188XnxRQFqdpcLZ-Vy3yKXegvaujrVujV`; „Rechnungskopien": `1Rri9WmPNTVKwKNHX9nbE9lt4gY6iCrnf`.
 8. Gmail-Entwürfe:
    - **an Kunde – immer, auch im Schattenmodus** (Regel 13a): vorher Gmail `search_threads`
-     `in:sent subject:"<Nr>"` – schon versendet ⇒ kein Entwurf, nur Hinweis. Sonst
-     `python3 -m invoice.mail out/<N> --draft` nach dem Rendern (bei angepasster Leistungsbeschreibung erst neu
+     `in:sent subject:"<Nr>"` – schon versendet ⇒ kein Entwurf, nur Hinweis. Dann zählen, wie viele Rechnungsmails
+     mit **anderer** Nummer heute schon an dieselbe An-Adresse gingen: `search_threads`
+     `in:sent to:<adresse> after:<JJJJ/MM/TT> subject:(Rechnung OR Invoice)` plus `list_drafts` mit `to:<adresse>`
+     (nur heute angelegte, andere Nummer) ⇒ `<n>`. Im selben Lauf zählt `invoice.mail` selbst (`out/_mails.json`).
+     Sonst/danach `python3 -m invoice.mail out/<N> --draft [--bereits <n>]` nach dem Rendern (bei angepasster Leistungsbeschreibung erst neu
      rendern). Empfänger: erste Adresse aus „Kontakt“ = An, alle weiteren = CC; Betreff `Rechnung <Nr>` /
      `Invoice <Nr>`; Text = Standardvorlage DE/EN mit Signatur; Anhang Kundenrechnung. Befunde aus der Ausgabe
      (kein Empfänger, kein Ansprechpartner) in die Zusammenfassung, Draft-ID mit in die Zeile.
