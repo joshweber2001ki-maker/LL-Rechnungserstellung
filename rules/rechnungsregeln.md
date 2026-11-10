@@ -4,7 +4,7 @@ Diese Datei ist die fachliche Wahrheit für die Rechnungserstellung. Claude lies
 komplett und wendet sie an. Neue Regeln werden unten unter „Änderungsprotokoll" mit Datum ergänzt
 (Befehl `rechnung regel "..."`). Bei Widerspruch gilt die jüngere Regel.
 
-Stand: 2026-11-04 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
+Stand: 2026-11-10 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
 
 ---
 
@@ -214,21 +214,43 @@ in beiden Betriebsmodi.
   `<CREATOR> (L&L)/02_Partners/01_Bezahlte Partnerschaften/<Jahr>/<NN_Kunde_MM/JJJJ>/06_Rechnungen`
   (Match über Creator + Kunde + Monat; 0 oder >1 Treffer ⇒ nur Rechnungskopien + Hinweis).
 - Dateinamen: `Rechnung-<Nr>.pdf`, `Stornorechnung-<Nr>.pdf`, `Rechnung-<Nr>_Belege.pdf` (Belegbündel).
-- Gmail-Entwürfe (finance@): (a) an den Kunden mit Kundenrechnung, Standardvorlage DE/EN, Du/Sie laut
-  `customers.yaml`; (b) an die Creatorin mit Fee-Rechnung. Nichts wird automatisch gesendet.
+- Gmail-Entwürfe (finance@): (a) an den Kunden mit Kundenrechnung, immer (Regel 13a); (b) an die Creatorin mit
+  Fee-Rechnung nur im Modus `produktiv`. Nichts wird automatisch gesendet.
 - Nach Versand (Status `gesendet`, erkannt über gesendete Mail mit der Rechnungsnummer): Beleg an
   simbadirekt (Ausgangsrechnungen) als Entwurf vorbereiten.
+
+## 13a. Mail-Entwurf zur Kundenrechnung (Regel vom 10.11.2026)
+
+- Zu **jeder** erzeugten Kundenrechnung wird ein Gmail-Entwurf in finance@ angelegt – in **beiden** Betriebsmodi,
+  im Schattenmodus ohne Zusatz im Betreff (Josh entscheidet beim Senden). Keine Fee-Mail im Schattenmodus.
+- Werkzeug: `python3 -m invoice.mail out/<N> --draft` (Anhang `Rechnung-<Nr>.pdf`; ein zweiter Aufruf legt keinen
+  zweiten Entwurf an).
+- **Empfänger** aus Sheet-Spalte „Kontakt“: die **erste** Adresse = An, **alle weiteren** = CC (egal ob im Sheet mit
+  „CC:“ markiert). Keine Adresse ⇒ Entwurf ohne Empfänger + Befund.
+- **Betreff**: `Rechnung <Nr>` (Deutsch) / `Invoice <Nr>` (Englisch).
+- **Text**: Standardvorlage von Josh (DE: „Hallo <Name>, ich hoffe, es geht dir gut! Hier ist Josh aus dem
+  Finance-Team von Locker & Lauter. 🪩 Anbei sende ich dir die Rechnung (<Nr>) zur gemeinsamen Aktivierung mit
+  <Creator> (<Handles>). …“; EN: „Hi <Name>, … Please find attached the invoice (<Nr>) for our collaboration with
+  <Creator> (<Handles>). We kindly ask for payment by <Fälligkeit> …“), danach Signatur Josh Weber, Finance Manager.
+  Name = Sheet „Ansprechpartner“ (leer/`pending` ⇒ Anrede ohne Namen). Sprache wie die Rechnung.
+  `customers.yaml` `contact.du_sie: sie` ⇒ Sie-Fassung.
+- Ist die Rechnung laut Gmail schon versendet (gesendete Mail mit der Nummer im Betreff), keinen Entwurf anlegen,
+  nur Hinweis.
 
 ## 14. Betriebsmodus
 
 - `modus: schatten` – n8n führend. Die PDFs tragen echte Rechnungsnummern (aus dem Finanzsheet, sonst die nächste
-  freie nach Regel 8), sie werden aber nicht im Register reserviert. PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`, keine Gmail-Entwürfe an
-  Kunden, keine Kampagnenordner-Ablage. Vergleichsmail an finance@ mit Abweichungen zur n8n-Rechnung.
+  freie nach Regel 8), sie werden aber nicht im Register reserviert. PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`,
+  Gmail-Entwurf an den Kunden laut Regel 13a (keiner an die Creatorin), keine Kampagnenordner-Ablage. Vergleichsmail an finance@ mit Abweichungen zur n8n-Rechnung.
 - `modus: produktiv` – voller Ablauf nach Abschnitt 8 und 13.
 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-10 · Neu Regel 13a: zu jeder Kundenrechnung ein Gmail-Entwurf (auch im Schattenmodus, ohne Zusatz im
+  Betreff); erste Kontaktadresse = An, alle weiteren = CC; Betreff „Rechnung <Nr>“/„Invoice <Nr>“; Standardvorlage
+  DE/EN. Fee-Mail an die Creatorin weiterhin nur produktiv (Josh).
 
 - 2026-11-06 · Summenblock: Bezeichnungen (Netto/zzgl./Brutto) linksbündig untereinander, Beträge rechtsbündig – gilt
   für Kunden- und Fee-Rechnung. Schattenmodus vergibt echte Rechnungsnummern statt `ENTWURF` (ohne Reservierung im

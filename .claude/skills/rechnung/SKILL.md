@@ -14,8 +14,8 @@ Das Finanzsheet wird **nie** beschrieben. Nichts wird automatisch per Mail verse
 `config/betrieb.yaml` → `modus: schatten | produktiv` (siehe Regel 14). Im Schattenmodus:
 echte Rechnungsnummern auf den PDFs (`build` vergibt sie automatisch, siehe Schritt 5), aber **keine** Reservierung
 im Register, PDFs nur in
-`Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/`, keine Gmail-Entwürfe an Kunden/Creator,
-Vergleichsmail an finance@.
+`Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/`, Gmail-Entwurf an den Kunden (Regel 13a), keiner an die
+Creatorin, Vergleichsmail an finance@.
 
 ## Werkzeuge im Repo
 
@@ -24,6 +24,7 @@ Vergleichsmail an finance@.
 | Sheet-Zeile → Befund + Dokument-JSONs (+PDF) | `python3 -m invoice.cli build --kampagnen data/kampagnen.csv --adressen data/finanzsheet.xlsx --nummer <N> --datum JJJJ-MM-TT [--nr-kunde X --nr-fee Y] [--expenses belege.json] [--lang de|en] --out out/<N> --pdf` |
 | Dokument-JSON → PDF | `python3 render/render.py <doc.json> <out.pdf>` |
 | Storno aus bestehendem Dokument-JSON | `python3 -m invoice.cli storno --doc <orig.json> --nummer <Nr> --grund "…" [--ersatz <Nr>] --out out/storno --pdf` |
+| Mail-Entwurf zur Kundenrechnung (Regel 13a) | `python3 -m invoice.mail out/<N> --draft` (ohne `--draft`: nur Vorschau `mail.json`/`mail.html`) |
 | Nächste Nummer | `python3 -m invoice.register next <KREIS> <Jahr>` |
 | Register ↔ Finanzsheet nachziehen | `python3 -m invoice.register import data/kampagnen.csv <Jahr>` |
 
@@ -109,12 +110,15 @@ Für jedes Event des Tages:
      sonst nur Rechnungskopien + Hinweis. Drive-IDs ins Register (`drive_kopie`, `drive_kampagne`).
    - `schatten`: `_parallelbetrieb/<JJJJ-MM-TT>/` (Brücke legt Ordner an; Fallback: Ordner-ID `1Qih0oENrp5d1Mn4HQzFaj8YnKOx3wAqY`).
      Ordner-ID „Locker & Lauter Finanzen": `188XnxRQFqdpcLZ-Vy3yKXegvaujrVujV`; „Rechnungskopien": `1Rri9WmPNTVKwKNHX9nbE9lt4gY6iCrnf`.
-8. Gmail-Entwürfe (nur `produktiv`; Brücke: `python3 -m invoice.bridge draft --to … --subject … --html mail.html --attach <pdf>`;
-   Fallback: `create_draft` mit `attachments[].content` base64, `mimeType: application/pdf`):
-   - an Kunde (`meta.kontakt`; fehlt er: Entwurf ohne Empfänger + Hinweis), Betreff
-     `Rechnung <Nr> | Locker & Lauter × <Creator>` (EN: `Invoice <Nr> | …`). Text = Standardvorlage aus
-     Regeldatei/Memory (Du/Sie und Sprache laut `customers.yaml` bzw. `meta.lang`), Anhang Kundenrechnung.
-   - an Creatorin (Adresse: Josh fragen bzw. `creators.yaml` `email`, falls gepflegt; sonst ohne Empfänger),
+8. Gmail-Entwürfe:
+   - **an Kunde – immer, auch im Schattenmodus** (Regel 13a): vorher Gmail `search_threads`
+     `in:sent subject:"<Nr>"` – schon versendet ⇒ kein Entwurf, nur Hinweis. Sonst
+     `python3 -m invoice.mail out/<N> --draft` nach dem Rendern (bei angepasster Leistungsbeschreibung erst neu
+     rendern). Empfänger: erste Adresse aus „Kontakt“ = An, alle weiteren = CC; Betreff `Rechnung <Nr>` /
+     `Invoice <Nr>`; Text = Standardvorlage DE/EN mit Signatur; Anhang Kundenrechnung. Befunde aus der Ausgabe
+     (kein Empfänger, kein Ansprechpartner) in die Zusammenfassung, Draft-ID mit in die Zeile.
+     Fallback ohne Brücke: `mail.json`/`mail.html` bauen und `create_draft` (to/cc/subject/htmlBody, Anhang base64).
+   - an Creatorin (nur `produktiv`) (Adresse: Josh fragen bzw. `creators.yaml` `email`, falls gepflegt; sonst ohne Empfänger),
      Betreff `Management-Fee-Rechnung <LL-Nr> zu <Kundenrechnungs-Nr>`, Anhang Fee-Rechnung.
    - Draft-IDs ins Register (`gmail_draft`).
 9. Register speichern, `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push`.
