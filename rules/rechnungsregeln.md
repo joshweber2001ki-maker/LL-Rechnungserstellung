@@ -253,6 +253,50 @@ in beiden Betriebsmodi.
 - Ist die Rechnung laut Gmail schon versendet (gesendete Mail mit der Nummer im Betreff), keinen Entwurf anlegen,
   nur Hinweis.
 
+## 15. Zahlungserinnerungen (Regel vom 11.11.2026)
+
+Läuft bei **jedem** Tageslauf, auch ohne Kalender-Event und in beiden Betriebsmodi. Es werden nur Gmail-Entwürfe
+angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / text / log), Ablauf im Skill.
+
+- **Wann:** Kundenrechnung im Finanzsheet mit Status `RE gestellt` oder `ZA überfällig`, deren Datum in „Rechnung
+  fällig am“ **mehr als 3 Kalendertage** zurückliegt (Schwelle in `config/betrieb.yaml`). Fee-Rechnungen (LL-) werden
+  nie angemahnt. Das Finanzsheet wird dabei nicht verändert – den Status `RE Erinnerung gesendet` setzt Josh selbst,
+  wenn er den Entwurf abschickt.
+- **Nie doppelt** – ein Entwurf entsteht nur, wenn ALLE Prüfungen leer sind:
+  1. Sheet-Status ist nicht `RE Erinnerung gesendet`.
+  2. Protokoll `register/zahlungserinnerungen.csv` hat für die Nummer kein `entwurf_angelegt`/`manuell_erinnert`.
+  3. Gmail „Gesendet“ enthält keine Erinnerung zu der Nummer (Betreff/Text mit Nummer + Zahlungserinnerung, Payment
+     reminder, Mahnung, überfällig …), auch nicht als Sammelmail mit mehreren Nummern.
+  4. Unter den Gmail-Entwürfen liegt keiner zu der Nummer.
+  Trifft 3 oder 4 zu: als `manuell_erinnert` protokollieren, kein neuer Entwurf. Je Rechnung gibt es automatisch
+  **genau eine** Erinnerung; eine zweite Stufe/Mahnung schreibt Josh selbst (Hinweis in der Zusammenfassung, wenn eine
+  erinnerte Rechnung nach 14 Tagen noch offen ist).
+- **Rückmeldung des Kunden zählt vor dem Entwurf.** Gelesen werden alle Mails seit Rechnungsversand, die von der
+  Kontaktadresse, den CC-Adressen oder derselben Domain kommen oder die Rechnungsnummer nennen – auch in anderen
+  Threads (z. B. einer älteren Erinnerung zum selben Kunden) und auch, wenn finance@ nur in CC steht:
+  - Verzögerung angekündigt, Zahlung „in Bearbeitung/im Zahllauf/freigegeben“, konkretes Zahldatum, längeres
+    Zahlungsziel genannt ⇒ **kein Entwurf**, `zurueckgestellt` mit Wiedervorlage: genanntes Datum + 3 Tage, sonst
+    Datum der Rückmeldung + 7 Tage. Liegt die Wiedervorlage schon in der Vergangenheit, gilt die Rückmeldung als
+    verbraucht ⇒ Entwurf mit Nachfrage-Text (`text --nachfrage`), der sich für die Rückmeldung bedankt.
+  - Kunde meldet Zahlung als erfolgt, Zahlung an falsches Konto, bestreitet die Rechnung, verlangt Korrektur,
+    neue Rechnungsadresse/Bestellnummer, oder die Lage ist unklar ⇒ **kein Entwurf**, `rueckfrage` (bzw. `erledigt`)
+    mit einem Satz Begründung; Josh entscheidet. Erst `rechnung erinnerung <Nr> freigeben` hebt das auf.
+  - Zählt NICHT als Rückmeldung: automatische Eingangsbestätigungen/Abwesenheitsnotizen, reine „Rechnung
+    erhalten“-Bestätigungen vor Fälligkeit, Mails zu anderen Rechnungen ohne Bezug zur Zahlung dieser Rechnung.
+  Ebenso zählt eine eigene, nach Fälligkeit gesendete Mail von finance@ an den Kunden zum Zahlungsstand als
+  Erinnerung (Prüfung 3).
+- **Entwurf:** eine Mail je An-Adresse; mehrere überfällige Rechnungen desselben Kontakts kommen in EINE Mail.
+  Empfänger wie Regel 13a (erste Adresse aus „Kontakt“ = An, weitere = CC). Der Entwurf wird als **Antwort im Thread
+  der ursprünglichen Rechnungsmail** angelegt (bei mehreren: Thread der ersten Rechnung), damit der Kunde die Rechnung
+  vor sich hat; findet sich keine Rechnungsmail, als neue Mail. Betreff `Zahlungserinnerung <Nr>[ / <Nr>]` bzw.
+  `Payment reminder <Nr>`. Text = Joshs bisherige Erinnerung (Rechnung, Creator × Kunde, Bruttobetrag laut Sheet,
+  Fälligkeit, Bitte um Prüfung, „falls schon unterwegs, gegenstandslos“), Sprache/Du-Sie wie die Rechnungsmail,
+  Sammelpostfach ohne Ansprechpartner ⇒ „ihr“. Ton freundlich, keine Mahngebühren, keine Fristsetzung.
+- **Keine Mailadresse** im Sheet („Sonderfall“, Portal) ⇒ kein Entwurf, Hinweis „manuell erinnern“.
+- **Information an Josh:** jeder angelegte Entwurf, jede Zurückstellung und jede Rückfrage steht im Chat-Protokoll des
+  Laufs und in der Zusammenfassungsmail (Abschnitt „Zahlungserinnerungen“), bei neuem Entwurf oder neuer Rückfrage
+  zusätzlich Push. Das Protokoll wird committet und gepusht.
+
 ## 14. Betriebsmodus
 
 - **Rechnungsnummern laufen in beiden Modi wie produktiv** (Regel 8): Vergabe aus Finanzsheet/Register,
@@ -267,6 +311,10 @@ in beiden Betriebsmodi.
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-11 · Regel 15 Zahlungserinnerungen: Entwurf ab mehr als 3 Tagen Überfälligkeit, nie doppelt (Sheet-Status,
+  Protokoll, Gmail gesendet + Entwürfe), Rückmeldungen des Kunden werden vorher gelesen, Info im Lauf-Protokoll.
+  Angabe Josh.
 
 - 2026-11-11 · Regel 8/14: Rechnungsnummern auch im Schattenmodus wie produktiv – jede Nummer wird beim Anlegen des
   Entwurfs im Register reserviert, committet und gepusht; Widerspruch Register ↔ Finanzsheet ist in beiden Modi ein

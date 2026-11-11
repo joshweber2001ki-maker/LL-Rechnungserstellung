@@ -19,6 +19,7 @@ invoice/bridge.py            Client für die Brücke (python3 -m invoice.bridge 
 invoice/sheet.py             Finanzsheet lesen (Spalten nach Kopfzeile, Jahresabschnitte, Beträge)
 invoice/build.py             Zeile → Vorprüfung (Befunde) → Dokument-JSON Kunde + Fee, Storno-Ableitung
 invoice/register.py          Rechnungsregister (CSV, versioniert), Nummernvergabe, Import aus dem Sheet
+invoice/erinnerung.py        Zahlungserinnerungen: überfällige Rechnungen finden, Entwurfstext, Protokoll (Regel 15)
 invoice/cli.py               Kommandozeile: build / storno
 render/render.py             Dokument-JSON → PDF (Jinja2 + Playwright/Chromium), Auto-Fit auf eine Seite
 templates/                   invoice.html (Body), header.html / footer.html (Farbbänder, Seitenzahlen)

@@ -14,3 +14,10 @@ drive:
 
 # Benachrichtigung
 summary_to: "finance@lockerundlauter.com"
+
+# Zahlungserinnerungen (Regel 15) – laufen in beiden Modi
+zahlungserinnerung:
+  aktiv: true
+  tage_ueberfaellig: 3      # Entwurf, wenn Fälligkeit mehr als so viele Tage zurückliegt
+  wiedervorlage_tage: 7     # Standard, wenn der Kunde eine Verzögerung meldet und kein Datum nennt
+  hinweis_nach_tagen: 14    # erinnert und weiter offen ⇒ Hinweis „manuell nachfassen?“

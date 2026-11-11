@@ -62,6 +62,9 @@ Sheet-Operationen laufen über die Shell (`invoice.bridge`), ohne Base64 im Kont
 
 ## Täglicher Lauf (geplante Aufgabe, werktags morgens)
 
+Zwei Teile: erst die Rechnungen zu den Kalender-Events (unten), dann **immer** die Zahlungserinnerungen (eigener
+Abschnitt weiter unten) – auch an Tagen ohne Event.
+
 Für jedes Event des Tages:
 
 1. `git pull`, Daten holen (oben), `modus` lesen.
@@ -145,7 +148,51 @@ Für jedes Event des Tages:
 
 Niemals: Finanzsheet schreiben, Mails senden, Nummern raten, bei Stopp-Befund trotzdem rendern.
 
+## Zahlungserinnerungen (Regel 15) – jeder Tageslauf, auch ohne Events, in beiden Modi
+
+Nach den Rechnungen, vor der Zusammenfassung. `git pull` und `data/sheet.json` sind schon da.
+
+1. `python3 -m invoice.erinnerung pruefen --sheet-json data/sheet.json` → `gruppen` (je An-Adresse eine Mail, mit
+   fertigen Gmail-Suchen unter `gmail`), `uebersprungen`, `bereits_erinnert_offen`. Keine Gruppen ⇒ weiter bei 6.
+2. Je Gruppe **erst prüfen, dann schreiben** (Gmail-Connector):
+   a. `search_threads` mit `gmail.schon_erinnert` und zusätzlich ohne Schlagwörter nur nach den Nummern (`"<Nr>"`);
+      `list_drafts` mit den Nummern (`view: DRAFT_VIEW_FULL`). Gibt es eine gesendete Erinnerung oder einen Entwurf
+      zu einer Nummer (auch Sammelmail, auch anders betitelt, auch eine eigene Nachfrage zum Zahlungsstand nach
+      Fälligkeit) ⇒ `log <Nr> --aktion manuell_erinnert --grund "<Betreff, Datum>"`, Nummer fällt aus der Gruppe.
+   b. Rückmeldung suchen: `gmail.rueckmeldung` (ganze Domain seit Rechnungsversand) UND `gmail.rueckmeldung_nummer`,
+      außerdem `from:<jede CC-Adresse>`. Suchtreffer sind nur Vorschauen der ältesten Nachrichten ⇒ jeden
+      einschlägigen Thread mit `get_thread` (`PLAIN_TEXT`) ganz lesen, die **neuesten** Nachrichten zählen. Auch
+      Threads zu anderen Rechnungen desselben Kunden lesen, wenn sie nach dem Rechnungsdatum weiterlaufen (dort stehen
+      oft Zahllauf-/Kontoprobleme, die diese Rechnung betreffen). Dann nach Regel 15 einordnen:
+      Verzögerung/Zahlung angekündigt ⇒ `log <Nr> --aktion zurueckgestellt --grund "<wer, wann, was>"
+      [--wiedervorlage JJJJ-MM-TT]`; bezahlt gemeldet ⇒ `--aktion erledigt`; Einwand, falsches Konto, Korrektur,
+      unklar ⇒ `--aktion rueckfrage`. Im Zweifel `rueckfrage` statt Entwurf.
+      War die Nummer zurückgestellt und die Wiedervorlage ist abgelaufen (`nach_zurueckstellung` in der Prüfung),
+      zählen nur Rückmeldungen NACH dem Protokolldatum neu; gibt es keine ⇒ Entwurf mit `--nachfrage`.
+   c. Fallen Nummern aus einer Gruppe, `pruefen` erneut laufen lassen (das Protokoll wirkt sofort) und mit den
+      neuen Gruppen weitermachen.
+3. Entwurf: `python3 -m invoice.erinnerung text <gruppe> [--nachfrage]` → `out/erinnerungen/<gruppe>.json`
+   (to, cc, subject, text, html). Ursprüngliche Rechnungsmail suchen (`gmail.rechnungsmail`, die Mail an den
+   Kunden, nicht die n8n-Freigabekopie an weber-josh@web.de) und `create_draft` mit `to`, `cc`, `subject`, `body`
+   = text, `htmlBody` = html, `replyToMessageId` = ID dieser Rechnungsmail (bei mehreren Rechnungen die erste;
+   keine gefunden ⇒ ohne `replyToMessageId`). Kein Anhang. Text nur anpassen, wenn Regel 15 oder ein Sonderfall in
+   `customers.yaml` es verlangt.
+4. Sofort protokollieren: `python3 -m invoice.erinnerung log <Nr>[,<Nr>] --aktion entwurf_angelegt --draft-id <id>
+   --grund "Entwurf im Thread <Betreff>"`. Ohne Protokollzeile gilt der Entwurf als nicht angelegt – deshalb direkt
+   nach jedem `create_draft`, nicht gesammelt am Ende.
+5. `git add register/zahlungserinnerungen.csv && git commit -m "erinnerungen: <Nummern> (<Aktionen>)" && git push`.
+6. In Zusammenfassung und Chat einen Abschnitt **Zahlungserinnerungen**: je Rechnung eine Zeile – Nummer, Kunde,
+   Betrag, fällig seit, Tage überfällig und was passiert ist (Entwurf angelegt an <Adresse> + Link / zurückgestellt
+   bis <Datum>, weil … / Rückfrage: … / bereits erinnert am … / keine Adresse). Dazu `bereits_erinnert_offen` kurz
+   als Liste, Einträge mit `hinweis` hervorheben. Neuer Entwurf oder neue Rückfrage ⇒ `PushNotification` mit einem
+   Satz je Fall. Gibt es gar nichts Überfälliges: eine Zeile „Keine überfälligen Rechnungen ohne Erinnerung“.
+
 ## Chat-Befehle
+
+- **`rechnung erinnerung [pruefen]`** – Schritte 1–6 sofort ausführen. **`rechnung erinnerung <Nr> freigeben`** –
+  `log <Nr> --aktion freigegeben --grund "<Josh>"`: hebt `rueckfrage`/`erledigt` auf, nächster Lauf prüft wieder.
+  **`rechnung erinnerung <Nr> zurückstellen <Datum> "<Grund>"`** – `--aktion zurueckgestellt --wiedervorlage`.
+  **`rechnung erinnerung <Nr> nicht`** – `--aktion manuell_erinnert --grund "keine automatische Erinnerung (Josh)"`.
 
 - **`rechnung erstellen <N>`** – manueller Lauf für Sheet-Nummer N ohne Kalender-Event (Nachberechnung,
   Teil-/Schlussrechnung). Ablauf wie oben ab Schritt 3; vor Schritt 5 dem Nutzer Befund + Leistungsbeschreibung
