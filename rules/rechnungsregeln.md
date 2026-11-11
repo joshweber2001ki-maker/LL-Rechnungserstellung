@@ -4,7 +4,7 @@ Diese Datei ist die fachliche Wahrheit für die Rechnungserstellung. Claude lies
 komplett und wendet sie an. Neue Regeln werden unten unter „Änderungsprotokoll" mit Datum ergänzt
 (Befehl `rechnung regel "..."`). Bei Widerspruch gilt die jüngere Regel.
 
-Stand: 2026-11-10 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
+Stand: 2026-11-11 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
 
 ---
 
@@ -154,7 +154,14 @@ in beiden Betriebsmodi.
 - Register = Google Sheet „Rechnungsregister L&L" (Ordner „Locker & Lauter Finanzen"). Eine Zeile je Dokument.
 - Nächste Nummer je Kreis und Jahr = max(Register, Finanzsheet-Spalten AH/AI) + 1. Weichen Register und
   Finanzsheet voneinander ab ⇒ **Stopp und Rückfrage**.
-- Eine Nummer wird erst beim Anlegen des Entwurfs reserviert (Status `entwurf`). Wird der Entwurf verworfen,
+- Eine Nummer wird beim Anlegen des Entwurfs sofort reserviert (Status `entwurf`, `python3 -m invoice.register
+  reserve out/<N>`), committet und gepusht – **in beiden Betriebsmodi**. Damit sieht jede spätere Session (Routine,
+  manuelles `rechnung erstellen`, Folgetag) die Nummer, auch wenn sie noch nicht im Finanzsheet steht.
+  Fortlaufende Nummern hängen also nicht davon ab, wann Josh die Rechnung im Finanzsheet einträgt.
+- Hat das Register für eine Sheet-Nummer schon eine aktive Reservierung, bekommt ein erneuter Lauf dieselbe Nummer
+  (keine Doppelvergabe). Nennt das Finanzsheet für die Zeile eine andere Nummer als das Register, oder ist die
+  Sheet-Nummer im Register einem anderen Vorgang zugeordnet ⇒ **Stopp und Rückfrage**.
+- Eine Nummer wird erst beim Anlegen des Entwurfs reserviert, nicht schon bei einem Stopp-Befund. Wird der Entwurf verworfen,
   bleibt die Zeile mit Status `verworfen` + Grund (Lücke erklärbar). Nächster Entwurf nimmt die nächste freie
   Nummer – eine verworfene Nummer wird **nicht** wiederverwendet.
 - Ab Status `gesendet` ist die Rechnung unveränderlich: Änderung nur per Storno + Neuausstellung (Regel 9).
@@ -248,15 +255,23 @@ in beiden Betriebsmodi.
 
 ## 14. Betriebsmodus
 
-- `modus: schatten` – n8n führend. Die PDFs tragen echte Rechnungsnummern (aus dem Finanzsheet, sonst die nächste
-  freie nach Regel 8), sie werden aber nicht im Register reserviert. PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`,
-  Gmail-Entwurf an den Kunden laut Regel 13a (keiner an die Creatorin), keine Kampagnenordner-Ablage. Vergleichsmail an finance@ mit Abweichungen zur n8n-Rechnung.
+- **Rechnungsnummern laufen in beiden Modi wie produktiv** (Regel 8): Vergabe aus Finanzsheet/Register,
+  sofortige Reservierung im Register, Commit + Push + Spiegel, Widerspruch Register ↔ Finanzsheet = Stopp.
+  Josh verwendet die Claude-Rechnungen; n8n läuft nur noch zum Abgleich.
+- `modus: schatten` – PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/`, Gmail-Entwurf an den Kunden
+  laut Regel 13a (keiner an die Creatorin), keine Ablage in Rechnungskopien/Kampagnenordner. Vergleichsmail an
+  finance@ mit Abweichungen zur n8n-Rechnung (Betrag, Steuerfall, Texte; vergibt n8n eine andere Nummer, ist das ein
+  Befund – maßgeblich ist die Register-Nummer).
 - `modus: produktiv` – voller Ablauf nach Abschnitt 8 und 13.
 
 ---
 
 ## Änderungsprotokoll
 
+- 2026-11-11 · Regel 8/14: Rechnungsnummern auch im Schattenmodus wie produktiv – jede Nummer wird beim Anlegen des
+  Entwurfs im Register reserviert, committet und gepusht; Widerspruch Register ↔ Finanzsheet ist in beiden Modi ein
+  Stopp; bestehende Reservierung einer Sheet-Nummer wird wiederverwendet. Hintergrund: Josh nutzt die
+  Claude-Rechnungen, n8n nur noch zum Abgleich; Sheet-Einträge erfolgen teils erst abends/am Folgetag (Josh).
 - 2026-11-10 · Neu Regel 13a: zu jeder Kundenrechnung ein Gmail-Entwurf (auch im Schattenmodus, ohne Zusatz im
   Betreff); erste Kontaktadresse = An, alle weiteren = CC; Betreff „Rechnung <Nr>“/„Invoice <Nr>“; Standardvorlage
   DE/EN. Fee-Mail an die Creatorin weiterhin nur produktiv (Josh).

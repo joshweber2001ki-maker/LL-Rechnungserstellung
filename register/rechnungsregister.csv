@@ -41,7 +41,7 @@ DR-2026-030,kunde,DR,2026,30,303,Casio,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026
 DR-2026-033,kunde,DR,2026,33,285,Lindbergh,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 DR-2026-034,kunde,DR,2026,34,287,Etsy,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_creator)
 DR-2026-035,kunde,DR,2026,35,327,PALU,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_creator)
-DR-2026-036,kunde,DR,2026,36,322,Hessnatur,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_creator)
+DR-2026-036,kunde,DR,2026,36,322,Hessnatur,Daniel Reith,11.11.2026,2500.0,475.0,2975.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1ABaDCIPj0hv639jzEg6LhhDZNammLrk3/view,,r3933833352603455313,010bc3bt6mmc58bnl00pm4ka52,2026-11-11 11:34,,schatten,
 EIH-2026-001,kunde,EIH,2026,1,160,CHRIST,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 EIH-2026-002,kunde,EIH,2026,2,158,E-COMMERCE BERLIN EXPO,Emma-Isadora Hagen,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 EIH-2026-003,kunde,EIH,2026,3,152,PRUEFSTER,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -256,7 +256,7 @@ LL-2026-154,fee,LL,2026,154,292,Scalable Capital,Kira Marie Löhden,,,,,EUR,,alt
 LL-2026-155,fee,LL,2026,155,312,Jabra,Kira Marie Löhden,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)
 LL-2026-156,fee,LL,2026,156,288,Tamaris,Alisa Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_ll)
 LL-2026-157,fee,LL,2026,157,327,PALU,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_ll)
-LL-2026-158,fee,LL,2026,158,322,Hessnatur,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-11,,n8n,Import aus Finanzsheet (rechnung_ll)
+LL-2026-158,fee,LL,2026,158,322,Hessnatur,Daniel Reith,11.11.2026,625.0,118.75,743.75,EUR,DE,entwurf,,https://drive.google.com/file/d/1olCibR2PokBfHNg29iGO6tRZk1F76CRA/view,,,010bc3bt6mmc58bnl00pm4ka52,2026-11-11 11:34,,schatten,
 MH-2026-001,kunde,MH,2026,1,161,Brooklyn Soap,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-002,kunde,MH,2026,2,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-003,kunde,MH,2026,3,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)

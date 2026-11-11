@@ -43,7 +43,7 @@ python3 -m invoice.register next DR 2026
 
 - **Schattenmodus** (`config/betrieb.yaml: modus: schatten`): n8n bleibt führend, Claude erzeugt täglich
   Vergleichs-PDFs nach `Locker & Lauter Finanzen/_parallelbetrieb/<Datum>/` und schickt eine Abweichungsliste an
-  finance@. Keine Nummernvergabe, keine Entwürfe an Kunden.
+  finance@. Nummernvergabe und Register wie produktiv, Gmail-Entwurf an den Kunden, keiner an die Creatorin.
 - **Produktiv**: Nummern aus dem Register, PDFs nach `Rechnungskopien/<Jahr>/<Monat>` und in den Kampagnenordner,
   Gmail-Entwürfe an Kunde und Creatorin, Zusammenfassung an finance@.
 - Das Finanzsheet wird ausschließlich gelesen. Es wird nie automatisch eine Mail gesendet.
@@ -52,7 +52,8 @@ python3 -m invoice.register next DR 2026
 
 `register/rechnungsregister.csv` ist die einzige Stelle, an der Nummern vergeben werden. Das Google Sheet
 „Rechnungsregister L&L" (Ordner Locker & Lauter Finanzen) ist ein reiner Spiegel davon (`python3 -m invoice.register mirror`). Jede Vergabe ist ein
-Git-Commit (Historie = Nachweis). Nächste Nummer = max(Register, Finanzsheet) + 1; weichen beide ab, stoppt der
+Git-Commit (Historie = Nachweis), in beiden Betriebsmodi sofort beim Anlegen des Entwurfs (`invoice.register reserve`).
+Nächste Nummer = max(Register, Finanzsheet) + 1; weichen beide ab, stoppt der
 Lauf mit Rückfrage. Verworfene Entwürfe bleiben mit Status `verworfen` stehen (Lücke erklärbar).
 
 ## Sicherheitsnetz

@@ -141,10 +141,76 @@ def mirror(rows=None):
     return bridge.call("replace", spreadsheetId=cfg["register_sheet_id"], rows=table)
 
 
+def betriebsmodus():
+    import yaml
+    try:
+        cfg = yaml.safe_load((ROOT / "config" / "betrieb.yaml").read_text(encoding="utf-8")) or {}
+    except FileNotFoundError:
+        cfg = {}
+    return cfg.get("modus", "schatten")
+
+
+def reserve_run(out_dir, event_id="", status="entwurf"):
+    """Reserviert Kunden- und Fee-Nummer eines build-Laufs (out/<N>) – in beiden Betriebsmodi (Regel 14).
+
+    Idempotent: steht die Nummer schon für dieselbe Sheet-Nummer im Register (auch als Altsystem-Import),
+    wird die Zeile mit den Rechnungsdaten aktualisiert statt doppelt angelegt. Gehört sie zu einer anderen
+    Sheet-Nummer, bricht der Aufruf ab (Doppelvergabe).
+    """
+    import json
+    out_dir = Path(out_dir)
+    befund = json.loads((out_dir / "befund.json").read_text(encoding="utf-8"))
+    row = befund.get("row") or {}
+    meta = {"nummer": row.get("nummer", ""), "kunde": row.get("kunde", ""), "creator": row.get("creator", ""),
+            **{k: v for k, v in befund.get("meta", {}).items() if v not in (None, "")}}
+    if not meta.get("nummer"):
+        raise SystemExit(f"Keine Sheet-Nummer in {out_dir}/befund.json.")
+    nummern = meta.get("nummern") or {}
+    if any(f.get("level") == "stop" for f in befund.get("findings", [])):
+        raise SystemExit("Stopp-Befund – keine Reservierung.")
+    rows = load()
+    modus = betriebsmodus()
+    done = []
+    for typ in ("kunde", "fee"):
+        nr = nummern.get(typ)
+        if not nr:
+            raise SystemExit(f"Keine {typ}-Nummer in {out_dir}/befund.json.")
+        doc = json.loads((out_dir / f"{nr}.json").read_text(encoding="utf-8"))
+        hit = next((r for r in rows if r["nummer"] == nr), None)
+        if hit and hit.get("sheet_nummer") not in ("", str(meta.get("nummer"))):
+            raise SystemExit(f"{nr} ist im Register schon für Sheet-Nummer {hit['sheet_nummer']} vergeben – Abbruch.")
+        if hit:
+            rows.remove(hit)
+        reserve(rows, nr, typ, meta, doc, status=status if not hit or hit.get("status") in ("altsystem", "entwurf")
+                else hit["status"], modus=modus, event_id=event_id or (hit or {}).get("event_id", ""),
+                notiz=(hit or {}).get("notiz", "") if hit and hit.get("modus") != "n8n" else "")
+        if hit:  # Felder aus der alten Zeile behalten, die reserve() leer lässt
+            new = next(r for r in rows if r["nummer"] == nr)
+            for k in ("drive_kopie", "drive_kampagne", "gmail_draft", "gesendet_am", "referenz"):
+                if hit.get(k) and not new.get(k):
+                    new[k] = hit[k]
+        done.append(nr)
+    save(rows)
+    return done
+
+
 if __name__ == "__main__":
     import sys
     from . import sheet as sh
-    if len(sys.argv) >= 2 and sys.argv[1] == "mirror":
+    if len(sys.argv) >= 3 and sys.argv[1] == "reserve":
+        ev = sys.argv[3] if len(sys.argv) > 3 else ""
+        print("reserviert:", ", ".join(reserve_run(sys.argv[2], event_id=ev)))
+    elif len(sys.argv) >= 4 and sys.argv[1] == "set":
+        rows = load()
+        kv = dict(a.split("=", 1) for a in sys.argv[3:])
+        status = kv.pop("status", None)
+        r = next((x for x in rows if x["nummer"] == sys.argv[2]), None)
+        if not r:
+            raise SystemExit(f"{sys.argv[2]} nicht im Register.")
+        set_status(rows, sys.argv[2], status or r["status"], **kv)
+        save(rows)
+        print("ok", sys.argv[2], status or r["status"], kv)
+    elif len(sys.argv) >= 2 and sys.argv[1] == "mirror":
         print(mirror())
     elif len(sys.argv) >= 3 and sys.argv[1] == "import":
         rows = load()
@@ -157,4 +223,5 @@ if __name__ == "__main__":
         rows = load()
         print(next_number(rows, sys.argv[2], int(sys.argv[3])))
     else:
-        print("python3 -m invoice.register import <kampagnen.csv> [jahr] | next <KREIS> <jahr> | mirror")
+        print("python3 -m invoice.register import <kampagnen.csv> [jahr] | next <KREIS> <jahr> | mirror\n"
+              "                          | reserve out/<N> [event_id] | set <Nr> feld=wert … [status=…]")

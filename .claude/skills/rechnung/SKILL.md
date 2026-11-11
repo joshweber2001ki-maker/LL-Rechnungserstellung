@@ -11,9 +11,9 @@ Das Finanzsheet wird **nie** beschrieben. Nichts wird automatisch per Mail verse
 
 ## Betriebsmodus
 
-`config/betrieb.yaml` → `modus: schatten | produktiv` (siehe Regel 14). Im Schattenmodus:
-echte Rechnungsnummern auf den PDFs (`build` vergibt sie automatisch, siehe Schritt 5), aber **keine** Reservierung
-im Register, PDFs nur in
+`config/betrieb.yaml` → `modus: schatten | produktiv` (siehe Regel 14). **Rechnungsnummern laufen in beiden
+Modi wie produktiv** (Schritt 5 + 9: Vergabe, sofortige Reservierung im Register, Commit + Push). Im Schattenmodus
+unterscheiden sich nur Ablage und Mails: PDFs nur in
 `Locker & Lauter Finanzen/_parallelbetrieb/<JJJJ-MM-TT>/`, Gmail-Entwurf an den Kunden (Regel 13a), keiner an die
 Creatorin, Vergleichsmail an finance@.
 
@@ -26,6 +26,8 @@ Creatorin, Vergleichsmail an finance@.
 | Storno aus bestehendem Dokument-JSON | `python3 -m invoice.cli storno --doc <orig.json> --nummer <Nr> --grund "…" [--ersatz <Nr>] --out out/storno --pdf` |
 | Mail-Entwurf zur Kundenrechnung (Regel 13a) | `python3 -m invoice.mail out/<N> --draft` (ohne `--draft`: nur Vorschau `mail.json`/`mail.html`) |
 | Nächste Nummer | `python3 -m invoice.register next <KREIS> <Jahr>` |
+| Nummern eines Laufs reservieren (beide Modi) | `python3 -m invoice.register reserve out/<N> [<Event-ID>]` |
+| Registerfelder nachtragen | `python3 -m invoice.register set <Nr> drive_kopie=<URL> gmail_draft=<ID> [status=gesendet]` |
 | Register ↔ Finanzsheet nachziehen | `python3 -m invoice.register import data/kampagnen.csv <Jahr>` |
 
 Exit-Code 3 von `build` = Stopp-Befund, es wurden keine Dokumente erzeugt. `out/<N>/befund.json` enthält
@@ -82,15 +84,17 @@ Für jedes Event des Tages:
    Ergebnis je Event notieren: ok / Unstimmigkeit / kein Dokument / unklar. Kein Stopp, JSON nicht aus dem Vertrag ändern.
 5. Nummern (vergibt `build` selbst, Standard `--nummern auto`; Ergebnis in `befund.json` → `meta.nummern`):
    - Steht für die Zeile schon eine Nummer im Finanzsheet (`Rechnung Creator:in` / `Rechnung L&L`), wird sie übernommen
-     (`quelle: finanzsheet`).
+     (`quelle: finanzsheet`). Widerspricht sie dem Register ⇒ Stopp.
+   - Sonst: aktive Reservierung im Register für diese Sheet-Nummer ⇒ wiederverwenden (`quelle: register`).
    - Sonst nächste freie Nummer je Kreis = max(Register, Finanzsheet, in diesem Lauf bereits vergeben) + 1
      (`quelle: neu`). `out/_vergeben.json` hält die Vergaben des Laufs fest – mehrere Events am selben Tag bekommen
      fortlaufende Nummern, ein erneuter Aufruf für dieselbe Sheet-Nummer dieselbe. `out/` daher während des Laufs
      nicht löschen.
-   - `schatten`: Nummern stehen auf den PDFs, werden aber **nicht** im Register reserviert (n8n vergibt parallel).
-     Weicht die Nummer, die n8n am selben Tag vergibt, ab, ist das ein Befund für die Zusammenfassung des Folgetags.
-   - `produktiv`: Widerspruch Register ↔ Finanzsheet ⇒ Stopp-Befund. Danach `register.reserve(...)` für beide
-     Dokumente mit Status `entwurf`, Event-ID, Modus.
+   - **Beide Modi:** Widerspruch Register ↔ Finanzsheet ⇒ Stopp-Befund. Ohne Stopp **sofort** reservieren:
+     `python3 -m invoice.register reserve out/<N> <Event-ID>` (beide Dokumente, Status `entwurf`, Modus), dann
+     `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push` – damit jede spätere Session die
+     Nummern kennt, auch bevor sie im Finanzsheet stehen.
+   - `schatten`: Vergibt n8n eine andere Nummer, ist das ein Befund (maßgeblich bleibt die Register-Nummer).
    - `ENTWURF` erscheint nur noch, wenn die Creatorin unbekannt ist (dann gibt es ohnehin einen Stopp) oder
      ausdrücklich `--nummern keine` gesetzt wurde.
    - Marina Ziblis: Regel 8 (Tageslimit) – Rechnungsdatum ggf. auf den nächsten freien Tag legen.
@@ -124,7 +128,8 @@ Für jedes Event des Tages:
    - an Creatorin (nur `produktiv`) (Adresse: Josh fragen bzw. `creators.yaml` `email`, falls gepflegt; sonst ohne Empfänger),
      Betreff `Management-Fee-Rechnung <LL-Nr> zu <Kundenrechnungs-Nr>`, Anhang Fee-Rechnung.
    - Draft-IDs ins Register (`gmail_draft`).
-9. Register speichern, `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push`.
+9. Register (beide Modi): Drive-Link und Draft-ID nachtragen (`python3 -m invoice.register set <Nr> drive_kopie=… gmail_draft=…`),
+   `git add register && git commit -m "register: <Nummern> (<Modus>)" && git push`.
    Push-Konflikt ⇒ `git pull --rebase`, Nummern erneut prüfen (keine Doppelvergabe), nochmal pushen.
    Danach `python3 -m invoice.register mirror` – spiegelt die CSV ins Google Sheet „Rechnungsregister L&L"
    (nur Anzeige für Josh/Laura; die CSV im Repo bleibt die Wahrheit, das Sheet wird bei jedem Lauf überschrieben).
@@ -164,6 +169,6 @@ Niemals: Finanzsheet schreiben, Mails senden, Nummern raten, bei Stopp-Befund tr
 
 ## Vergleichsmodus (Schatten) – worauf achten
 
-n8n bleibt führend. Der Wert des Schattenlaufs ist die Abweichungsliste: andere Summe, anderer Steuerfall,
+n8n läuft nur noch zum Abgleich (Josh nutzt die Claude-Rechnungen). Der Wert des Schattenlaufs ist die Abweichungsliste: andere Summe, anderer Steuerfall,
 fehlende/zusätzliche Hinweistexte, andere Sprache, unlesbare Leistungsbeschreibung. Jede Abweichung, die eine
 fehlende Regel zeigt, als Vorschlag formulieren („Regel ergänzen: …"), nicht still beheben.

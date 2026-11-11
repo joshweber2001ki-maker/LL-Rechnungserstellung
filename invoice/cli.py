@@ -47,10 +47,13 @@ def assign_numbers(row, rows, out_root, issue, modus):
     """Vergibt Kunden- und Fee-Nummer (Regel 8 / 14).
 
     1. Steht für die Zeile schon eine Nummer im Finanzsheet, wird sie übernommen.
-    2. Sonst nächste freie Nummer = max(Register, Finanzsheet, in diesem Lauf schon vergeben) + 1.
+    2. Sonst: Hat das Register für diese Sheet-Nummer schon eine aktive Reservierung (aus einer früheren
+       Session), wird sie wiederverwendet – keine Doppelvergabe über Sessions/Tage hinweg.
+    3. Sonst nächste freie Nummer = max(Register, Finanzsheet, in diesem Lauf schon vergeben) + 1.
        Innerhalb eines Laufs merkt sich out/_vergeben.json die Vergaben, damit zwei Events nicht dieselbe
        Nummer bekommen; derselbe Vorgang bekommt beim erneuten Aufruf dieselbe Nummer.
-    Im Modus produktiv ist ein Widerspruch Register ↔ Finanzsheet ein Stopp, im Schattenmodus nur ein Hinweis.
+    Die Nummernvergabe ist seit 11.11.2026 in beiden Betriebsmodi gleich (Regel 14): Widerspruch
+    Register ↔ Finanzsheet ist immer ein Stopp; reserviert wird anschließend mit `invoice.register reserve`.
     """
     creators = yaml.safe_load((ROOT / "config" / "creators.yaml").read_text(encoding="utf-8")) or {}
     ccfg = creators.get(row["creator"].strip())
@@ -68,14 +71,29 @@ def assign_numbers(row, rows, out_root, issue, modus):
     given = [n for v in state.values() for n in (v.get("kunde"), v.get("fee")) if n]
     result = {"quelle": {}}
     for key, pref in (("kunde", prefix), ("fee", "LL")):
+        reserved = [r["nummer"] for r in register.find_by_sheet(reg_rows, row["nummer"], key)
+                    if r["nummer"].startswith(f"{pref}-{year}-")]
         if key in from_sheet:
-            result[key] = from_sheet[key]
+            nr = from_sheet[key]
+            other = [r for r in reg_rows if r["nummer"] == nr and r.get("sheet_nummer") not in ("", str(row["nummer"]))]
+            if other:
+                findings.append({"level": "stop", "text": f"{nr} steht im Finanzsheet bei Nummer {row['nummer']}, "
+                                 f"ist im Register aber für Nummer {other[0]['sheet_nummer']} vergeben."})
+            if reserved and nr not in reserved:
+                findings.append({"level": "stop", "text": f"Finanzsheet nennt für Nummer {row['nummer']} {nr}, "
+                                 f"im Register ist {', '.join(reserved)} reserviert."})
+            result[key] = nr
             result["quelle"][key] = "finanzsheet"
+            continue
+        if reserved:
+            result[key] = reserved[-1]
+            result["quelle"][key] = "register"
+            given.append(reserved[-1])
             continue
         run_max = max([int(n.rsplit("-", 1)[1]) for n in given if n.startswith(f"{pref}-{year}-")] or [0])
         number, conflict = register.next_number(reg_rows, pref, year, max(sheet_max.get(pref, 0), run_max))
         if conflict and run_max < sheet_max.get(pref, 0):
-            findings.append({"level": "stop" if modus == "produktiv" else "warn", "text": f"Nummernkreis {pref}: {conflict}"})
+            findings.append({"level": "stop", "text": f"Nummernkreis {pref}: {conflict}"})
         result[key] = number
         result["quelle"][key] = "neu"
         given.append(number)
