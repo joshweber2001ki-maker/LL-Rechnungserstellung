@@ -4,7 +4,7 @@ Diese Datei ist die fachliche Wahrheit für die Rechnungserstellung. Claude lies
 komplett und wendet sie an. Neue Regeln werden unten unter „Änderungsprotokoll" mit Datum ergänzt
 (Befehl `rechnung regel "..."`). Bei Widerspruch gilt die jüngere Regel.
 
-Stand: 2026-11-11 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
+Stand: 2026-11-16 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
 
 ---
 
@@ -48,8 +48,12 @@ Hinweistext inkl. Steuernummer/USt-IdNr. (wird 1:1 übernommen), Creator Handle 
 - Zeilen des Sheet-Felds „Rechnungsempfänger" werden 1:1 übernommen (Name, Straße, PLZ Ort, Land).
 - Zeilen mit Kennungen werden erkannt und separat gesetzt:
   - **Steuer-ID**: `USt-ID`, `USt-IdNr`, `VAT`, `VAT ID`, `VAT-ID`, `VAT Number`, `UID` ⇒ Zeile `VAT: …` / `USt-IdNr.: …`
-  - **Referenzen**: `Bestellnummer`, `PO`, `PO number`, `ANID`, `WBS-Code`, `Registration number`, `KVK`, `#OP-…`
+  - **Referenzen**: `Bestellnummer`, `PO`, `PO number`, `ANID`, `WBS-Code`, `Registration number`, `KVK`, `#OP-…`,
+    `Company number`, `Vorgangsnummer`, `Auftragsnummer`, `Referenz`, `Kundennummer`, `Lieferantennummer`, `CVR`, `CIF` …
     ⇒ eigene Zeilen unter der Adresse (werden auf der Rechnung angezeigt, Kunde braucht sie zur Zuordnung).
+  - **Grundsatz (16.11.2026):** Jede nachvollziehbare Nummer, die im Sheet beim Rechnungsempfänger steht, kommt mit
+    auf die Rechnung – auch mit unbekannter Bezeichnung (`<Bezeichnung>: <Nummer>` oder `#<Kennung>`). Solche Zeilen
+    zählen nie als Adress- oder Landzeile.
 - Land fehlt und PLZ ist 5-stellig numerisch ⇒ Deutschland annehmen. Sonst: Land aus `customers.yaml`,
   sonst **Rückfrage**.
 - Steht im Feld `pending` ⇒ **keine Rechnung**, Rückfrage.
@@ -311,6 +315,10 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-16 · Regel 3: Alle nachvollziehbaren Nummern aus dem Feld „Rechnungsempfänger“ (Company number, VAT ID,
+  Vorgangs-/Bestell-/Referenznummern usw.) kommen als eigene Zeile zum Rechnungsempfänger auf die Rechnung; sie werden
+  nicht mehr als Landzeile gelesen (Anlass: Sheet 324 Benchmark Media, „Company number“). Angabe Josh.
 
 - 2026-11-11 · Regel 15 Zahlungserinnerungen: Entwurf ab mehr als 3 Tagen Überfälligkeit, nie doppelt (Sheet-Status,
   Protokoll, Gmail gesendet + Entwürfe), Rückmeldungen des Kunden werden vorher gelesen, Info im Lauf-Protokoll.

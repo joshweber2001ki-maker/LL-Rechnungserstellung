@@ -87,7 +87,7 @@
       <h2>{{ t.recipient }}</h2>
       {% for line in d.recipient.lines %}<div{% if loop.first %} class="name"{% endif %}>{{ line }}</div>{% endfor %}
       {% for id in d.recipient.ids %}<div>{{ id.label }}: {{ id.value }}</div>{% endfor %}
-      {% for ref in d.recipient.refs %}<div>{{ ref.label }}: {{ ref.value }}</div>{% endfor %}
+      {% for ref in d.recipient.refs %}<div>{% if ref.label %}{{ ref.label }}: {% endif %}{{ ref.value }}</div>{% endfor %}
     </div>
   </div>
 

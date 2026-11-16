@@ -37,8 +37,12 @@ COUNTRY_LABEL = {"CH": ("Schweiz", "Switzerland"), "GB": ("Vereinigtes Königrei
                  "US": ("USA", "the United States"), "NL": ("Niederlande", "the Netherlands"),
                  "DK": ("Dänemark", "Denmark"), "AT": ("Österreich", "Austria")}
 
-ID_PATTERN = re.compile(r"^\s*(USt-?Id(?:Nr)?\.?|USt-ID|UID(?:-Nr\.?)?|VAT(?:[- ]?(?:ID|Number|No\.?))?|Tax ID)\s*[:\s]\s*(.+)$", re.I)
-REF_PATTERN = re.compile(r"^\s*(Bestellnummer|Bestell-Nr\.?|PO(?: number| no\.?)?|ANID|WBS-Code|Registration number|KVK|Kostenstelle|Projektnummer|Order(?: number)?)\s*[:#]?\s*(.+)$", re.I)
+ID_PATTERN = re.compile(r"^[\s•·\-–*]*(USt\.?-?Id(?:Nr)?\.?|USt-ID|UID(?:-Nr\.?)?|VAT(?:[- ]?(?:ID|Number|No\.?))?|Tax ID)\s*[:\s]\s*(.+)$", re.I)
+REF_PATTERN = re.compile(r"^[\s•·\-–*]*(Bestellnummer|Bestell-Nr\.?|PO(?: number| no\.?)?|ANID|WBS-Code|Registration number|KVK|Kostenstelle|Projektnummer|Projekt-Nr\.?|Order(?: number)?|Vorgangsnummer|Vorgangs-Nr\.?|Auftragsnummer|Auftrags-Nr\.?|Referenz(?:nummer)?|Reference(?: number| no\.?)?|Ref\.|Kundennummer|Kunden-Nr\.?|Lieferantennummer|Lieferanten-Nr\.?|(?:Supplier|Vendor|Customer) (?:number|no\.?|ID)|Company (?:number|no\.?|registration(?: number)?)|Companies House(?: number)?)\s*[:#]?\s*(.+)$", re.I)
+# Regel 3 (16.11.2026): jede nachvollziehbare Nummer im Empfängerfeld kommt mit auf die Rechnung.
+# Allgemein: "<Bezeichnung>: <Wert mit Ziffer>" (Bezeichnung ohne Ziffern, max. 40 Zeichen) oder "#<Kennung>".
+GENERIC_REF_PATTERN = re.compile(r"^[\s•·\-–*]*([^\d:#•·]{2,40}?)\s*[:#]\s*(\S*\d.*)$")
+HASH_REF_PATTERN = re.compile(r"^\s*(#\S*\d\S*)\s*$")
 MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
 MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -74,9 +78,13 @@ def parse_recipient(raw, customers_cfg, customer_name):
         if m:
             ids.append({"label": m.group(1).strip(), "value": m.group(2).strip().rstrip(".")})
             continue
-        m = REF_PATTERN.match(l)
+        m = REF_PATTERN.match(l) or GENERIC_REF_PATTERN.match(l)
         if m:
             refs.append({"label": m.group(1).strip(), "value": m.group(2).strip()})
+            continue
+        m = HASH_REF_PATTERN.match(l)
+        if m:
+            refs.append({"label": "", "value": m.group(1).strip()})
             continue
         out_lines.append(l)
     # Land: letzte Zeile oder "…, Land"
