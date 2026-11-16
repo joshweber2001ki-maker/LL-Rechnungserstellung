@@ -113,7 +113,7 @@ KS-2026-014,kunde,KS,2026,14,281,Kolsquare,Katrin Stockinger,,,,,EUR,,altsystem,
 KS-2026-015,kunde,KS,2026,15,275,American Express,Katrin Stockinger,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KS-2026-016,kunde,KS,2026,16,170,BFS,Katrin Stockinger,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KS-2026-017,kunde,KS,2026,17,,Stepstone,Katrin Stockinger,,,,,EUR,,gesendet,,,,,,2026-11-16,2026-11-02,manuell,"Fremdkostenrechnung Reisekosten Award Night 14.09.2026 an Merle Schnug (StepStone), gesendet 02.11.2026 per Mail; nicht im Finanzsheet – nachgetragen 16.11.2026"
-KS-2026-018,kunde,KS,2026,18,324,Chat GPT,Katrin Stockinger,16.11.2026,11750.0,575.75,12325.75,EUR,DRITTLAND,entwurf,,,,,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,
+KS-2026-018,kunde,KS,2026,18,324,Chat GPT,Katrin Stockinger,16.11.2026,11750.0,575.75,12325.75,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1Td56DxKNEpgqrZrFbrblpL_BkfV7ostU/view,,r-814213084252736937,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,
 KS-2026-019,kunde,KS,2026,19,268,This is Marketing,Katrin Stockinger,16.11.2026,1630.72,309.84,1940.56,EUR,DE,entwurf,,,,,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
 LL-2026-001,fee,LL,2026,1,132,Klosterfrau Healthcare Group,Tanja Bülter,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)
 LL-2026-002,fee,LL,2026,2,133,Adobe,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)
@@ -266,7 +266,7 @@ LL-2026-158,fee,LL,2026,158,322,Hessnatur,Daniel Reith,11.11.2026,625.0,118.75,7
 LL-2026-159,fee,LL,2026,159,304,Falke,Daniel Reith,12.11.2026,262.5,49.88,312.38,EUR,DE,entwurf,,https://drive.google.com/file/d/17WtGqYhLTRyWLs6Jnhk-R7sKw8VlIeJ1/view,,,2pd64g6ejc2jdj010orqgss1h1,2026-11-12 06:19,,schatten,
 LL-2026-160,fee,LL,2026,160,308,HIDROFUGAL,Daniel Reith,12.11.2026,300.0,57.0,357.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1QLyfDlT8mj6OVtt3X5-3QCYuHe6ooaAV/view,,,0730k4dfsq38h6v87jeaefviai,2026-11-12 06:19,,schatten,
 LL-2026-161,fee,LL,2026,161,315,Casio,Daniel Reith,12.11.2026,800.0,152.0,952.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1D_oJVPAX9VtCvzLx8ngAIiuPRFrYfQBo/view,,,7erog1bequ7jgopf49rnrc8ff3,2026-11-12 06:19,,schatten,
-LL-2026-162,fee,LL,2026,162,324,Chat GPT,Katrin Stockinger,16.11.2026,3513.25,0,3513.25,EUR,DRITTLAND,entwurf,,,,,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,
+LL-2026-162,fee,LL,2026,162,324,Chat GPT,Katrin Stockinger,16.11.2026,3513.25,0,3513.25,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1JP-7rF6GIwbXJodiU2HdvjobOf9Xtbkd/view,,,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,
 LL-2026-163,fee,LL,2026,163,268,This is Marketing,Katrin Stockinger,16.11.2026,300.0,57.0,357.0,EUR,DE,entwurf,,,,,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
 MH-2026-001,kunde,MH,2026,1,161,Brooklyn Soap,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-002,kunde,MH,2026,2,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
