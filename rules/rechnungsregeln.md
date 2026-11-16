@@ -100,7 +100,10 @@ sagt explizit etwas anderes (dann Sheet).
     of the consideration for the service; receipts attached. Reverse Charge Procedure applies to the full amount."
   - Belege ohne USt (Kilometerpauschale, § 19 UStG) in voller Höhe.
   - **Ab 4 Belegen**: zusätzliche Anlage-Seite „Aufstellung der weiterberechneten Auslagen" (Tabelle
-    Nr · Beleg · Anhang-Seite · Brutto · Netto, Summenzeile) wie KML-2026-015.
+    Nr · Beleg · Anhang-Seite · Brutto · Netto, Summenzeile) wie KML-2026-015. Die einzelnen Belege stehen dann
+    **nur in der Anlage**; auf der Rechnung selbst steht eine Sammelposition „Weiterberechnete Auslagen (netto)“ mit
+    Unterzeile „<n> Belege · Aufstellung siehe Anlage, Belege im Anhang“ und der Netto-Summe (gilt für alle
+    Steuerfälle; Regel vom 16.11.2026). Unter 4 Belegen weiter eine Unterzeile je Beleg auf der Rechnung.
 - Belege werden als Anhang hinter die Rechnung gehängt (PDF-Merge), wenn sie im Kampagnenordner liegen.
 - Kooperationsverträge mit Fremdkostenbudget (TK Mental Matters/Kira: 12.905 € netto): Anlage zusätzlich mit
   Budgetabgleich (Budget · bereits abgerechnet · verbleibend · mit dieser Rechnung berechnet). Alles über
@@ -316,6 +319,8 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 
 ## Änderungsprotokoll
 
+- 2026-11-16 · Regel 6: Ab 4 Belegen (Anlage-Seite) keine Einzelbelege mehr in den Rechnungspositionen, nur eine
+  Sammelposition „Weiterberechnete Auslagen (netto)“ mit Verweis auf die Anlage – spart Platz, keine Doppelung (Josh).
 - 2026-11-16 · Regel 3: Alle nachvollziehbaren Nummern aus dem Feld „Rechnungsempfänger“ (Company number, VAT ID,
   Vorgangs-/Bestell-/Referenznummern usw.) kommen als eigene Zeile zum Rechnungsempfänger auf die Rechnung; sie werden
   nicht mehr als Landzeile gelesen (Anlass: Sheet 324 Benchmark Media, „Company number“). Angabe Josh.

@@ -114,7 +114,7 @@ KS-2026-015,kunde,KS,2026,15,275,American Express,Katrin Stockinger,,,,,EUR,,alt
 KS-2026-016,kunde,KS,2026,16,170,BFS,Katrin Stockinger,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KS-2026-017,kunde,KS,2026,17,,Stepstone,Katrin Stockinger,,,,,EUR,,gesendet,,,,,,2026-11-16,2026-11-02,manuell,"Fremdkostenrechnung Reisekosten Award Night 14.09.2026 an Merle Schnug (StepStone), gesendet 02.11.2026 per Mail; nicht im Finanzsheet – nachgetragen 16.11.2026"
 KS-2026-018,kunde,KS,2026,18,324,Chat GPT,Katrin Stockinger,16.11.2026,11750.0,575.75,12325.75,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1Td56DxKNEpgqrZrFbrblpL_BkfV7ostU/view,,r-814213084252736937,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,
-KS-2026-019,kunde,KS,2026,19,268,This is Marketing,Katrin Stockinger,16.11.2026,1630.72,309.84,1940.56,EUR,DE,entwurf,,https://drive.google.com/file/d/1O6LOTJ16Cv1N0ix3plY5rAhd6Uc_PEtn/view,,r7024628516503554291,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
+KS-2026-019,kunde,KS,2026,19,268,This is Marketing,Katrin Stockinger,16.11.2026,1630.72,309.84,1940.56,EUR,DE,entwurf,,https://drive.google.com/file/d/1cbIy4USgHhW5LCxiU3_P6YAhGQPOtshc/view,,r-805946679130020520,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
 LL-2026-001,fee,LL,2026,1,132,Klosterfrau Healthcare Group,Tanja Bülter,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)
 LL-2026-002,fee,LL,2026,2,133,Adobe,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)
 LL-2026-003,fee,LL,2026,3,136,RAUSCH,Daniel Reith,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_ll)

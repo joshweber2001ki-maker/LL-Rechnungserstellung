@@ -369,7 +369,15 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
     else:
         items.append({"title": title, "lines": sublines, "qty": 1, "unit_price": f(creator_net), "amount": f(creator_net)})
         items.append({"title": fee_label, "qty": 1, "unit_price": f(fee_net), "amount": f(fee_net)})
-        if expense_items:
+        if len(expense_items) >= 4:
+            # Ab 4 Belegen stehen die Einzelbelege nur in der Anlage-Aufstellung; auf der Rechnung eine Sammelposition
+            # (Regel 6, Josh 16.11.2026).
+            n = len(expense_items)
+            items.append({"title": ("Weiterberechnete Auslagen (netto)" if lang == "de" else "Reimbursed expenses (net)"),
+                          "lines": [(f"{n} Belege · Aufstellung siehe Anlage, Belege im Anhang" if lang == "de"
+                                     else f"{n} receipts · see schedule in the annex, receipts attached")],
+                          "qty": 1, "unit_price": f(expenses_net), "amount": f(expenses_net)})
+        elif expense_items:
             items.append({"kind": "group", "title": ("Weiterberechnete Auslagen (netto, Belege im Anhang)" if lang == "de" else "Reimbursed expenses (net, receipts attached)"), "lines": []})
             for e in expense_items:
                 items.append({"kind": "sub", "title": e["title"], "qty": 1, "unit_price": f(e["net"]), "amount": f(e["net"])})
