@@ -180,7 +180,8 @@ in beiden Betriebsmodi.
 - Eine Nummer wird erst beim Anlegen des Entwurfs reserviert, nicht schon bei einem Stopp-Befund. Wird der Entwurf verworfen,
   bleibt die Zeile mit Status `verworfen` + Grund (Lücke erklärbar). Nächster Entwurf nimmt die nächste freie
   Nummer – eine verworfene Nummer wird **nicht** wiederverwendet.
-- Ab Status `gesendet` ist die Rechnung unveränderlich: Änderung nur per Storno + Neuausstellung (Regel 9).
+- Ab Status `gesendet` ist die Rechnung unveränderlich: Änderung nur per Storno + Neuausstellung (Regel 9). Gilt nur für
+  Kundenrechnungen; LL-Fee-Rechnungen werden immer korrigiert (Regel 9).
 - Idempotenz: Kalender-Event-ID und Sheet-Nummer werden im Register gespeichert. Gibt es für die
   Sheet-Nummer bereits eine Kundenrechnung mit Status ≠ `verworfen`/`storniert` ⇒ keine neue, nur Hinweis.
 - Marina Ziblis: max. eine Rechnung à 5.000 € netto pro Tag ⇒ weitere auf Folgetage verteilen (Rechnungsdatum).
@@ -194,8 +195,11 @@ in beiden Betriebsmodi.
 - Ersatzrechnung = neue Nummer, Kopfzeile „Ersetzt Rechnung: <alt>" / „Replaces invoice: <alt>", bei bereits
   geleisteter Zahlung Verrechnungstext: „Your payment of X has been offset against the total amount of this
   invoice (Y). No payment required – the difference of Z will be refunded to you." (bzw. Restbetrag fällig).
-- Fee-Rechnung folgt immer der Kundenrechnung: wird die Kundenrechnung storniert/ersetzt, wird die LL-Rechnung
-  ebenfalls storniert und neu gestellt (Beispiel DR-024 → DR-031/032, LL-103 → LL-150/151).
+- Fee-Rechnung folgt immer der Kundenrechnung, wird aber **nie storniert, sondern korrigiert** (Regel vom 16.11.2026):
+  Wird die Kundenrechnung storniert/ersetzt, bekommt die bestehende LL-Rechnung dieselbe Nummer, angepasste
+  Beträge/Positionen und den Verweis auf die neue Kundenrechnungsnummer; PDF wird ersetzt (alte Datei in den
+  Papierkorb), Registerzeile aktualisiert. Grund: Fee-Rechnungen werden den Creator:innen erst deutlich später
+  zugänglich gemacht. (Früher Storno + Neu, z. B. LL-103 → LL-150/151.)
 - Register: Original bekommt Status `storniert` + Referenz auf Storno; Storno und Ersatz referenzieren das Original.
 
 ## 10. Fee-Rechnung (LL-)
@@ -328,6 +332,8 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 
 ## Änderungsprotokoll
 
+- 2026-11-16 · Regel 9: LL-Fee-Rechnungen werden nie storniert, sondern unter derselben Nummer korrigiert (Creator:innen
+  erhalten sie erst deutlich später). Angewendet auf LL-2026-162; LL-2026-164/165 verworfen (Josh).
 - 2026-11-16 · Neu Regel 4a: MwSt- und KSK-Spalten im Sheet beide leer/0 ⇒ weder MwSt noch KSK berechnen (auch keine
   KSK-Umlage im Ausland, kein KSK auf der Fee-Rechnung), Josh informieren. Anlass: KS-2026-018 Chat GPT mit KSK
   verschickt, Storno KS-2026-020 + Ersatz KS-2026-021 (Josh).

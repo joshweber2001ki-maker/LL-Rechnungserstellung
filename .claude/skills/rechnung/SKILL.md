@@ -200,10 +200,12 @@ Nach den Rechnungen, vor der Zusammenfassung. `git pull` und `data/sheet.json` s
 - **`rechnung storno <Nr> "<Grund>" [neu]`** – Original-JSON aus `out/`-Historie bzw. aus dem Register-Drive-Link
   rekonstruieren (PDF lesen, falls kein JSON vorliegt), `cli storno` mit nächster Nummer im selben Kreis, Register:
   Original → `storniert` + `referenz`, Storno-Zeile `typ=storno`. Bei `neu`: Ersatzrechnung (Regel 9) mit
-  `replaces`, Verrechnungstext, neue Nummer; **Fee-Rechnung immer mitziehen** (Storno + Neu). PDFs ablegen,
+  `replaces`, Verrechnungstext, neue Nummer; **Fee-Rechnung immer mitziehen, aber korrigieren statt stornieren** (gleiche LL-Nummer, Beträge/Verweis auf neue
+  Kundenrechnung anpassen, neu rendern, PDF in Drive ersetzen, Register aktualisieren – Regel 9). PDFs ablegen,
   Entwürfe anlegen, zusammenfassen.
 - **`rechnung korrigieren <Nr> "<was>"`** – Status `entwurf`: JSON ändern, neu rendern, PDF in Drive ersetzen
-  (alte Datei `trash_file`), Register aktualisieren. Status `gesendet`: ⇒ Storno + Neu.
+  (alte Datei `trash_file`), Register aktualisieren. Status `gesendet`: ⇒ Storno + Neu – gilt nur für
+  Kundenrechnungen; LL-Fee-Rechnungen werden in jedem Status korrigiert (Regel 9).
 - **`rechnung regel "<Text>"`** – an `rules/rechnungsregeln.md` unter „Änderungsprotokoll" mit Datum anhängen
   und, wenn es eine bestehende Regel ändert, den betreffenden Abschnitt anpassen. Commit `regel: <Kurzfassung>`.
   Betrifft die Regel eine Creatorin/einen Kunden ⇒ zusätzlich `creators.yaml` / `customers.yaml`.
