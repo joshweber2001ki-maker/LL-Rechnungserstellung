@@ -310,6 +310,17 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         findings.append({"level": "stop", "text": f"Steuerfall {tax_case} (Kunde {customer_country}), aber im Sheet ist MwSt {mwst_flag} € eingetragen."})
     if tax_case == "DE" and mwst_flag is not None and mwst_flag == 0:
         findings.append({"level": "stop", "text": "Kunde in Deutschland, aber im Sheet MwSt = 0,00 € – Steuerfall klären."})
+    # Sonderfall (Regel 4a, 16.11.2026): MwSt- UND KSK-Spalten im Sheet leer/0 ⇒ weder MwSt noch KSK berechnen, Josh informieren.
+    def _leer_oder_null(v):
+        v = str(v or "").strip()
+        return v in ("", "-", "–") or parse_amount(v) == 0
+    ohne_mwst_ksk = (all(_leer_oder_null(row.get(k)) for k in ("mwst_creator", "mwst_gesamt"))
+                     and all(_leer_oder_null(row.get(k)) for k in ("ksk_einnahme", "ksk_abgabe")))
+    if ohne_mwst_ksk:
+        if tax_case in ("EU", "DRITTLAND"):
+            findings.append({"level": "warn", "text": "Sonderfall: MwSt und KSK im Sheet leer/0 – Rechnung ohne MwSt und ohne KSK-Umlage erstellt (Regel 4a). Bitte kurz bestätigen."})
+        elif tax_case == "DE":
+            findings.append({"level": "stop", "text": "Sonderfall: MwSt und KSK im Sheet leer/0, Kunde aber in Deutschland – Rechnung ohne MwSt nur nach Rücksprache (Regel 4a)."})
     if tax_case == "EU" and not rec["ids"]:
         findings.append({"level": "stop", "text": "EU-Kunde ohne USt-ID im Adressblock (Reverse Charge braucht die ID)."})
     if any(x["level"] == "stop" for x in findings):
@@ -391,20 +402,23 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
                       {"label": "BRUTTOSUMME:", "value": f(gross), "style": "grand"}]
             notes = [hinweis, ksk_note]
         else:  # EU / DRITTLAND
-            ksk = q(subtotal * ksk_rate)
+            ksk = Decimal("0") if ohne_mwst_ksk else q(subtotal * ksk_rate)
             if expense_items:
                 net = subtotal + ksk + expenses_net
-                totals = [{"label": "subtotal:", "value": f(subtotal)},
-                          {"label": "KSK (4,9 % of subtotal):", "value": f(ksk)},
+                totals = [{"label": "subtotal:", "value": f(subtotal)}] + ([] if ohne_mwst_ksk else [
+                          {"label": "KSK (4,9 % of subtotal):", "value": f(ksk)}]) + [
                           {"label": "expenses (net):", "value": f(expenses_net)},
                           {"label": "net amount:", "value": f(net), "style": "sub"},
                           {"label": "VAT (reverse charge):", "value": 0.0},
                           {"label": "total amount:", "value": f(net), "style": "grand"}]
             else:
                 net = subtotal + ksk
-                totals = [{"label": "net amount:", "value": f(subtotal), "style": "sub"},
-                          {"label": "KSK (4,9 %):", "value": f(ksk)},
-                          {"label": "total amount:", "value": f(net), "style": "grand"}]
+                totals = ([{"label": "net amount:", "value": f(subtotal), "style": "sub"},
+                           {"label": "VAT (reverse charge):", "value": 0.0},
+                           {"label": "total amount:", "value": f(net), "style": "grand"}] if ohne_mwst_ksk else
+                          [{"label": "net amount:", "value": f(subtotal), "style": "sub"},
+                           {"label": "KSK (4,9 %):", "value": f(ksk)},
+                           {"label": "total amount:", "value": f(net), "style": "grand"}])
             gross = net
             notes = [hinweis]
             if tax_case == "DRITTLAND":
@@ -436,7 +450,7 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         }]
 
     # --- Fee-Rechnung (immer Deutsch)
-    fee_doc = build_fee_doc(row, cinfo, ccfg, tax_case, fee_net, q((creator_net + fee_net) * ksk_rate) if tax_case in ("EU", "DRITTLAND") else None,
+    fee_doc = build_fee_doc(row, cinfo, ccfg, tax_case, fee_net, (q((creator_net + fee_net) * ksk_rate) if not ohne_mwst_ksk else None) if tax_case in ("EU", "DRITTLAND") else None,
                             number_fee, number_customer, issue_date, year, company)
 
     meta = {
@@ -465,17 +479,18 @@ def build_fee_doc(row, cinfo, ccfg, tax_case, fee_net, ksk_passthrough, number_f
               "qty": 1, "unit_price": f(fee_net), "amount": f(fee_net)}]
     notes = []
     if tax_case == "DRITTLAND":
-        items.append({"title": "KSK (4,9%)", "qty": 1, "unit_price": f(ksk_passthrough), "amount": f(ksk_passthrough)})
-        net = fee_net + ksk_passthrough
+        if ksk_passthrough:
+            items.append({"title": "KSK (4,9%)", "qty": 1, "unit_price": f(ksk_passthrough), "amount": f(ksk_passthrough)})
+        net = fee_net + (ksk_passthrough or 0)
         totals = [{"label": "GESAMTNETTOSUMME:", "value": f(net), "style": "sub"}, {"label": "GESAMTBETRAG:", "value": f(net), "style": "grand"}]
-        notes = [{"text": f"Steuerfreie Vermittlungsleistung gemäß § 4 Nr. 5 Buchst. c UStG. Der vermittelte Umsatz (Rechnung {number_customer}) wird im Drittlandsgebiet ausgeführt. Die Position KSK (4,9%) entspricht der in Rechnung {number_customer} ausgewiesenen Künstlersozialabgabe.", "plain": True}]
+        notes = [{"text": f"Steuerfreie Vermittlungsleistung gemäß § 4 Nr. 5 Buchst. c UStG. Der vermittelte Umsatz (Rechnung {number_customer}) wird im Drittlandsgebiet ausgeführt." + (f" Die Position KSK (4,9%) entspricht der in Rechnung {number_customer} ausgewiesenen Künstlersozialabgabe." if ksk_passthrough else ""), "plain": True}]
         payment = f"Hinweis zur Zahlung: Der Rechnungsbetrag wird mit der Kundenzahlung zu {number_customer} verrechnet. Eine gesonderte Zahlung ist nicht erforderlich."
     elif tax_case == "CREATOR_AT":
         totals = [{"label": "NETTOSUMME:", "value": f(fee_net), "style": "sub"}, {"label": "UMSATZSTEUER (0 %)*:", "value": 0.0}, {"label": "RECHNUNGSBETRAG:", "value": f(fee_net), "style": "grand"}]
         notes = [{"text": "* Steuerschuldnerschaft des Leistungsempfängers (Reverse Charge, § 13b UStG / Art. 196 MwStSystRL). Leistungsempfängerin: " + lines[0] + ".", "plain": True}]
         payment = "Hinweis zur Zahlung: Der Rechnungsbetrag wird mit eingehenden Kundenzahlungen verrechnet. Eine gesonderte Zahlung ist nicht erforderlich."
     else:
-        if tax_case == "EU":
+        if tax_case == "EU" and ksk_passthrough:
             items.append({"title": "KSK (4,9%)", "qty": 1, "unit_price": f(ksk_passthrough), "amount": f(ksk_passthrough)})
             base = fee_net + ksk_passthrough
         else:

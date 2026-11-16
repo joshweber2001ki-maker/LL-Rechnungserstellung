@@ -27,6 +27,9 @@ COLUMNS = {
     "belege": ["Belege"],
     "mwst_creator": ["MwSt 19% #3"],               # Spalte O (nach Belege) – das "Ausland"-Indiz
     "verguetung_ll": ["Vergütung L&L"],
+    "mwst_gesamt": ["Mwst Gesamt", "MwSt Gesamt"],
+    "ksk_einnahme": ["KSK-Einnahme"],
+    "ksk_abgabe": ["KSK-Abgabe"],
     "brutto_sheet": ["Vergütung Gesamt (Rechnunsbetrag)", "Vergütung Gesamt (Rechnungsbetrag)"],
     "rechnung_status": ["Rechnung Status"],
     "faellig": ["Rechnung fällig am"],

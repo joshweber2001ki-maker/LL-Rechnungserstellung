@@ -76,9 +76,18 @@ Konsistenzprüfung (Vorprüfung): Sheet-Spalte „MwSt 19%" = 0 muss zum Fall EU
 Sprache: Fall DE/CREATOR-AT ⇒ Deutsch, EU/DRITTLAND ⇒ Englisch, es sei denn Sheet-Spalte „Sprache"
 sagt explizit etwas anderes (dann Sheet).
 
+## 4a. Sonderfall: MwSt und KSK im Sheet leer/0 (Regel vom 16.11.2026)
+
+- Sind im Finanzsheet für die Zeile **sowohl** die MwSt-Spalten (`MwSt 19%` nach Belege, `Mwst Gesamt`) **als auch** die
+  KSK-Spalten (`KSK-Einnahme`, `KSK-Abgabe`) leer, `-` oder 0,00 €, wird **weder MwSt noch KSK** berechnet – auch keine
+  KSK-Umlage für ausländische Kunden (Regel 5) und kein KSK-Durchreichen auf der Fee-Rechnung (Regel 10).
+- Das ist ein seltener, bewusster Sonderfall (derzeit nur Chat GPT / Benchmark Media). Josh wird bei jedem Auftreten
+  informiert (Befund in Zusammenfassung/Chat), die Rechnung wird trotzdem erzeugt.
+- Kunde in Deutschland mit diesem Muster ⇒ kein Entwurf, Rückfrage (Rechnung ohne MwSt nur nach Rücksprache).
+
 ## 5. KSK-Umlage (Regel vom 26.10.2026)
 
-- **Ausländischer Kunde** (EU + Drittland, Creatorin DE): KSK 4,9 % wird auf der Kundenrechnung als eigene
+- **Ausländischer Kunde** (EU + Drittland, Creatorin DE), außer Sonderfall Regel 4a: KSK 4,9 % wird auf der Kundenrechnung als eigene
   Zeile im Summenblock berechnet. Bemessung = Creator-Honorar + Management Fee (**nicht** auf Auslagen).
 - **Deutscher Kunde**: keine Umlage, nur der Hinweistext.
 - Creatorin AT: keine KSK.
@@ -319,6 +328,9 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 
 ## Änderungsprotokoll
 
+- 2026-11-16 · Neu Regel 4a: MwSt- und KSK-Spalten im Sheet beide leer/0 ⇒ weder MwSt noch KSK berechnen (auch keine
+  KSK-Umlage im Ausland, kein KSK auf der Fee-Rechnung), Josh informieren. Anlass: KS-2026-018 Chat GPT mit KSK
+  verschickt, Storno KS-2026-020 + Ersatz KS-2026-021 (Josh).
 - 2026-11-16 · Regel 6: Ab 4 Belegen (Anlage-Seite) keine Einzelbelege mehr in den Rechnungspositionen, nur eine
   Sammelposition „Weiterberechnete Auslagen (netto)“ mit Verweis auf die Anlage – spart Platz, keine Doppelung (Josh).
 - 2026-11-16 · Regel 3: Alle nachvollziehbaren Nummern aus dem Feld „Rechnungsempfänger“ (Company number, VAT ID,
