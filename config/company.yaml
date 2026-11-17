@@ -24,6 +24,19 @@ bank:
 ksk_rate: 0.049
 vat_rate: 0.19
 
+# Rechnungsdesign ab 17.11.2026 (Regel 16)
+# Punkt 2: ab diesem Netto-Gesamthonorar (Creator + Fee, ohne Auslagen/KSK) keine eigene Zeile „Management Fee“
+# auf der Kundenrechnung, sondern eine Zeile Gesamthonorar. null = immer getrennt. Je Creator:in in creators.yaml
+# mit gleichem Schlüssel überschreibbar.
+gesamthonorar_ab_netto: 10000
+# Punkt 4: Zahlstellen-Klausel unter der Zahlungsfrist. Wortlaut nach anwaltlicher Prüfung hier anpassen;
+# aktiv: false blendet nur die Klausel aus (Fußzeile „Zahlstelle / Kontoverbindung“ bleibt).
+# Platzhalter: {ll} / {ll_en} = Locker & Lauter, {von} = „der <Gesellschaft>“ bzw. „von <Name>“, {name} = Name.
+zahlstelle:
+  aktiv: true
+  text_de: "Zahlbar mit schuldbefreiender Wirkung an die {ll} als Zahlstelle {von} – Kontoverbindung siehe unten."
+  text_en: "Payable with discharging effect to {ll_en} as paying agent of {name} – bank details below."
+
 # Nummernkreise
 numbering:
   fee_prefix: "LL"            # LL-JJJJ-NNN (3-stellig)

@@ -36,3 +36,13 @@
 ```
 Beträge als Zahlen (float), Formatierung übernimmt der Renderer (`1.234,56 €` / `€1,234.56`).
 Negative Beträge für Stornos. `items[].lines` werden kursiv unter dem Titel gesetzt.
+
+## Ergänzung 17.11.2026 (Regel 16)
+
+- `supplier` (optional, nur Kundenrechnungen): `{ "lines": ["Name", "Straße", "PLZ Ort, Land"], "ids": [{"label": "USt-IdNr.", "value": "DE…"}] }`
+  ⇒ Kopfblock „Leistendes Unternehmen“ + „Ausgestellt durch (Abrechnungsstelle)“, Fußzeile „Abrechnungsstelle“ /
+  „Zahlstelle / Kontoverbindung“. Fehlt das Feld (Fee-Rechnungen, Dokumente vor dem 17.11.2026), rendert die Vorlage
+  das alte Layout mit L&L als „Rechnungsaussteller“.
+- `payment_note` (optional): Zahlstellen-Klausel, normal gesetzt unter `payment_text`.
+- `notes[]`: Einträge dürfen `{ "text", "plain", "role" }` sein; `role: "issuer"` = Hinweis „im Namen und für Rechnung“
+  (bleibt auf Stornorechnungen erhalten).

@@ -249,6 +249,56 @@ def dmy(d):
     return d.strftime("%d.%m.%Y")
 
 
+# ---------------------------------------------------------------- Leistendes Unternehmen (Regel 16)
+
+COMPANY_FORM = re.compile(r"\b(UG|GmbH|AG|KG|OHG|GbR|Ltd\.?|SE)\b")
+TAXNO_PATTERN = re.compile(r"(?:Steuer(?:nummer|-Nr\.?)|tax number)\s*:?\s+([0-9][0-9 /]*[0-9])", re.I)
+VATID_PATTERN = re.compile(r"(?:USt\.?-?\s?Id(?:Nr)?\.?|UID(?:-Nr\.?)?|VAT ID)\s*:?\s+([A-Z]{2}[A-Z0-9]{6,})", re.I)
+COUNTRY_DE_EN = {"deutschland": "Germany", "österreich": "Austria", "schweiz": "Switzerland"}
+
+
+def money_txt(v, lang):
+    s = f"{float(q(v)):,.2f}"
+    if lang == "de":
+        return s.replace(",", "X").replace(".", ",").replace("X", ".") + " €"
+    return "€" + s
+
+
+def build_supplier(cinfo, ccfg, lang):
+    """Kopfblock „Leistendes Unternehmen“: Name, Anschrift, Steuernummer/USt-IdNr. der Creatorin bzw. ihrer Gesellschaft.
+    Steuernummern stehen im Sheet nur im Hinweistext (Tab Creator-Adressen) und werden dort herausgelesen."""
+    findings = []
+    lines = [l.strip() for l in str(cinfo["adresse"]).split("\n") if l.strip()]
+    country_cfg = ccfg.get("country", "DE")
+    land = lines.pop() if (len(lines) > 1 and lines[-1].lower() in COUNTRY_NAMES) else {"DE": "Deutschland", "AT": "Österreich"}.get(country_cfg, country_cfg)
+    if lang == "en":
+        land = COUNTRY_DE_EN.get(land.lower(), land)
+    if len(lines) > 1:
+        lines[-1] = f"{lines[-1]}, {land}"
+    name = lines[0] if lines else ""
+    de, en = str(cinfo.get("hinweis_de") or ""), str(cinfo.get("hinweis_en") or "")
+    tax = TAXNO_PATTERN.search(de) or TAXNO_PATTERN.search(en)
+    vat_de, vat_en = VATID_PATTERN.search(de), VATID_PATTERN.search(en)
+    vat = (vat_de or vat_en)
+    vat = vat.group(1).upper() if vat else None
+    if vat_de and vat_en and vat_de.group(1).upper() != vat_en.group(1).upper():
+        findings.append({"level": "stop", "text": f"USt-IdNr. von {name} im Tab Creator-Adressen widersprüchlich: deutscher Text {vat_de.group(1)}, englischer Text {vat_en.group(1)}."})
+    if vat and not re.match(r"^(DE\d{9}|ATU\d{8})$", vat) and vat[:2] in ("DE", "AT"):
+        findings.append({"level": "warn", "text": f"USt-IdNr. von {name} hat ein ungültiges Format ({vat}) – bitte im Tab Creator-Adressen prüfen."})
+    ids = []
+    if tax:
+        ids.append({"label": "Steuernummer" if lang == "de" else "Tax number", "value": tax.group(1).strip()})
+    if vat:
+        ids.append({"label": ("UID-Nr." if vat.startswith("ATU") else "USt-IdNr.") if lang == "de" else "VAT ID", "value": vat})
+    entity = ccfg.get("entity", "person")
+    is_company = entity in ("ug", "gmbh")
+    if COMPANY_FORM.search(name) and not is_company:
+        findings.append({"level": "warn", "text": f"Adresse im Tab Creator-Adressen lautet auf eine Gesellschaft ({name}), in creators.yaml steht aber entity: {entity} – KSK-Kostenumlage (Regel 16) wird NICHT berechnet. Bitte bestätigen."})
+    if is_company and not COMPANY_FORM.search(name):
+        findings.append({"level": "stop", "text": f"creators.yaml nennt entity: {entity}, die Adresse im Tab Creator-Adressen lautet aber auf '{name}' statt auf die Gesellschaft."})
+    return {"name": name, "lines": lines, "ids": ids, "is_company": is_company}, findings
+
+
 # ---------------------------------------------------------------- Hauptfunktion
 
 def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWURF", number_fee="ENTWURF",
@@ -273,8 +323,8 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
     if not cinfo or not cinfo.get("adresse"):
         findings.append({"level": "stop", "text": f"Creatorin '{creator_name}' fehlt im Tab 'Finance I Creator-Adressen'."})
         return {"findings": findings, "tax_case": None, "meta": {}, "customer": None, "fee": None}
-    if ccfg.get("entity") == "ug" or "SONDERREGEL" in str(ccfg.get("notes", "")):
-        findings.append({"level": "stop", "text": f"{creator_name}: Sonderregel/UG – manuelle Freigabe nötig ({ccfg.get('notes', '')[:120]})."})
+    if "SONDERREGEL" in str(ccfg.get("notes", "")):
+        findings.append({"level": "stop", "text": f"{creator_name}: Sonderregel – manuelle Freigabe nötig ({ccfg.get('notes', '')[:120]})."})
 
     # --- Beträge
     cur = currency_of(row["verguetung_gesamt"])
@@ -342,6 +392,13 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         if not i["label"]:
             i["label"] = "VAT" if lang == "en" else "USt-IdNr."
 
+    # --- Leistendes Unternehmen im Kopf (Regel 16)
+    supplier, sup_findings = build_supplier(cinfo, ccfg, lang)
+    findings += sup_findings
+    if any(x["level"] == "stop" for x in findings):
+        return {"findings": findings, "tax_case": tax_case, "meta": {}, "customer": None, "fee": None}
+    is_company = supplier["is_company"]
+
     # --- Auslagen
     expense_items = []
     expenses_net = Decimal("0")
@@ -360,7 +417,29 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
     ksk_rate = Decimal(str(company["ksk_rate"]))
     vat_rate = Decimal(str(company["vat_rate"]))
     fee_label = "Management Fee" if lang == "de" else "Management fee"
-    hinweis = cinfo["hinweis_de"] if lang == "de" else cinfo["hinweis_en"]
+    # Hinweis „im Namen und für Rechnung“ (Regel 16): Anschrift und Steuernummern stehen jetzt im Kopf.
+    ll_de, ll_en = company["name"], company["name_en"]
+    sname = supplier["name"]
+    if lang == "de":
+        hinweis_txt = (f"Diese Rechnung wird im Namen und für Rechnung {'der' if is_company else 'von'} {sname} durch die {ll_de} "
+                       f"als Abrechnungsstelle ausgestellt. " +
+                       (f"Leistende Unternehmerin im Sinne des § 14 UStG ist die {sname}." if is_company
+                        else f"Leistendes Unternehmen im Sinne des § 14 UStG ist {sname}."))
+    else:
+        hinweis_txt = (f"This invoice is issued in the name and for the account of {sname} by {ll_en} acting as billing agent. "
+                       f"The supplier within the meaning of Sec. 14 of the German VAT Act (UStG) is {sname}.")
+    hinweis = {"text": hinweis_txt, "plain": True, "role": "issuer"}
+    if not supplier["ids"]:
+        # Steuernummer/USt-IdNr. nicht erkennbar ⇒ alten Sheet-Hinweis zusätzlich behalten (enthält die Angaben ggf. in anderer Form)
+        findings.append({"level": "warn", "text": f"Steuernummer/USt-IdNr. von {sname} im Tab Creator-Adressen nicht erkennbar – Kopfblock ohne Steuernummer, alter Hinweistext zusätzlich übernommen."})
+        hinweis_alt = cinfo["hinweis_de"] if lang == "de" else cinfo["hinweis_en"]
+    else:
+        hinweis_alt = None
+    # Gesamthonorar in einer Zeile ab Schwelle (Regel 16, Punkt 2)
+    schwelle = ccfg.get("gesamthonorar_ab_netto", company.get("gesamthonorar_ab_netto"))
+    one_line = schwelle is not None and (creator_net + fee_net) >= Decimal(str(schwelle))
+    # KSK-Kostenumlage als eigene Position, wenn die Rechnung im Namen einer UG/GmbH gestellt wird (Regel 16, Punkt 1)
+    ksk_umlage = None
     ksk_note = ("Bitte beachten Sie, die Künstlersozialabgaben sind in der jeweils festgelegten Höhe (derzeit 4,9%), vom Verwerter bzw. Veranstalter zusätzlich zum oben genannten Nettohonorar an die KSK direkt abzuführen."
                 if lang == "de" else
                 "Please note that the artists' social security contributions must be paid directly to the Künstlersozialkasse (KSK) by the exploiter or event organizer in the applicable amount, currently 4.9%, in addition to the net fee stated above.")
@@ -376,10 +455,21 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         notes = [hinweis,
                  f"* Die Leistung ist in Österreich nicht steuerbar; Leistungsort ist {('die ' if customer_country == 'CH' else '')}{land_de} (§ 3a Abs. 6 UStG AT). Die Steuerschuld geht auf den Leistungsempfänger über" + (" (Bezugsteuer, Art. 45 MWSTG)." if customer_country == "CH" else " (Reverse Charge)."),
                  f"Service not subject to Austrian VAT (place of supply: {land_en}). The recipient is liable to account for VAT (reverse charge)."]
+        notes = notes[1:] + [hinweis]
         gross = net
     else:
-        items.append({"title": title, "lines": sublines, "qty": 1, "unit_price": f(creator_net), "amount": f(creator_net)})
-        items.append({"title": fee_label, "qty": 1, "unit_price": f(fee_net), "amount": f(fee_net)})
+        if one_line:
+            items.append({"title": title, "lines": sublines + ["Gesamthonorar inkl. Kampagnenmanagement" if lang == "de" else "Total fee incl. campaign management"],
+                          "qty": 1, "unit_price": f(creator_net + fee_net), "amount": f(creator_net + fee_net)})
+        else:
+            items.append({"title": title, "lines": sublines, "qty": 1, "unit_price": f(creator_net), "amount": f(creator_net)})
+            items.append({"title": fee_label, "qty": 1, "unit_price": f(fee_net), "amount": f(fee_net)})
+        if is_company and not ohne_mwst_ksk:
+            ksk_umlage = q((creator_net + fee_net) * ksk_rate)
+            satz = f"{(ksk_rate * 100).normalize()}".replace(".", "," if lang == "de" else ".")
+            items.append({"title": (f"Kostenumlage Künstlersozialabgabe ({satz} % auf {money_txt(creator_net + fee_net, lang)})" if lang == "de"
+                                    else f"Cost allocation for artists' social security contribution (KSK, {satz} % of {money_txt(creator_net + fee_net, lang)})"),
+                          "qty": 1, "unit_price": f(ksk_umlage), "amount": f(ksk_umlage)})
         if len(expense_items) >= 4:
             # Ab 4 Belegen stehen die Einzelbelege nur in der Anlage-Aufstellung; auf der Rechnung eine Sammelposition
             # (Regel 6, Josh 16.11.2026).
@@ -393,17 +483,26 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
             for e in expense_items:
                 items.append({"kind": "sub", "title": e["title"], "qty": 1, "unit_price": f(e["net"]), "amount": f(e["net"])})
         subtotal = creator_net + fee_net
+        ksk_hinweis = ("Hinweis zur Künstlersozialabgabe: Die Kostenumlage ist Teil des Entgelts und unterliegt der Umsatzsteuer." if lang == "de"
+                       else "Note on the artists' social security contribution (KSK): the cost allocation is part of the consideration for the service and is treated for VAT purposes in the same way as the fee.")
         if tax_case == "DE":
-            net = subtotal + expenses_net
+            net = subtotal + (ksk_umlage or 0) + expenses_net
             vat = q(net * vat_rate)
             gross = net + vat
             totals = [{"label": "NETTOSUMME:", "value": f(net), "style": "sub"},
                       {"label": "zzgl. MwSt. (19%)", "value": f(vat)},
                       {"label": "BRUTTOSUMME:", "value": f(gross), "style": "grand"}]
-            notes = [hinweis, ksk_note]
+            # UG/GmbH: Zahlungen an eine Gesellschaft sind beim Kunden nicht KSK-pflichtig ⇒ kein „vom Verwerter abzuführen“-Hinweis
+            notes = ([ksk_hinweis] if ksk_umlage else []) + ([] if is_company else [ksk_note]) + [hinweis]
         else:  # EU / DRITTLAND
             ksk = Decimal("0") if ohne_mwst_ksk else q(subtotal * ksk_rate)
-            if expense_items:
+            if is_company:
+                # KSK steht als Position in der Tabelle und ist Teil des Nettobetrags
+                net = subtotal + (ksk_umlage or 0) + expenses_net
+                totals = [{"label": "net amount:", "value": f(net), "style": "sub"},
+                          {"label": "VAT (reverse charge):", "value": 0.0},
+                          {"label": "total amount:", "value": f(net), "style": "grand"}]
+            elif expense_items:
                 net = subtotal + ksk + expenses_net
                 totals = [{"label": "subtotal:", "value": f(subtotal)}] + ([] if ohne_mwst_ksk else [
                           {"label": "KSK (4,9 % of subtotal):", "value": f(ksk)}]) + [
@@ -420,7 +519,7 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
                            {"label": "KSK (4,9 %):", "value": f(ksk)},
                            {"label": "total amount:", "value": f(net), "style": "grand"}])
             gross = net
-            notes = [hinweis]
+            notes = []
             if tax_case == "DRITTLAND":
                 land_en = COUNTRY_LABEL.get(customer_country, (None, customer_country))[1]
                 notes.append(f"Not subject to German VAT – the place of supply is {land_en} (Sec. 3a (2) German VAT Act). Reverse Charge Procedure applies. The customer is required to account for the VAT.")
@@ -428,17 +527,30 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
                 notes.append("Reverse Charge Procedure applies. The customer is required to account for the VAT.")
             if expense_items:
                 notes[-1] = "Expenses are charged at net cost as part of the consideration for the service; receipts attached. " + notes[-1].replace("Reverse Charge Procedure applies.", "Reverse Charge Procedure applies to the full amount.")
+            if ksk_umlage:
+                notes.append(ksk_hinweis)
+            notes.append(hinweis)
+    if hinweis_alt:
+        notes.append(hinweis_alt)
 
     due = due_date(issue_date, row.get("zahlungsfrist"), company["default_payment_days"])
     payment = (f"Bitte begleichen Sie den Rechnungsbetrag bis spätestens {dmy(due)}." if lang == "de"
                else f"We kindly ask you to settle the invoice by {dmy(due)}.")
     period = month_label(row["monat"], year, lang)
+    # Zahlstellen-Klausel (Regel 16, Punkt 4) – Wortlaut in company.yaml, damit er nach anwaltlicher Prüfung an einer Stelle geändert wird
+    zs = company.get("zahlstelle") or {}
+    payment_note = ""
+    if zs.get("aktiv"):
+        payment_note = (zs["text_de"] if lang == "de" else zs["text_en"]).format(
+            ll=ll_de, ll_en=ll_en, name=sname, von=(f"der {sname}" if is_company else f"von {sname}"))
 
     customer_doc = {
         "doc_type": "invoice", "category": "customer", "lang": lang, "currency": cur,
         "number": number_customer, "date": dmy(issue_date), "service_period": period,
         "recipient": {"lines": rec["lines"], "ids": rec["ids"], "refs": rec["refs"]},
-        "items": items, "totals": totals, "payment_text": payment, "highlights": highlights, "notes": notes,
+        "supplier": {"lines": supplier["lines"], "ids": supplier["ids"]},
+        "items": items, "totals": totals, "payment_text": payment, "payment_note": payment_note,
+        "highlights": highlights, "notes": notes,
     }
     if len(expense_items) >= 4:
         customer_doc["annexes"] = [{
@@ -450,7 +562,7 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         }]
 
     # --- Fee-Rechnung (immer Deutsch)
-    fee_doc = build_fee_doc(row, cinfo, ccfg, tax_case, fee_net, (q((creator_net + fee_net) * ksk_rate) if not ohne_mwst_ksk else None) if tax_case in ("EU", "DRITTLAND") else None,
+    fee_doc = build_fee_doc(row, cinfo, ccfg, tax_case, fee_net, (q((creator_net + fee_net) * ksk_rate) if not ohne_mwst_ksk else None) if (tax_case in ("EU", "DRITTLAND") and not is_company) else None,
                             number_fee, number_customer, issue_date, year, company)
 
     meta = {
@@ -459,6 +571,8 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         "customer_country": customer_country, "net": f(net), "gross": f(gross), "fee_net": f(fee_net),
         "kontakt": row.get("kontakt", "").strip(), "ansprechpartner": row.get("ansprechpartner", "").strip(),
         "handles": cinfo.get("handles", []), "due": dmy(due), "issue_date": dmy(issue_date),
+        "entity": ccfg.get("entity", "person"), "gesamthonorar_zeile": bool(one_line or tax_case == "CREATOR_AT"),
+        "ksk_umlage": f(ksk_umlage) if ksk_umlage else None,
         "already_invoiced": {"creator": row.get("rechnung_creator", ""), "ll": row.get("rechnung_ll", "")},
     }
     sheet_gross = parse_amount(row.get("brutto_sheet"))
@@ -533,6 +647,8 @@ def cancellation_doc(original, number, issue_date, reason, replacement=None, lan
         txt = f"Reason for cancellation: {reason}"
         if replacement:
             txt += f" The service is re-invoiced with invoice {replacement}."
-    d["notes"] = [{"text": txt, "plain": True}] + [n for n in original.get("notes", []) if (n["text"] if isinstance(n, dict) else n).startswith(("Hinweis:", "Note:"))]
+    d["notes"] = [{"text": txt, "plain": True}] + [n for n in original.get("notes", []) if (isinstance(n, dict) and n.get("role") == "issuer")
+                                                         or (n["text"] if isinstance(n, dict) else n).startswith(("Hinweis:", "Note:"))]
+    d["payment_note"] = ""
     d["annexes"] = []
     return d

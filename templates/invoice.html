@@ -31,6 +31,9 @@
   .party h2 { margin: 0 0 2.5mm 0; font-size: 9.4pt; letter-spacing: 1.4pt; font-weight: bold; text-transform: uppercase; }
   .party .name { font-weight: bold; }
   .party div { white-space: pre-line; }
+  .party .taxid { font-size: 8.2pt; color: var(--muted); margin-top: 0.6mm; }
+  .party .agent { font-size: 8.2pt; color: var(--muted); margin-top: 2.6mm; line-height: 1.4; }
+  .party .agent b { color: var(--text); }
   table.items { width: 100%; border-collapse: collapse; margin-bottom: 4mm; }
   table.items th {
     font-size: 8.4pt; letter-spacing: 0.6pt; text-align: left; font-weight: bold; text-transform: uppercase;
@@ -56,6 +59,7 @@
   .totals tr.grand td { font-weight: bold; border-top: 1.2pt solid var(--rule); padding-top: 1.2mm; }
   .totals tr.sub td { font-weight: bold; }
   .payment { margin-top: 8mm; font-weight: bold; }
+  .payment-note { margin-top: 1.6mm; font-size: 9.2pt; }
   .highlight { margin-top: 4mm; font-weight: bold; }
   .note { margin-top: 3.5mm; font-size: 8.8pt; font-style: italic; color: var(--text); }
   .note.plain { font-style: normal; }
@@ -79,9 +83,18 @@
 <div class="page">
   <div class="parties">
     <div class="party">
+      {% if d.supplier %}
+      <h2>{{ t.supplier }}</h2>
+      {% for line in d.supplier.lines %}<div{% if loop.first %} class="name"{% endif %}>{{ line }}</div>{% endfor %}
+      {% if d.supplier.ids %}<div class="taxid">{% for id in d.supplier.ids %}{{ id.label }}: {{ id.value }}{% if not loop.last %} | {% endif %}{% endfor %}</div>{% endif %}
+      <div class="agent"><b>{{ t.issued_by }}:</b>
+{{ company.name }}
+{{ company.street }}, {{ company.zip }} {{ company.city }}</div>
+      {% else %}
       <h2>{{ t.issuer }}</h2>
       <div class="name">{{ company.name_short }}<br>{{ company.name_suffix }}</div>
       <div>{{ company.street }}<br>{{ company.zip }} {{ company.city }}<br>{{ company.country_de }}</div>
+      {% endif %}
     </div>
     <div class="party right">
       <h2>{{ t.recipient }}</h2>
@@ -143,6 +156,7 @@
   </div>
 
   {% if d.payment_text %}<div class="payment">{{ d.payment_text }}</div>{% endif %}
+  {% if d.payment_note %}<div class="payment-note">{{ d.payment_note }}</div>{% endif %}
   {% for h in d.highlights %}<div class="highlight">{{ h }}</div>{% endfor %}
   {% for n in d.notes %}<div class="note{% if n.plain %} plain{% endif %}">{{ n.text if n.text is defined else n }}</div>{% endfor %}
 </div>

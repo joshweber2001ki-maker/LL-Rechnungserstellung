@@ -24,6 +24,8 @@ TEXTS = {
         "cancels": "Storno zu Rechnung", "replaces": "Ersetzt Rechnung", "dated": "vom",
         "page": "Seite", "of": "von",
         "issuer": "Rechnungsaussteller", "recipient": "Rechnungsempfänger",
+        "supplier": "Leistendes Unternehmen", "issued_by": "Ausgestellt durch (Abrechnungsstelle)",
+        "billing_agent": "Abrechnungsstelle", "paying_agent": "Zahlstelle / Kontoverbindung",
         "col_desc": "Beschreibung", "col_qty": "Anzahl", "col_price": "Preis", "col_sum": "Summe",
         "company_info": "Unternehmensinformationen", "bank_info": "Kontoverbindung",
         "annex": "Anlage", "col_no": "Nr", "col_receipt": "Beleg", "col_pages": "Anhang", "col_gross": "Brutto",
@@ -35,6 +37,8 @@ TEXTS = {
         "cancels": "Cancellation of invoice", "replaces": "Replaces invoice", "dated": "dated",
         "page": "Page", "of": "of",
         "issuer": "Invoice issuer", "recipient": "Invoice recipient",
+        "supplier": "Supplier", "issued_by": "Issued by (billing agent)",
+        "billing_agent": "Billing agent", "paying_agent": "Paying agent / bank details",
         "col_desc": "Description", "col_qty": "Quantity", "col_price": "Price", "col_sum": "Total",
         "company_info": "Company Information", "bank_info": "Bank account details",
         "annex": "Annex", "col_no": "No", "col_receipt": "Receipt", "col_pages": "Attachment", "col_gross": "Gross",
@@ -88,6 +92,8 @@ def prepare(doc):
     doc.setdefault("items", [])
     doc.setdefault("totals", [])
     doc.setdefault("highlights", [])
+    doc.setdefault("supplier", None)       # None = altes Layout (L&L als Rechnungsaussteller), z. B. Fee-Rechnungen
+    doc.setdefault("payment_note", "")
     doc.setdefault("notes", [])
     doc.setdefault("annexes", [])
     doc.setdefault("cancels", None)

@@ -5,7 +5,9 @@
 # Felder:
 #   prefix          Nummernkreis der Kundenrechnung (DR-2026-NNN)
 #   address_key     Name im Tab Creator-Adressen, wenn er vom Sheet-Namen abweicht
-#   entity          person | ug  (ug: Kundenrechnung und Fee-Rechnung laufen auf die UG)
+#   entity          person | ug | gmbh  (ug/gmbh: Kundenrechnung im Namen der Gesellschaft, Fee-Rechnung an sie;
+#                   Kundenrechnung trägt die Position „Kostenumlage Künstlersozialabgabe“ – Regel 16)
+#   gesamthonorar_ab_netto  optional: eigene Schwelle für „eine Zeile Gesamthonorar“ (Standard in company.yaml)
 #   country         Sitzland der Creatorin (DE/AT/...) – steuert Steuertexte
 #   vat_liable      true = umsatzsteuerpflichtig (Auslagen nur netto weiterberechnen)
 #   fee_default     übliche Management Fee in % – nur für die Plausibilitätsprüfung,
@@ -92,10 +94,11 @@ Elena Noemi Miller:
 
 Sophia Tran:
   prefix: ST
-  entity: person
+  entity: gmbh
   country: DE
   vat_liable: true
   fee_default: [25]
+  notes: "Arbeitet über die Spotlight! GmbH (Tab Creator-Adressen). Kundenrechnung im Namen der GmbH, Fee-Rechnung an die GmbH (Regel 16)."
 
 Tanja Bülter:
   prefix: TB
@@ -124,4 +127,4 @@ Julie Lepique:
   fee_default: [20, 25]
   notes: >-
     Arbeitet über JL Studio Compound UG (haftungsbeschränkt). Kundenrechnung im Namen der UG,
-    Fee-Rechnung an die UG. SONDERREGEL FOLGT – bis dahin jede JL-Rechnung zur manuellen Prüfung vorlegen.
+    Fee-Rechnung an die UG. Design und KSK-Kostenumlage nach Regel 16 (Muster JL-2026-001, StB Buhl).

@@ -4,7 +4,7 @@ Diese Datei ist die fachliche Wahrheit für die Rechnungserstellung. Claude lies
 komplett und wendet sie an. Neue Regeln werden unten unter „Änderungsprotokoll" mit Datum ergänzt
 (Befehl `rechnung regel "..."`). Bei Widerspruch gilt die jüngere Regel.
 
-Stand: 2026-11-16 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
+Stand: 2026-11-17 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen mit Josh/Steuerberatung.
 
 ---
 
@@ -40,8 +40,9 @@ Stand: 2026-11-16 · Quelle: bisherige Rechnungen 2026, n8n-Workflow, Absprachen
 | Zahlungsfrist | AF | „14 Tage" ⇒ Fälligkeit = Rechnungsdatum + 14 |
 | Rechnung Creator:in / Rechnung L&L | AH / AI | bereits vergebene Nummern (Dublettencheck, Zählerabgleich) |
 
-Tab „Finance I Creator-Adressen": Adresse (zeilenweise), **Beschreibung (DE)/(EN)** = fertiger
-Hinweistext inkl. Steuernummer/USt-IdNr. (wird 1:1 übernommen), Creator Handle (für die Leistungsbeschreibung).
+Tab „Finance I Creator-Adressen": Adresse (zeilenweise) = Kopfblock „Leistendes Unternehmen“; **Beschreibung
+(DE)/(EN)** = Quelle für Steuernummer und USt-IdNr. (werden herausgelesen, der Text selbst steht seit Regel 16 nicht
+mehr auf der Rechnung); Creator Handle (für die Leistungsbeschreibung).
 
 ## 3. Adressblock des Kunden
 
@@ -68,7 +69,7 @@ Bestimmung: Land des Kunden (Adresse/`customers.yaml`) × Sitzland der Creatorin
 | **EU** | Kunde EU (nicht DE), Creatorin DE | net amount · KSK (4,9 %) · total amount | Creator-Hinweis (EN) + „Reverse Charge Procedure applies. The customer is required to account for the VAT." · USt-ID des Kunden im Adressblock **Pflicht** |
 | **DRITTLAND** | Kunde CH/GB/US/…, Creatorin DE | wie EU | wie EU, zusätzlich „Not subject to German VAT – the place of supply is <Land> (Sec. 3a (2) German VAT Act)." |
 | **CREATOR-AT** | Creatorin AT (Selina) | NETTOSUMME · UMSATZSTEUER (0 %)* · RECHNUNGSBETRAG | österreichischer Text: „Die Leistung ist in Österreich nicht steuerbar; Leistungsort ist <Land> (§ 3a Abs. 6 UStG AT). Die Steuerschuld geht auf den Leistungsempfänger über …" + englische Kurzfassung. **Keine KSK.** Fee ist in Position 1 enthalten („inkl. Management Fee"), keine eigene Fee-Position |
-| **UG** | Creatorin arbeitet über UG (Julie) | wie DE/EU je nach Kunde | Hinweistext nennt die UG. **Bis Sonderregel vorliegt: manuelle Freigabe** |
+| **UG/GmbH** | Creatorin arbeitet über eine Gesellschaft (Julie Lepique, Sophia Tran) | wie DE/EU je nach Kunde, zusätzlich Position „Kostenumlage Künstlersozialabgabe“ | siehe Regel 16 Punkt 1; **kein** „vom Verwerter abzuführen“-Hinweis |
 
 Konsistenzprüfung (Vorprüfung): Sheet-Spalte „MwSt 19%" = 0 muss zum Fall EU/DRITTLAND/CREATOR-AT passen,
 > 0 zum Fall DE. Passt es nicht ⇒ **keine Rechnung, Rückfrage** mit beiden Befunden.
@@ -91,6 +92,8 @@ sagt explizit etwas anderes (dann Sheet).
   Zeile im Summenblock berechnet. Bemessung = Creator-Honorar + Management Fee (**nicht** auf Auslagen).
 - **Deutscher Kunde**: keine Umlage, nur der Hinweistext.
 - Creatorin AT: keine KSK.
+- Rechnung im Namen einer UG/GmbH (`entity: ug|gmbh`): abweichend Regel 16 Punkt 1 – Kostenumlage als eigene
+  Position für **alle** Kunden (auch deutsche), Teil des Entgelts, mit USt.
 - Ob auf den KSK-Anteil USt anfällt, prüft die Steuerberatung (offen seit 21.10.2026). Bis zur Antwort:
   KSK ohne USt, wie bisher.
 
@@ -130,6 +133,8 @@ Ziel: lesbar statt Textklumpen. Nur aus Sheet-Daten (Leistungen, Go Live, Kunde,
 
 Management Fee                                        1   <Fee>     <Fee>
 ```
+
+Ab 10.000 € Netto-Gesamthonorar entfällt die Zeile „Management Fee“ (Regel 16 Punkt 2).
 
 Regeln:
 - „Leistungen" wird in einzelne Deliverables zerlegt (Trenner `;`, Zeilenumbruch, „1 x / 1 ×"). Mehrere
@@ -212,6 +217,8 @@ in beiden Betriebsmodi.
   Kunde im Drittland (CH, GB, US …) ⇒ steuerfrei „gemäß § 4 Nr. 5 Buchst. c UStG" (Vermittlungsleistung zu
   einem im Drittland ausgeführten Umsatz) und KSK-Anteil der Kundenrechnung als eigene Position durchreichen
   (Beispiel LL-2026-151). Creatorin AT ⇒ ohne USt, Reverse Charge.
+- Rechnung im Namen einer UG/GmbH: kein KSK-Durchreichen auf der Fee-Rechnung (die Kostenumlage ist Erlös der
+  Gesellschaft, L&L schuldet dafür keine KSA – Regel 16).
 - Zahlungshinweis: „Der Rechnungsbetrag wird mit eingehenden Kundenzahlungen verrechnet. Eine gesonderte
   Zahlung ist nicht erforderlich."
 - USD-Deals (Whalar): Fee-Rechnung ebenfalls in USD, Verrechnung in EUR zum Kurs am Zahlungseingang (Hinweistext).
@@ -232,7 +239,9 @@ in beiden Betriebsmodi.
 5. Steuerfall-Konflikt (Regel 4) oder EU-Kunde ohne USt-ID.
 6. Zusatzkosten > 0 (Regel 6) – Entwurf ja, aber mit Rückfrage zur Belegliste.
 7. Sheet-Nummer bereits fakturiert (Spalte AH/AI gefüllt oder Register) – Hinweis, keine Dublette.
-8. Creatorin mit `entity: ug` oder markierter Sonderregel (Julie) – manuelle Freigabe.
+8. Creatorin mit markierter Sonderregel (`SONDERREGEL` in `creators.yaml`) – manuelle Freigabe. UG/GmbH allein ist
+   seit Regel 16 kein Stopp mehr. Stopp aber, wenn `entity: ug|gmbh` und die Adresse im Tab Creator-Adressen nicht auf
+   die Gesellschaft lautet, oder wenn die USt-IdNr. im deutschen und englischen Text voneinander abweicht.
 9. Währung ≠ EUR.
 10. Mehr als ein Kalender-Event am Tag mit derselben Sheet-Nummer.
 
@@ -319,6 +328,36 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
   Laufs und in der Zusammenfassungsmail (Abschnitt „Zahlungserinnerungen“), bei neuem Entwurf oder neuer Rückfrage
   zusätzlich Push. Das Protokoll wird committet und gepusht.
 
+## 16. Rechnungsdesign Kundenrechnung (Regel vom 17.11.2026)
+
+Grundlage: Musterrechnung „Muster JL-2026-001“ (StB Buhl), abgestimmt mit StBin Bersch, Vorgaben Josh. Gilt für
+alle ab dem 17.11.2026 erzeugten **Kundenrechnungen**. Fee-Rechnungen (LL-) bleiben unverändert (dort ist L&L selbst
+leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das Layout des Originals.
+
+1. **KSK-Kostenumlage – nur Rechnungen im Namen einer UG/GmbH** (`entity: ug|gmbh`; derzeit Julie Lepique = JL Studio
+   Compound UG, Sophia Tran = Spotlight! GmbH): eigene Position „Kostenumlage Künstlersozialabgabe (4,9 % auf <Honorar>)“,
+   Bemessung = Creator-Honorar + Management Fee (nicht auf Auslagen). Die Umlage ist Teil des Entgelts: bei deutschen
+   Kunden liegen die 19 % USt auch darauf; bei Auslandskunden steht sie als Position im Nettobetrag (kein eigener
+   KSK-Summenblock). Hinweis: „Hinweis zur Künstlersozialabgabe: Die Kostenumlage ist Teil des Entgelts und unterliegt
+   der Umsatzsteuer.“ Der Hinweis „vom Verwerter direkt an die KSK abzuführen“ entfällt bei UG/GmbH. Regel 4a
+   (Sheet ohne MwSt und KSK) geht vor: dann keine Umlage. Für alle anderen Creator:innen bleibt es bei Regel 5.
+2. **Management Fee**: ab **10.000 € Netto-Gesamthonorar** (Vergütung Gesamt = Creator + Fee, ohne Auslagen und
+   KSK; Schwelle `gesamthonorar_ab_netto` in `company.yaml`, je Creator:in überschreibbar) steht auf der Kundenrechnung
+   nur **eine Zeile** mit dem Gesamthonorar und der Unterzeile „Gesamthonorar inkl. Kampagnenmanagement“. Darunter
+   wie bisher zwei Zeilen (Honorar + Management Fee). Beträge und LL-Rechnung ändern sich nie; die Aufteilung steht
+   weiter im Befund (`meta.fee_net`), im Register und auf der LL-Rechnung (für die Buchhaltung).
+3. **Leistendes Unternehmen im Kopf** (alle Creator:innen): links oben „Leistendes Unternehmen“ mit Name, Anschrift
+   (Tab Creator-Adressen) und Steuernummer/USt-IdNr. (aus dem Hinweistext des Tabs gelesen); darunter klein
+   „Ausgestellt durch (Abrechnungsstelle): Locker & Lauter UG (haftungsbeschränkt), Eschenholt 22a, 22525 Hamburg“.
+   Der bisherige Sheet-Hinweistext wird ersetzt durch: „Diese Rechnung wird im Namen und für Rechnung von/der <Name>
+   durch die Locker & Lauter UG (haftungsbeschränkt) als Abrechnungsstelle ausgestellt. Leistendes Unternehmen im
+   Sinne des § 14 UStG ist <Name>.“ (UG/GmbH: „Leistende Unternehmerin … ist die <Gesellschaft>“; englische Fassung
+   analog). Steuernummer nicht lesbar ⇒ Warnung, alter Sheet-Hinweis bleibt zusätzlich stehen.
+4. **Zahlstellen-Klausel** (alle Creator:innen): unter der Zahlungsfrist „Zahlbar mit schuldbefreiender Wirkung an die
+   Locker & Lauter UG (haftungsbeschränkt) als Zahlstelle von/der <Name> – Kontoverbindung siehe unten.“; Fußzeile
+   „Abrechnungsstelle“ (links) und „Zahlstelle / Kontoverbindung“ (rechts). Wortlaut steht in `company.yaml`
+   (`zahlstelle`), **anwaltliche Prüfung vor Serienanwendung von StBin Bersch empfohlen – Stand 17.11.2026 offen**.
+
 ## 14. Betriebsmodus
 
 - **Rechnungsnummern laufen in beiden Modi wie produktiv** (Regel 8): Vergabe aus Finanzsheet/Register,
@@ -333,6 +372,11 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-17 · Neu Regel 16 Rechnungsdesign: (1) KSK-Kostenumlage als Position mit USt nur bei UG/GmbH (Julie Lepique,
+  Sophia Tran), (2) eine Zeile Gesamthonorar ab 10.000 € netto, sonst wie bisher, (3) leistendes Unternehmen im Kopf,
+  L&L als Abrechnungsstelle, (4) Zahlstellen-Klausel + Fußzeile. UG/GmbH kein Stopp mehr (Regel 12.8). Muster
+  JL-2026-001, Freigabe StBin Bersch, Vorgaben Josh.
 
 - 2026-11-17 · Regel 8: Nie verschickte, verworfene Nummern dürfen auf Joshs Anweisung neu vergeben werden. Angewendet:
   LL-2026-164/165 (verworfen 16.11.) freigegeben, Fee zu ST-2026-001 von LL-2026-166 auf LL-2026-164 umnummeriert;
