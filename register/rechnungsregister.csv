@@ -272,7 +272,7 @@ LL-2026-162,fee,LL,2026,162,324,Chat GPT,Katrin Stockinger,16.11.2026,2937.5,0,2
 LL-2026-163,fee,LL,2026,163,268,This is Marketing,Katrin Stockinger,16.11.2026,300.0,57.0,357.0,EUR,DE,entwurf,,https://drive.google.com/file/d/18FgGSqSfDxcA8wcsQLuBiq3ZpUmoPS3o/view,,,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
 LL-2026-164,storno,LL,2026,164,324,Chat GPT,Katrin Stockinger,16.11.2026,-3513.25,0,-3513.25,EUR,DRITTLAND,verworfen,LL-2026-162,,,,0726vj6almbgudruj726a5krn8,2026-11-16 10:05,,schatten,verworfen 16.11.: Fee-Rechnung LL-2026-162 wird korrigiert statt storniert (Josh) – Nummer nicht wiederverwenden
 LL-2026-165,fee,LL,2026,165,324,Chat GPT,Katrin Stockinger,16.11.2026,2937.5,0,2937.5,EUR,DRITTLAND,verworfen,LL-2026-162,,,,0726vj6almbgudruj726a5krn8,2026-11-16 10:05,,schatten,verworfen 16.11.: Fee-Rechnung LL-2026-162 wird korrigiert statt storniert (Josh) – Nummer nicht wiederverwenden
-LL-2026-166,fee,LL,2026,166,325,Chat GPT,Sophia Tran,17.11.2026,2437.5,0,2437.5,EUR,DRITTLAND,entwurf,,,,,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,
+LL-2026-166,fee,LL,2026,166,325,Chat GPT,Sophia Tran,17.11.2026,2437.5,0,2437.5,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1Nb2_T8uWelyx4yvDNrKGPn_80rdkXfd8/view,,,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,
 MH-2026-001,kunde,MH,2026,1,161,Brooklyn Soap,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-002,kunde,MH,2026,2,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-003,kunde,MH,2026,3,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -303,7 +303,7 @@ MZ-2026-020,kunde,MZ,2026,20,300,Adobe,Marina Ziblis,,,,,EUR,,altsystem,,,,,,202
 MZ-2026-021,kunde,MZ,2026,21,329,AT World,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MZ-2026-022,kunde,MZ,2026,22,335,Deloitte,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 SH-2026-001,kunde,SH,2026,1,302,Die Lizenz zum Erfolg - Buchlaunch,Selina Hehl,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
-ST-2026-001,kunde,ST,2026,1,325,Chat GPT,Sophia Tran,17.11.2026,9750.0,0.0,9750.0,EUR,DRITTLAND,entwurf,,,,,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,
+ST-2026-001,kunde,ST,2026,1,325,Chat GPT,Sophia Tran,17.11.2026,9750.0,0.0,9750.0,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1gTSI9scb2CrefyXU8bTNtWVA8TdEMGK-/view,,r-6310711836796517967,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,
 VE-2026-001,kunde,VE,2026,1,164,Burda,Victoria Effer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 VE-2026-002,kunde,VE,2026,2,159,Charité,Victoria Effer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 VE-2026-003,kunde,VE,2026,3,179,Charité,Victoria Effer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
