@@ -180,6 +180,8 @@ in beiden Betriebsmodi.
 - Eine Nummer wird erst beim Anlegen des Entwurfs reserviert, nicht schon bei einem Stopp-Befund. Wird der Entwurf verworfen,
   bleibt die Zeile mit Status `verworfen` + Grund (Lücke erklärbar). Nächster Entwurf nimmt die nächste freie
   Nummer – eine verworfene Nummer wird **nicht** wiederverwendet.
+- Ausnahme (17.11.2026): Verworfene Nummern, die **nie verschickt** wurden (weder an Kunde noch Creator:in), gibt Josh
+  ausdrücklich frei ⇒ Registerzeile wird entfernt und die Nummer neu vergeben (keine Lücke). Nur auf Joshs Anweisung.
 - Ab Status `gesendet` ist die Rechnung unveränderlich: Änderung nur per Storno + Neuausstellung (Regel 9). Gilt nur für
   Kundenrechnungen; LL-Fee-Rechnungen werden immer korrigiert (Regel 9).
 - Idempotenz: Kalender-Event-ID und Sheet-Nummer werden im Register gespeichert. Gibt es für die
@@ -332,6 +334,9 @@ angelegt, nie gesendet. Werkzeug: `python3 -m invoice.erinnerung` (pruefen / tex
 
 ## Änderungsprotokoll
 
+- 2026-11-17 · Regel 8: Nie verschickte, verworfene Nummern dürfen auf Joshs Anweisung neu vergeben werden. Angewendet:
+  LL-2026-164/165 (verworfen 16.11.) freigegeben, Fee zu ST-2026-001 von LL-2026-166 auf LL-2026-164 umnummeriert;
+  nächste Fee-Nummer LL-2026-165 (Josh).
 - 2026-11-16 · Regel 9: LL-Fee-Rechnungen werden nie storniert, sondern unter derselben Nummer korrigiert (Creator:innen
   erhalten sie erst deutlich später). Angewendet auf LL-2026-162; LL-2026-164/165 verworfen (Josh).
 - 2026-11-16 · Neu Regel 4a: MwSt- und KSK-Spalten im Sheet beide leer/0 ⇒ weder MwSt noch KSK berechnen (auch keine
