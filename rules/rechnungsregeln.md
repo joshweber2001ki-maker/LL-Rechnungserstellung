@@ -373,6 +373,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-18 · Regel 8 (Ausnahme nie verschickt) angewendet: Lauf 18.11. verschoben, Rechnungen nicht versendet ⇒
+  DR-2026-040/041 und LL-2026-165/166 (Sheet 333 Geely, 338 PALU) aus dem Register entfernt, kein Storno; Vergabe neu
+  im Lauf 19.11. (Josh).
+
 - 2026-11-17 · Neu Regel 16 Rechnungsdesign: (1) KSK-Kostenumlage als Position mit USt nur bei UG/GmbH (Julie Lepique,
   Sophia Tran), (2) eine Zeile Gesamthonorar ab 10.000 € netto, sonst wie bisher, (3) leistendes Unternehmen im Kopf,
   L&L als Abrechnungsstelle, (4) Zahlstellen-Klausel + Fußzeile. UG/GmbH kein Stopp mehr (Regel 12.8). Muster
