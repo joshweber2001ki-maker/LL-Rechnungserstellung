@@ -373,6 +373,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-19 · Regel 8 (Ausnahme nie verschickt) angewendet: Kalender-Event „PALU“ trug irrtümlich Sheet 338 statt 229 ⇒
+  DR-2026-041/LL-2026-166 (nie verschickt) von 338 gelöst und für Sheet 229 (PALU, 6. Teilrechnung Oktober) vergeben;
+  338 nicht abzurechnen (entspricht 327 / DR-2026-035) (Josh).
+
 - 2026-11-18 · Regel 8 (Ausnahme nie verschickt) angewendet: Lauf 18.11. verschoben, Rechnungen nicht versendet ⇒
   DR-2026-040/041 und LL-2026-165/166 (Sheet 333 Geely, 338 PALU) aus dem Register entfernt, kein Storno; Vergabe neu
   im Lauf 19.11. (Josh).
