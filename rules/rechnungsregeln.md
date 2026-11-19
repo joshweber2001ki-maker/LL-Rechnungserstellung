@@ -376,6 +376,9 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-19 · Regel 8 (Ausnahme nie verschickt) angewendet: SH-2026-002 / LL-2026-167 (Sheet 331 Team Beverage, Selina
+  Hehl) nicht versendet, freigegeben – Rechnung wird später gestellt; Mail-Entwurf gelöscht, PDFs im Papierkorb (Josh).
+
 - 2026-11-19 · Regel 13a/15: Mail-Entwürfe ohne eigene Signatur; Gmail-Signatur per `includeSignature`, sonst ohne
   Signatur (Josh). Regel 8 angewendet auf Sheet 331: Creatorin im Sheet korrigiert („Dr.“ entfernt), SH-2026-002 /
   LL-2026-167 vergeben.
