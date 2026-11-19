@@ -168,7 +168,7 @@ TEXT = {
                     "betrachte diese Mail gerne als gegenstandslos.",
            "nachfrage": "du hattest uns zuletzt eine kurze Rückmeldung zum Stand gegeben – vielen Dank dafür! "
                         "Bisher konnten wir allerdings noch keinen Zahlungseingang feststellen.",
-           "gruss": "Vielen Dank und liebe Grüße\nJosh Weber", "ueber": " über {b}",
+           "gruss": "Vielen Dank und liebe Grüße", "ueber": " über {b}",
            "betreff": "Zahlungserinnerung {nrs}"},
     "sie": {"anrede": ("Guten Tag {name},", "Sehr geehrte Damen und Herren,"), "einstieg": "ich hoffe, es geht Ihnen gut!",
             "eine": "Für die Rechnung {nr} ({wer}){betrag}, fällig am {due}, haben wir bisher noch keine Zahlung erhalten.",
@@ -178,7 +178,7 @@ TEXT = {
                      "betrachten Sie diese Mail gerne als gegenstandslos.",
             "nachfrage": "Sie hatten uns zuletzt eine kurze Rückmeldung zum Stand gegeben – vielen Dank dafür! "
                          "Bisher konnten wir allerdings noch keinen Zahlungseingang feststellen.",
-            "gruss": "Vielen Dank und beste Grüße\nJosh Weber", "ueber": " über {b}",
+            "gruss": "Vielen Dank und beste Grüße", "ueber": " über {b}",
             "betreff": "Zahlungserinnerung {nrs}"},
     "en": {"anrede": ("Hi {name},", "Hi,"), "einstieg": "I hope you are doing well!",
            "eine": "For invoice {nr} ({wer}){betrag}, due on {due}, we have not yet received payment.",
@@ -188,7 +188,7 @@ TEXT = {
                     "already been made in the meantime, please disregard this message.",
            "nachfrage": "Thank you for your last update on the status! So far, however, we have not been able to "
                         "identify an incoming payment.",
-           "gruss": "Many thanks and best regards,\nJosh Weber", "ueber": " over {b}",
+           "gruss": "Many thanks and best regards,", "ueber": " over {b}",
            "betreff": "Payment reminder {nrs}"},
 }
 

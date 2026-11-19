@@ -35,7 +35,7 @@ COUNTRY_NAMES = {
 }
 COUNTRY_LABEL = {"CH": ("Schweiz", "Switzerland"), "GB": ("Vereinigtes Königreich", "the United Kingdom"),
                  "US": ("USA", "the United States"), "NL": ("Niederlande", "the Netherlands"),
-                 "DK": ("Dänemark", "Denmark"), "AT": ("Österreich", "Austria")}
+                 "DK": ("Dänemark", "Denmark"), "AT": ("Österreich", "Austria"), "DE": ("Deutschland", "Germany")}
 
 ID_PATTERN = re.compile(r"^[\s•·\-–*]*(USt\.?-?Id(?:Nr)?\.?|USt-ID|UID(?:-Nr\.?)?|VAT(?:[- ]?(?:ID|Number|No\.?))?|Tax ID)\s*[:\s]\s*(.+)$", re.I)
 REF_PATTERN = re.compile(r"^[\s•·\-–*]*(Bestellnummer|Bestell-Nr\.?|PO(?: number| no\.?)?|ANID|WBS-Code|Registration number|KVK|Kostenstelle|Projektnummer|Projekt-Nr\.?|Order(?: number)?|Vorgangsnummer|Vorgangs-Nr\.?|Auftragsnummer|Auftrags-Nr\.?|Referenz(?:nummer)?|Reference(?: number| no\.?)?|Ref\.|Kundennummer|Kunden-Nr\.?|Lieferantennummer|Lieferanten-Nr\.?|(?:Supplier|Vendor|Customer) (?:number|no\.?|ID)|Company (?:number|no\.?|registration(?: number)?)|Companies House(?: number)?)\s*[:#]?\s*(.+)$", re.I)

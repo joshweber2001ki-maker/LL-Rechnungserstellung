@@ -2,7 +2,12 @@
 """Gmail-Entwurf zur Kundenrechnung (Regel 13a).
 
     python3 -m invoice.mail out/<N>            # baut out/<N>/mail.json + mail.html (Vorschau, kein Entwurf)
-    python3 -m invoice.mail out/<N> --draft    # zusätzlich Gmail-Entwurf über die Brücke (PDF im Anhang)
+    python3 -m invoice.mail out/<N> --draft    # Fallback: Gmail-Entwurf über die Brücke (PDF im Anhang, OHNE Signatur)
+    python3 -m invoice.mail out/<N> --set-draft <draftId>   # per Connector angelegten Entwurf in mail.json festhalten
+
+- Signatur (Regel 13a, 19.11.2026): Der Text enthält KEINE eigene Signatur. Normalweg = Gmail-Connector
+  create_draft mit includeSignature: true (voreingestellte Gmail-Signatur von finance@); geht das nicht, Entwurf
+  ohne Signatur (Brücke) – Josh fügt seine Signatur beim Senden ein.
 
 - Empfänger aus Sheet-Spalte „Kontakt": erste Adresse = An, alle weiteren = CC (Reihenfolge wie im Sheet,
   „CC:"-Präfixe, Namen in Klammern, Trenner ; , & / Zeilenumbruch werden ignoriert).
@@ -90,23 +95,6 @@ def handles_text(handles, lang):
     return ", ".join(parts)
 
 
-SIGNATURE_TEXT = """Josh Weber
-Finance Manager
-
-Mail: finance@lockerundlauter.com
-Social: Website https://lockerundlauter.com/ | Instagram https://www.instagram.com/lockerundlauter/ | LinkedIn https://www.linkedin.com/company/locker-und-lauter/
-
-Locker & Lauter UG (haftungsbeschränkt)
-Eschenholt 22a | 22525 Hamburg | +4917663033047
-Geschäftsführung: Laura Schimming
-Amtsgericht Hamburg HRB 187235 | VAT-ID: DE369478827 | Sitz: Hamburg"""
-
-SIGNATURE_HTML = """<p style="margin:16px 0 0 0"><b>Josh Weber</b><br>Finance Manager</p>
-<p style="margin:8px 0 0 0"><b>Mail:</b> <a href="mailto:finance@lockerundlauter.com">finance@lockerundlauter.com</a><br>
-<b>Social:</b> <a href="https://lockerundlauter.com/">Website</a> | <a href="https://www.instagram.com/lockerundlauter/">Instagram</a> | <a href="https://www.linkedin.com/company/locker-und-lauter/">LinkedIn</a></p>
-<p style="margin:8px 0 0 0;font-size:12px;color:#555"><b>Locker &amp; Lauter UG (haftungsbeschränkt)</b><br>
-Eschenholt 22a | 22525 Hamburg | +4917663033047<br>Geschäftsführung: Laura Schimming<br>
-Amtsgericht Hamburg HRB 187235 | VAT-ID: DE369478827 | Sitz: Hamburg</p>"""
 
 
 # Bausteine je Absatz: Aufbau bleibt immer gleich (Anrede · Einstieg · Rechnung · Bitte · Dank/Gruß), die
@@ -209,7 +197,7 @@ DISCO = "\U0001FAA9"  # 🪩 – GmailApp zerlegt Zeichen außerhalb der BMP, da
 def to_html(paras):
     body = "".join(f'<p style="margin:0 0 12px 0">{htmlmod.escape(p).replace(chr(10), "<br>").replace(DISCO, "&#x1FAA9;")}</p>'
                    for p in paras)
-    return f'<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222">{body}{SIGNATURE_HTML}</div>'
+    return f'<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222">{body}</div>'
 
 
 def same_day_position(out_dir, to, number, day):
@@ -261,7 +249,7 @@ def prepare(out_dir, bereits=0):
     if not passend and len(meta.get("handles") or []) > 1:
         findings.append("Plattform der Kampagne nicht eindeutig – alle Creator-Handles in der Mail.")
     mail = {"to": [to] if to else [], "cc": cc, "subject": subject, "folge": folge,
-            "text": "\n\n".join(paras).replace(" " + DISCO, "") + "\n\n" + SIGNATURE_TEXT, "attach": [str(pdf)],
+            "text": "\n\n".join(paras).replace(" " + DISCO, ""), "attach": [str(pdf)],
             "findings": findings}
     old = out_dir / "mail.json"
     if old.exists():
@@ -279,11 +267,16 @@ def main(argv=None):
     ap.add_argument("out_dir")
     ap.add_argument("--draft", action="store_true")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--set-draft", metavar="DRAFT_ID",
+                    help="per Connector (create_draft, includeSignature) angelegte Draft-ID in mail.json festhalten")
     ap.add_argument("--bereits", type=int, default=0,
                     help="Anzahl Rechnungsmails (andere Nummer) heute laut Gmail schon an dieselbe An-Adresse")
     a = ap.parse_args(argv)
     mail = prepare(a.out_dir, bereits=a.bereits)
-    if a.draft:
+    if a.set_draft:
+        mail["draftId"], mail["via"] = a.set_draft, "connector"
+        (Path(a.out_dir) / "mail.json").write_text(json.dumps(mail, ensure_ascii=False, indent=1), encoding="utf-8")
+    elif a.draft:
         if mail.get("draftId") and not a.force:
             mail["findings"].append(f"Entwurf existiert bereits ({mail['draftId']}) – kein zweiter angelegt.")
         elif not Path(mail["attach"][0]).exists():
@@ -293,7 +286,8 @@ def main(argv=None):
             html = (Path(a.out_dir) / "mail.html").read_text(encoding="utf-8")
             res = bridge.draft(mail["to"], mail["subject"], html=html, text=mail["text"], cc=mail["cc"],
                                attachments=mail["attach"])
-            mail["draftId"], mail["messageId"] = res.get("draftId"), res.get("messageId")
+            mail["draftId"], mail["messageId"], mail["via"] = res.get("draftId"), res.get("messageId"), "bruecke"
+            mail["findings"].append("Entwurf über die Brücke ohne Signatur – Gmail-Signatur beim Senden einfügen.")
             (Path(a.out_dir) / "mail.json").write_text(json.dumps(mail, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps({k: mail.get(k) for k in ("to", "cc", "subject", "folge", "draftId", "findings")},
                      ensure_ascii=False, indent=1))

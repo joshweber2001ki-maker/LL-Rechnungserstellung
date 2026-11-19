@@ -269,11 +269,14 @@ in beiden Betriebsmodi.
 - **Text**: Standardvorlage von Josh (DE: „Hallo <Name>, ich hoffe, es geht dir gut! Hier ist Josh aus dem
   Finance-Team von Locker & Lauter. 🪩 Anbei sende ich dir die Rechnung (<Nr>) zur gemeinsamen Aktivierung mit
   <Creator> (<Handles>). …“; EN: „Hi <Name>, … Please find attached the invoice (<Nr>) for our collaboration with
-  <Creator> (<Handles>). We kindly ask for payment by <Fälligkeit> …“), danach Signatur Josh Weber, Finance Manager.
+  <Creator> (<Handles>). We kindly ask for payment by <Fälligkeit> …“), endet mit dem Gruß.
+- **Signatur (Regel vom 19.11.2026):** keine eigene Signatur im Text. Entwurf per Gmail-Connector `create_draft` mit
+  `includeSignature: true` (voreingestellte Gmail-Signatur von finance@). Geht das nicht (z. B. nur Brücke), Entwurf
+  **ohne** Signatur – Josh fügt sie beim Senden ein. Gilt auch für Zahlungserinnerungen (Regel 15).
   Name = Sheet „Ansprechpartner“ (leer/`pending` ⇒ Anrede ohne Namen). Sprache wie die Rechnung.
   `customers.yaml` `contact.du_sie: sie` ⇒ Sie-Fassung.
 - **Aufbau fest, Wortlaut flexibel:** immer Anrede · Einstieg (Josh, Finance-Team) · Rechnung mit Nummer und
-  Creator · Bitte um Zahlung/Eingangsbestätigung · Dank und Gruß · Signatur. Die Formulierung darf sich je Mail
+  Creator · Bitte um Zahlung/Eingangsbestätigung · Dank und Gruß (Signatur aus Gmail, s. o.). Die Formulierung darf sich je Mail
   leicht ändern (Varianten im Code, stabil je Rechnungsnummer).
 - **Mehrere Mails am selben Tag an dieselbe Person** (gleiche An-Adresse, andere Rechnungsnummer – im selben Lauf
   oder heute schon gesendet/als Entwurf in Gmail): ab der zweiten Mail Folgetext, ohne erneute Vorstellung
@@ -372,6 +375,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-19 · Regel 13a/15: Mail-Entwürfe ohne eigene Signatur; Gmail-Signatur per `includeSignature`, sonst ohne
+  Signatur (Josh). Regel 8 angewendet auf Sheet 331: Creatorin im Sheet korrigiert („Dr.“ entfernt), SH-2026-002 /
+  LL-2026-167 vergeben.
 
 - 2026-11-19 · Regel 8 (Ausnahme nie verschickt) angewendet: Kalender-Event „PALU“ trug irrtümlich Sheet 338 statt 229 ⇒
   DR-2026-041/LL-2026-166 (nie verschickt) von 338 gelöst und für Sheet 229 (PALU, 6. Teilrechnung Oktober) vergeben;

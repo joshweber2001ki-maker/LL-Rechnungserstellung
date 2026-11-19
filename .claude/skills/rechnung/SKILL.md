@@ -123,11 +123,16 @@ Für jedes Event des Tages:
      mit **anderer** Nummer heute schon an dieselbe An-Adresse gingen: `search_threads`
      `in:sent to:<adresse> after:<JJJJ/MM/TT> subject:(Rechnung OR Invoice)` plus `list_drafts` mit `to:<adresse>`
      (nur heute angelegte, andere Nummer) ⇒ `<n>`. Im selben Lauf zählt `invoice.mail` selbst (`out/_mails.json`).
-     Sonst/danach `python3 -m invoice.mail out/<N> --draft [--bereits <n>]` nach dem Rendern (bei angepasster Leistungsbeschreibung erst neu
-     rendern). Empfänger: erste Adresse aus „Kontakt“ = An, alle weiteren = CC; Betreff `Rechnung <Nr>` /
+     Sonst/danach nach dem Rendern (bei angepasster Leistungsbeschreibung erst neu rendern):
+     `python3 -m invoice.mail out/<N> [--bereits <n>]` baut `mail.json`/`mail.html` (Text **ohne** Signatur), dann
+     Gmail-Connector `create_draft` mit `to`/`cc`/`subject`, `body` = mail.json `text` (🪩 nach „Locker & Lauter.“ wieder
+     einsetzen), `htmlBody` = mail.html, **`includeSignature: true`**, Anhang als Datei-Referenz
+     `sha256:<sha256sum>:<absoluter Pfad>` (`filename` Rechnung-<Nr>.pdf, `mimeType` application/pdf); danach
+     `python3 -m invoice.mail out/<N> --set-draft <id>`. Nur wenn der Connector nicht geht: `--draft` über die Brücke
+     (ohne Signatur, Josh ergänzt sie) und das in der Zusammenfassung nennen. Empfänger: erste Adresse aus „Kontakt“ = An, alle weiteren = CC; Betreff `Rechnung <Nr>` /
      `Invoice <Nr>`; Text = Standardvorlage DE/EN mit Signatur; Anhang Kundenrechnung. Befunde aus der Ausgabe
      (kein Empfänger, kein Ansprechpartner) in die Zusammenfassung, Draft-ID mit in die Zeile.
-     Fallback ohne Brücke: `mail.json`/`mail.html` bauen und `create_draft` (to/cc/subject/htmlBody, Anhang base64).
+     Vor jedem neuen Entwurf (auch bei Nacharbeit am selben Tag) erneut `in:sent subject:"<Nr>"` prüfen.
    - an Creatorin (nur `produktiv`) (Adresse: Josh fragen bzw. `creators.yaml` `email`, falls gepflegt; sonst ohne Empfänger),
      Betreff `Management-Fee-Rechnung <LL-Nr> zu <Kundenrechnungs-Nr>`, Anhang Fee-Rechnung.
    - Draft-IDs ins Register (`gmail_draft`).
@@ -174,7 +179,7 @@ Nach den Rechnungen, vor der Zusammenfassung. `git pull` und `data/sheet.json` s
 3. Entwurf: `python3 -m invoice.erinnerung text <gruppe> [--nachfrage]` → `out/erinnerungen/<gruppe>.json`
    (to, cc, subject, text, html). Ursprüngliche Rechnungsmail suchen (`gmail.rechnungsmail`, die Mail an den
    Kunden, nicht die n8n-Freigabekopie an weber-josh@web.de) und `create_draft` mit `to`, `cc`, `subject`, `body`
-   = text, `htmlBody` = html, `replyToMessageId` = ID dieser Rechnungsmail (bei mehreren Rechnungen die erste;
+   = text, `htmlBody` = html, `includeSignature: true`, `replyToMessageId` = ID dieser Rechnungsmail (bei mehreren Rechnungen die erste;
    keine gefunden ⇒ ohne `replyToMessageId`). Kein Anhang. Text nur anpassen, wenn Regel 15 oder ein Sonderfall in
    `customers.yaml` es verlangt.
 4. Sofort protokollieren: `python3 -m invoice.erinnerung log <Nr>[,<Nr>] --aktion entwurf_angelegt --draft-id <id>
