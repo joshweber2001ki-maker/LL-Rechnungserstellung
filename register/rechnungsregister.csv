@@ -45,6 +45,8 @@ DR-2026-036,kunde,DR,2026,36,322,Hessnatur,Daniel Reith,11.11.2026,2500.0,475.0,
 DR-2026-037,kunde,DR,2026,37,304,Falke,Daniel Reith,12.11.2026,1050.0,199.5,1249.5,EUR,DE,entwurf,,https://drive.google.com/file/d/1m-PP4YtbdFi-a2ffIolECA6rJtcmpVg0/view,,r4828383471118760097,2pd64g6ejc2jdj010orqgss1h1,2026-11-12 06:19,,schatten,
 DR-2026-038,kunde,DR,2026,38,308,HIDROFUGAL,Daniel Reith,12.11.2026,1200.0,228.0,1428.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1EwfcMi_zw_jcwepK5u-0cS9517DocUPG/view,,r7428810220406309245,0730k4dfsq38h6v87jeaefviai,2026-11-12 06:19,,schatten,
 DR-2026-039,kunde,DR,2026,39,315,Casio,Daniel Reith,12.11.2026,3200.0,608.0,3808.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1B6vckq15DrW_ogclSz1hghkMxTeTgxED/view,,r-5382416154283260197,7erog1bequ7jgopf49rnrc8ff3,2026-11-12 06:19,,schatten,
+DR-2026-040,kunde,DR,2026,40,333,Geely,Daniel Reith,19.11.2026,7612.14,1446.31,9058.45,EUR,DE,entwurf,,,,,72kipahi6dbcvia22sur34m88l,2026-11-19 06:15,,schatten,
+DR-2026-041,kunde,DR,2026,41,338,PALU,Daniel Reith,19.11.2026,1200.0,228.0,1428.0,EUR,DE,entwurf,,,,,7l9bo0dqh4m868m5mphppbk7fo,2026-11-19 06:15,,schatten,
 EIH-2026-001,kunde,EIH,2026,1,160,CHRIST,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 EIH-2026-002,kunde,EIH,2026,2,158,E-COMMERCE BERLIN EXPO,Emma-Isadora Hagen,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 EIH-2026-003,kunde,EIH,2026,3,152,PRUEFSTER,Emma-Isadora Hagen,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -271,6 +273,8 @@ LL-2026-161,fee,LL,2026,161,315,Casio,Daniel Reith,12.11.2026,800.0,152.0,952.0,
 LL-2026-162,fee,LL,2026,162,324,Chat GPT,Katrin Stockinger,16.11.2026,2937.5,0,2937.5,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1vc2FS-AHoMBbgX2jLIzTuAYPe2BlaVIG/view,,,0726vj6almbgudruj726a5krn8,2026-11-16 09:39,,schatten,"korrigiert 16.11.: KSK-Position entfernt (Regel 4a), Verweis auf Ersatzrechnung KS-2026-021 (Fee-Rechnungen werden korrigiert, nicht storniert)"
 LL-2026-163,fee,LL,2026,163,268,This is Marketing,Katrin Stockinger,16.11.2026,300.0,57.0,357.0,EUR,DE,entwurf,,https://drive.google.com/file/d/18FgGSqSfDxcA8wcsQLuBiq3ZpUmoPS3o/view,,,5kp2ifqrg5k8s880mmfot6hl14,2026-11-16 09:39,,schatten,
 LL-2026-164,fee,LL,2026,164,325,Chat GPT,Sophia Tran,17.11.2026,2437.5,0,2437.5,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1HMzesehXbe16wJMvC8B5ush40blx1wQw/view,,,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,"umnummeriert 17.11. von LL-2026-166 (Josh: nie verschickte, verworfene Nummern 164/165 freigegeben)"
+LL-2026-165,fee,LL,2026,165,333,Geely,Daniel Reith,19.11.2026,1875.0,356.25,2231.25,EUR,DE,entwurf,,,,,72kipahi6dbcvia22sur34m88l,2026-11-19 06:15,,schatten,
+LL-2026-166,fee,LL,2026,166,338,PALU,Daniel Reith,19.11.2026,300.0,57.0,357.0,EUR,DE,entwurf,,,,,7l9bo0dqh4m868m5mphppbk7fo,2026-11-19 06:15,,schatten,
 MH-2026-001,kunde,MH,2026,1,161,Brooklyn Soap,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-002,kunde,MH,2026,2,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-003,kunde,MH,2026,3,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
