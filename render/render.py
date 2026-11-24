@@ -19,7 +19,7 @@ CONFIG = ROOT / "config"
 
 TEXTS = {
     "de": {
-        "title": {"invoice": "RECHNUNG", "cancellation": "STORNORECHNUNG", "reimbursement": "REISEKOSTENERSTATTUNG"},
+        "title": {"invoice": "RECHNUNG", "cancellation": "STORNORECHNUNG", "reimbursement": "REISEKOSTENERSTATTUNG", "dunning": "MAHNUNG"},
         "number": "Rechnungsnummer", "date": "Rechnungsdatum", "period": "Leistungszeitraum",
         "cancels": "Storno zu Rechnung", "replaces": "Ersetzt Rechnung", "dated": "vom",
         "page": "Seite", "of": "von",
@@ -32,7 +32,7 @@ TEXTS = {
         "col_net": "Netto", "sum_receipts": "Summe der Belege",
     },
     "en": {
-        "title": {"invoice": "INVOICE", "cancellation": "CANCELLATION INVOICE", "reimbursement": "TRAVEL EXPENSE REIMBURSEMENT"},
+        "title": {"invoice": "INVOICE", "cancellation": "CANCELLATION INVOICE", "reimbursement": "TRAVEL EXPENSE REIMBURSEMENT", "dunning": "PAYMENT REMINDER"},
         "number": "Invoice number", "date": "Invoice date", "period": "Performance period",
         "cancels": "Cancellation of invoice", "replaces": "Replaces invoice", "dated": "dated",
         "page": "Page", "of": "of",
@@ -117,6 +117,12 @@ def render_html(doc, company=None):
     lang = doc["lang"]
     t = dict(TEXTS[lang])
     t["title"] = t["title"][doc["doc_type"]]
+    if doc["doc_type"] == "dunning":  # Mahnschreiben: Kopf verweist auf die gemahnte Rechnung
+        de = lang == "de"
+        t.update(number="Mahnung zu Rechnung" if de else "Reminder for invoice",
+                 date="Mahndatum" if de else "Reminder date",
+                 recipient="Empfänger" if de else "Recipient", issuer="Absender" if de else "Sender",
+                 col_qty="" , col_price="")
     band = company["design"]["color_fee_band"] if doc["category"] == "fee" else company["design"]["color_customer_band"]
     ctx = dict(d=doc, t=t, company=company, band_color=band, logo_src=logo_data_uri(),
                multipage=bool(doc["annexes"]))
