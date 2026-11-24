@@ -376,6 +376,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-24 · Regel 9 angewendet: KML-2026-024 doppelt vergeben – manuell gestellte Rechnung an MDCT/Amex (09.11.,
+  nicht in Register/Finanzsheet) und Lauf-Rechnung Sheet 319 Scalable (am 24.11. versendet). Scalable-024 storniert mit
+  KML-2026-025, Ersatz KML-2026-026; LL-2026-167 auf KML-2026-026 korrigiert; MDCT-024 im Register nachgetragen (Josh).
+
 - 2026-11-19 · Regel 8 (Ausnahme nie verschickt) angewendet: SH-2026-002 / LL-2026-167 (Sheet 331 Team Beverage, Selina
   Hehl) nicht versendet, freigegeben – Rechnung wird später gestellt; Mail-Entwurf gelöscht, PDFs im Papierkorb (Josh).
 
