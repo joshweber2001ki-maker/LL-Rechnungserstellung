@@ -98,7 +98,7 @@ KML-2026-020,kunde,KML,2026,20,290,GoodHabitz,Kira Marie Löhden,,,,,EUR,,altsys
 KML-2026-021,kunde,KML,2026,21,274,American Express,Kira Marie Löhden,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KML-2026-022,kunde,KML,2026,22,292,Scalable Capital,Kira Marie Löhden,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KML-2026-023,kunde,KML,2026,23,312,Jabra,Kira Marie Löhden,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
-KML-2026-024,kunde,KML,2026,24,319,Scalable Capital,Kira Marie Löhden,24.11.2026,6000.0,1140.0,7140.0,EUR,DE,entwurf,,,,,798rndrlfop685jv94tq4q2mc6,2026-11-24 07:15,,schatten,
+KML-2026-024,kunde,KML,2026,24,319,Scalable Capital,Kira Marie Löhden,24.11.2026,6000.0,1140.0,7140.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1_k0rS_jevqjuQ-IOc_8irYlH1NPV8HtM/view,,r-1384210018191754941,798rndrlfop685jv94tq4q2mc6,2026-11-24 07:15,,schatten,
 KS-2026-001,kunde,KS,2026,1,163,Miss Germany,Katrin Stockinger,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KS-2026-002,kunde,KS,2026,2,181,Biogena,Katrin Stockinger,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 KS-2026-003,kunde,KS,2026,3,185,Biogena,Katrin Stockinger,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -276,9 +276,9 @@ LL-2026-163,fee,LL,2026,163,268,This is Marketing,Katrin Stockinger,16.11.2026,3
 LL-2026-164,fee,LL,2026,164,325,Chat GPT,Sophia Tran,17.11.2026,2437.5,0,2437.5,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1HMzesehXbe16wJMvC8B5ush40blx1wQw/view,,,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,"umnummeriert 17.11. von LL-2026-166 (Josh: nie verschickte, verworfene Nummern 164/165 freigegeben)"
 LL-2026-165,fee,LL,2026,165,333,Geely,Daniel Reith,19.11.2026,1875.0,356.25,2231.25,EUR,DE,entwurf,,https://drive.google.com/file/d/1Ohi0ccYJtpt1RKU4qRqZUcWi2TC_XtPX/view,,,72kipahi6dbcvia22sur34m88l,2026-11-19 06:15,,schatten,
 LL-2026-166,fee,LL,2026,166,229,PALU,Daniel Reith,19.11.2026,156.25,29.69,185.94,EUR,DE,entwurf,,https://drive.google.com/file/d/1i0OzpxQvfhk8OMclCTape9HfFgmawNWY/view,,,7l9bo0dqh4m868m5mphppbk7fo,2026-11-19 09:24,,schatten,
-LL-2026-167,fee,LL,2026,167,319,Scalable Capital,Kira Marie Löhden,24.11.2026,1200.0,228.0,1428.0,EUR,DE,entwurf,,,,,798rndrlfop685jv94tq4q2mc6,2026-11-24 07:15,,schatten,
-LL-2026-168,fee,LL,2026,168,195,Kolbe Optik,Marco Hausdörfer,24.11.2026,395.0,75.05,470.05,EUR,DE,entwurf,,,,,7dr6g34ptekhc8iaha3cloqs6u,2026-11-24 07:15,,schatten,
-LL-2026-169,fee,LL,2026,169,305,Freelance Summit,Marina Ziblis,24.11.2026,1400.0,266.0,1666.0,EUR,DE,entwurf,,,,,37dt7qttkh0jrstm02i3d9nttb,2026-11-24 07:15,,schatten,
+LL-2026-167,fee,LL,2026,167,319,Scalable Capital,Kira Marie Löhden,24.11.2026,1200.0,228.0,1428.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1j0LQkE4wia5gEiqrbKm1gaMOmFigd4lU/view,,,798rndrlfop685jv94tq4q2mc6,2026-11-24 07:15,,schatten,
+LL-2026-168,fee,LL,2026,168,195,Kolbe Optik,Marco Hausdörfer,24.11.2026,395.0,75.05,470.05,EUR,DE,entwurf,,https://drive.google.com/file/d/1TuOrFgqWXujsRKPGhNsGQx1b1bzg3vu4/view,,,7dr6g34ptekhc8iaha3cloqs6u,2026-11-24 07:15,,schatten,
+LL-2026-169,fee,LL,2026,169,305,Freelance Summit,Marina Ziblis,24.11.2026,1400.0,266.0,1666.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1tz1AmPhMmQ6jjDLPoyXOaOhQfyxkfDJw/view,,,37dt7qttkh0jrstm02i3d9nttb,2026-11-24 07:15,,schatten,
 MH-2026-001,kunde,MH,2026,1,161,Brooklyn Soap,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-002,kunde,MH,2026,2,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-003,kunde,MH,2026,3,154,MOS MOSH,Marco Hausdörfer,,,,,EUR,,storniert,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -288,7 +288,7 @@ MH-2026-006,kunde,MH,2026,6,165,BRAUN BÜFFEL,Marco Hausdörfer,,,,,EUR,,altsyst
 MH-2026-007,kunde,MH,2026,7,208,MOS MOSH,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-008,kunde,MH,2026,8,221,Hessnatur,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MH-2026-010,kunde,MH,2026,10,228,BRAX,Marco Hausdörfer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
-MH-2026-011,kunde,MH,2026,11,195,Kolbe Optik,Marco Hausdörfer,24.11.2026,1975.0,375.25,2350.25,EUR,DE,entwurf,,,,,7dr6g34ptekhc8iaha3cloqs6u,2026-11-24 07:15,,schatten,
+MH-2026-011,kunde,MH,2026,11,195,Kolbe Optik,Marco Hausdörfer,24.11.2026,1975.0,375.25,2350.25,EUR,DE,entwurf,,https://drive.google.com/file/d/1pMft0YlME3bujDDZSQHa-Z5ZTj9xmzlx/view,,r3815874593928505215,7dr6g34ptekhc8iaha3cloqs6u,2026-11-24 07:15,,schatten,
 MZ-2026-001,kunde,MZ,2026,1,143,Machtfit,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MZ-2026-002,kunde,MZ,2026,2,184,sevdesk,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MZ-2026-003,kunde,MZ,2026,3,223,Leapsome,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
@@ -309,7 +309,7 @@ MZ-2026-018,kunde,MZ,2026,18,299,Leapsome,Marina Ziblis,,,,,EUR,,altsystem,,,,,,
 MZ-2026-020,kunde,MZ,2026,20,300,Adobe,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MZ-2026-021,kunde,MZ,2026,21,329,AT World,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 MZ-2026-022,kunde,MZ,2026,22,335,Deloitte,Marina Ziblis,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
-MZ-2026-023,kunde,MZ,2026,23,305,Freelance Summit,Marina Ziblis,24.11.2026,7000.0,1330.0,8330.0,EUR,DE,entwurf,,,,,37dt7qttkh0jrstm02i3d9nttb,2026-11-24 07:15,,schatten,
+MZ-2026-023,kunde,MZ,2026,23,305,Freelance Summit,Marina Ziblis,24.11.2026,7000.0,1330.0,8330.0,EUR,DE,entwurf,,https://drive.google.com/file/d/1Osx3Fm7qxndsCne82BgAFe2COxoskA9P/view,,r-9049220319746899598,37dt7qttkh0jrstm02i3d9nttb,2026-11-24 07:15,,schatten,
 SH-2026-001,kunde,SH,2026,1,302,Die Lizenz zum Erfolg - Buchlaunch,Selina Hehl,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
 ST-2026-001,kunde,ST,2026,1,325,Chat GPT,Sophia Tran,17.11.2026,9750.0,0.0,9750.0,EUR,DRITTLAND,entwurf,,https://drive.google.com/file/d/1gTSI9scb2CrefyXU8bTNtWVA8TdEMGK-/view,,r-6310711836796517967,2pclglmk0mqbh1h5maans4hn1a,2026-11-17 06:16,,schatten,
 VE-2026-001,kunde,VE,2026,1,164,Burda,Victoria Effer,,,,,EUR,,altsystem,,,,,,2026-11-02,,n8n,Import aus Finanzsheet (rechnung_creator)
