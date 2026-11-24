@@ -128,3 +128,11 @@ Julie Lepique:
   notes: >-
     Arbeitet über JL Studio Compound UG (haftungsbeschränkt). Kundenrechnung im Namen der UG,
     Fee-Rechnung an die UG. Design und KSK-Kostenumlage nach Regel 16 (Muster JL-2026-001, StB Buhl).
+
+Annahita Esmailzadeh:
+  prefix: AS
+  entity: person
+  country: DE
+  vat_liable: true
+  fee_default: [25]
+  notes: "Rechtlicher Name Annahita Schildhauer (Adress-Tab). Steuernummer fehlt noch (Stand 24.11.2026), USt-IdNr. DE354095139 genügt nach § 14 Abs. 4 Nr. 2 UStG (Josh)."
