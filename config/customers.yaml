@@ -61,3 +61,7 @@ Wiresoft:
   country: CH
   lang: de
   notes: "Kunde von Selina Hehl (AT) – österreichischer Steuertext, keine KSK."
+
+Salamander:
+  country: CH
+  notes: "Rechnungsempfänger AstorMueller AG, Hünenberg (CH). VAT ID fehlt (Stand 25.11.2026) – Sheet 340/341 bis auf Weiteres verschoben (Josh). ID hier als vat_id eintragen, sobald sie vorliegt; Sheet-MwSt (19 %) passt nicht zu CH, vor Freigabe klären."

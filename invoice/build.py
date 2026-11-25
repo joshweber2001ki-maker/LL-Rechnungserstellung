@@ -371,8 +371,9 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
             findings.append({"level": "warn", "text": "Sonderfall: MwSt und KSK im Sheet leer/0 – Rechnung ohne MwSt und ohne KSK-Umlage erstellt (Regel 4a). Bitte kurz bestätigen."})
         elif tax_case == "DE":
             findings.append({"level": "stop", "text": "Sonderfall: MwSt und KSK im Sheet leer/0, Kunde aber in Deutschland – Rechnung ohne MwSt nur nach Rücksprache (Regel 4a)."})
-    if tax_case == "EU" and not rec["ids"]:
-        findings.append({"level": "stop", "text": "EU-Kunde ohne USt-ID im Adressblock (Reverse Charge braucht die ID)."})
+    # Regel 12.5 (25.11.2026): jede Auslandsrechnung (EU und Drittland) braucht die USt-ID/VAT ID/UID des Kunden.
+    if tax_case in ("EU", "DRITTLAND") and not rec["ids"]:
+        findings.append({"level": "stop", "text": f"Auslandskunde ({customer_country}) ohne USt-ID/VAT ID im Adressblock bzw. customers.yaml – ohne VAT ID keine Auslandsrechnung (Regel 12.5). Rechnung verschieben, bis die ID vorliegt."})
     if any(x["level"] == "stop" for x in findings):
         return {"findings": findings, "tax_case": tax_case, "meta": {}, "customer": None, "fee": None}
 

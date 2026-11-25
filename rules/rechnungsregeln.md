@@ -236,7 +236,8 @@ in beiden Betriebsmodi.
 2. Creatorin unbekannt (nicht in `creators.yaml` oder nicht im Adress-Tab).
 3. Vergütung Gesamt ≠ Creator + L&L (Rundungstoleranz 0,02 €).
 4. Fee-Prozent nicht in `fee_default` der Creatorin.
-5. Steuerfall-Konflikt (Regel 4) oder EU-Kunde ohne USt-ID.
+5. Steuerfall-Konflikt (Regel 4) oder Auslandskunde (EU **und** Drittland) ohne USt-ID/VAT ID/UID – ohne ID wird keine
+   ausländische Rechnung gestellt, der Vorgang wird verschoben, bis die ID vorliegt (Regel vom 25.11.2026).
 6. Zusatzkosten > 0 (Regel 6) – Entwurf ja, aber mit Rückfrage zur Belegliste.
 7. Sheet-Nummer bereits fakturiert (Spalte AH/AI gefüllt oder Register) – Hinweis, keine Dublette.
 8. Creatorin mit markierter Sonderregel (`SONDERREGEL` in `creators.yaml`) – manuelle Freigabe. UG/GmbH allein ist
@@ -375,6 +376,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-25 · Regel 12.5: Ausländische Rechnungen (EU und Drittland) nur mit USt-ID/VAT ID des Kunden; fehlt sie ⇒
+  Stopp, Rechnung verschieben bis die ID vorliegt. Angewendet: Sheet 340/341 Salamander (AstorMueller AG, CH) bis auf
+  Weiteres verschoben (Josh).
 
 - 2026-11-24 · Regel 9 angewendet: KML-2026-024 doppelt vergeben – manuell gestellte Rechnung an MDCT/Amex (09.11.,
   nicht in Register/Finanzsheet) und Lauf-Rechnung Sheet 319 Scalable (am 24.11. versendet). Scalable-024 storniert mit
