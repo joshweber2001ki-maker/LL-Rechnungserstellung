@@ -73,6 +73,7 @@ Für jedes Event des Tages:
 3. `build --datum <heute>` laufen lassen (vergibt die Nummern automatisch, siehe Schritt 5) → Befund lesen.
    - Stopp-Befund ⇒ in die Zusammenfassung, weiter mit dem nächsten Event.
    - Warnungen ⇒ Entwurf trotzdem erzeugen, Warnungen in die Zusammenfassung.
+   - Hinweise (`level: info`, z. B. verwendetes Handle bei Scalable) ⇒ in die Event-Zeile der Zusammenfassung, kein Rückfragegrund.
 4. **Leistungsbeschreibung prüfen** (`out/<N>/<Kundenrechnungs-Nr>.json`, `items[0]`): Titel muss eine
    kurze, lesbare Leistung sein (z. B. „4 × LinkedIn-Beiträge als Co-Author"), Unterzeilen Kampagne/Go Live,
    Handles, Deliverables. Ist der automatische Titel unglücklich (zu lang, Füllwörter, „Content-Paket"),

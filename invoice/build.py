@@ -162,9 +162,8 @@ def short_name(deliverable):
     return s.strip(" .,:")
 
 
-def build_description(row, creator_info, lang, year, handles_mode=None):
-    """Liefert (title, sublines, partial_note). handles_mode "plattform" (customers.yaml `handles`): nur die Handles
-    der Kampagnen-Plattform aus „Leistungen“ (wie Regel 13a), unklar ⇒ alle."""
+def build_description(row, creator_info, lang, year):
+    """Liefert (title, sublines, partial_note). Handles kommen bereits gefiltert (Regel 7, select_handles)."""
     raw = str(row["leistungen"] or "")
     partial = None
     m = PARTIAL_DE.match(raw) or PARTIAL_EN.match(raw)
@@ -201,9 +200,6 @@ def build_description(row, creator_info, lang, year, handles_mode=None):
         camp += " · " + ("Go Live" if lang == "de" else "Go live") + f": {go_live}"
     sub.append(camp)
     handles = creator_info.get("handles") or []
-    if handles and handles_mode == "plattform":
-        from .mail import pick_handles
-        handles, _ = pick_handles(handles, row["leistungen"])
     if handles:
         sub.append(" · ".join(handles))
     if sub_deliv:
@@ -418,7 +414,19 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         findings.append({"level": "warn", "text": f"Zusatzkosten {zusatz} € aus dem Sheet übernommen (Netto-Belegliste bestätigen – Sheet-Wert ist oft brutto)."})
 
     # --- Positionen Kundenrechnung
-    title, sublines, partial = build_description(row, cinfo, lang, year, handles_mode=cust.get("handles"))
+    # Handles (Regel 7, 26.11.2026): Plattform eindeutig ⇒ nur deren Handles, sonst alle; customers.yaml `handles: alle`
+    # schaltet die Auswahl ab, `handles_hinweis: true` meldet das verwendete Handle im Befund.
+    from .mail import pick_handles
+    all_handles = cinfo.get("handles") or []
+    if str(cust.get("handles", "plattform")).lower() == "alle":
+        inv_handles, eindeutig = all_handles, False
+    else:
+        inv_handles, eindeutig = pick_handles(all_handles, row["leistungen"])
+    if cust.get("handles_hinweis") and all_handles:
+        findings.append({"level": "info", "text": f"Handle auf der Rechnung ({row['kunde'].strip()}): "
+                         + (" · ".join(inv_handles) or "–")
+                         + (" (Plattform eindeutig)" if eindeutig else " (Plattform nicht eindeutig – alle Handles)")})
+    title, sublines, partial = build_description(row, dict(cinfo, handles=inv_handles), lang, year)
     items, totals, notes, highlights = [], [], [], []
     ksk_rate = Decimal(str(company["ksk_rate"]))
     vat_rate = Decimal(str(company["vat_rate"]))

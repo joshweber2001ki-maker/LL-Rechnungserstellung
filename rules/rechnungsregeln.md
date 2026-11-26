@@ -145,7 +145,11 @@ Regeln:
   „1. Teilrechnung" / „1st partial invoice" und zählen nicht als Deliverable.
 - „Go Live:"-Präfix aus dem Sheet entfernen, Datumsangaben normalisieren (`30.10. & 02.11.2026` bleibt).
   Steht nur ein Monat („September") ⇒ `Go Live: September 2026`.
-- Handles aus Tab Creator-Adressen, alle in einer Zeile.
+- Handles aus Tab Creator-Adressen, in einer Zeile. **Nur die Handles der Kampagnen-Plattform**, wenn das aus
+  „Leistungen“ vollkommen eindeutig ist (mindestens eine Plattform erkannt und für jede erkannte Plattform ein Handle
+  vorhanden; z. B. LinkedIn-Beiträge ⇒ nur LinkedIn, Reel/Story ⇒ nur Instagram). Sonst wie bisher **alle** Handles.
+  Gleiche Logik wie im Mail-Text (Regel 13a). `customers.yaml` `handles: alle` schaltet die Auswahl für einen Kunden ab;
+  `handles_hinweis: true` (derzeit Scalable Capital) ⇒ verwendetes Handle als Hinweis in Zusammenfassung/Chat.
 - Markdown-Sternchen (`*Scalable Capital*`) entfernen.
 - Englische Vorlage: `Campaign:` / `Go live:` / `Management fee`.
 - Fee-Rechnung: Position „Management Fee" mit Unterzeilen `für Kunde: <Kunde>` ·
@@ -377,8 +381,9 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
-- 2026-11-26 · Kunde Scalable Capital: auf der Rechnung immer nur das Creator-Handle der Kampagnen-Plattform
-  (`customers.yaml` `handles: plattform`, gleiche Logik wie Regel 13a). Angewendet: KML-2026-026 (Sheet 319) ohne Storno
+- 2026-11-26 · Regel 7 (übergreifend): Auf der Kundenrechnung nur die Handles der Kampagnen-Plattform, wenn eindeutig;
+  sonst alle wie bisher. Scalable Capital: zusätzlich in jeder Zusammenfassung ein Hinweis, welches Handle verwendet
+  wurde (`handles_hinweis`). Angewendet: KML-2026-026 (Sheet 319) ohne Storno
   korrigiert – nur LinkedIn-Handle, gleiche Nummer, PDF in Drive ersetzt (Josh, Wunsch Keti/Scalable).
 
 - 2026-11-25 · Regel 12.5: Ausländische Rechnungen (EU und Drittland) nur mit USt-ID/VAT ID des Kunden; fehlt sie ⇒

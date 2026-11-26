@@ -7,7 +7,8 @@
 #   currency      EUR | USD
 #   contact       Ansprechpartner-Stil: { name, du_sie: du|sie, lang }
 #   reference_label  Pflichtangabe im Empfängerblock (z. B. Bestellnummer, ANID, PO)
-#   handles       plattform ⇒ auf der Rechnung nur die Creator-Handles der Kampagnen-Plattform (wie Mail, Regel 13a)
+#   handles       alle ⇒ immer alle Creator-Handles (Standard: plattform = nur die Handles der eindeutig erkennbaren Plattform, Regel 7)
+#   handles_hinweis  true ⇒ verwendetes Handle als Hinweis in Befund/Zusammenfassung
 #   notes         Freitext – wird Claude bei der Erstellung gezeigt
 
 _default:
@@ -69,5 +70,5 @@ Salamander:
 
 Scalable Capital:
   country: DE
-  handles: plattform
-  notes: "Auf der Rechnung immer nur das passende Creator-Handle der Kampagnen-Plattform (z. B. LinkedIn-Kampagne ⇒ nur LinkedIn), keine weiteren Handles. Wunsch Keti/Scalable, Josh 26.11.2026."
+  handles_hinweis: true
+  notes: "Auf der Rechnung nur das passende Creator-Handle der Kampagnen-Plattform (Regel 7); jede Rechnung meldet im Befund, welches Handle verwendet wurde. Wunsch Keti/Scalable, Josh 26.11.2026."

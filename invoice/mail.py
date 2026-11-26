@@ -76,12 +76,16 @@ def campaign_platforms(leistungen):
 
 
 def pick_handles(handles, leistungen):
-    """Nur die Handles der Plattform(en) aus „Leistungen“; ist das unklar (keine Plattform erkennbar oder kein
-    passender Handle), alle Handles aus Tab Creator-Adressen."""
+    """Nur die Handles der Plattform(en) aus „Leistungen“ – aber nur, wenn das vollkommen eindeutig ist: mindestens eine
+    Plattform erkannt und für JEDE erkannte Plattform ein passender Handle vorhanden. Sonst alle Handles aus Tab
+    Creator-Adressen. -> (handles, eindeutig)"""
     handles = [h for h in (handles or []) if h and h.strip()]
-    plats = campaign_platforms(leistungen)
-    hits = [h for h in handles if (split_handle(h)[1] or "").lower() in {p.lower() for p in plats}]
-    return (hits, True) if hits else (handles, False)
+    plats = {p.lower() for p in campaign_platforms(leistungen)}
+    hits = [h for h in handles if (split_handle(h)[1] or "").lower() in plats]
+    covered = {(split_handle(h)[1] or "").lower() for h in hits}
+    if plats and hits and covered == plats:
+        return hits, True
+    return handles, False
 
 
 def handles_text(handles, lang):
