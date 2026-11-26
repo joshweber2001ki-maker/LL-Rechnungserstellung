@@ -162,8 +162,9 @@ def short_name(deliverable):
     return s.strip(" .,:")
 
 
-def build_description(row, creator_info, lang, year):
-    """Liefert (title, sublines, partial_note)."""
+def build_description(row, creator_info, lang, year, handles_mode=None):
+    """Liefert (title, sublines, partial_note). handles_mode "plattform" (customers.yaml `handles`): nur die Handles
+    der Kampagnen-Plattform aus „Leistungen“ (wie Regel 13a), unklar ⇒ alle."""
     raw = str(row["leistungen"] or "")
     partial = None
     m = PARTIAL_DE.match(raw) or PARTIAL_EN.match(raw)
@@ -199,8 +200,12 @@ def build_description(row, creator_info, lang, year):
     if go_live:
         camp += " · " + ("Go Live" if lang == "de" else "Go live") + f": {go_live}"
     sub.append(camp)
-    if creator_info.get("handles"):
-        sub.append(" · ".join(creator_info["handles"]))
+    handles = creator_info.get("handles") or []
+    if handles and handles_mode == "plattform":
+        from .mail import pick_handles
+        handles, _ = pick_handles(handles, row["leistungen"])
+    if handles:
+        sub.append(" · ".join(handles))
     if sub_deliv:
         sub.append(" · ".join(sub_deliv))
     if partial:
@@ -413,7 +418,7 @@ def build_invoices(row, creator_addr, *, issue_date=None, number_customer="ENTWU
         findings.append({"level": "warn", "text": f"Zusatzkosten {zusatz} € aus dem Sheet übernommen (Netto-Belegliste bestätigen – Sheet-Wert ist oft brutto)."})
 
     # --- Positionen Kundenrechnung
-    title, sublines, partial = build_description(row, cinfo, lang, year)
+    title, sublines, partial = build_description(row, cinfo, lang, year, handles_mode=cust.get("handles"))
     items, totals, notes, highlights = [], [], [], []
     ksk_rate = Decimal(str(company["ksk_rate"]))
     vat_rate = Decimal(str(company["vat_rate"]))

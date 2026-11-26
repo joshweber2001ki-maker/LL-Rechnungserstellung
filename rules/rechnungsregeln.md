@@ -377,6 +377,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-26 · Kunde Scalable Capital: auf der Rechnung immer nur das Creator-Handle der Kampagnen-Plattform
+  (`customers.yaml` `handles: plattform`, gleiche Logik wie Regel 13a). Angewendet: KML-2026-026 (Sheet 319) ohne Storno
+  korrigiert – nur LinkedIn-Handle, gleiche Nummer, PDF in Drive ersetzt (Josh, Wunsch Keti/Scalable).
+
 - 2026-11-25 · Regel 12.5: Ausländische Rechnungen (EU und Drittland) nur mit USt-ID/VAT ID des Kunden; fehlt sie ⇒
   Stopp, Rechnung verschieben bis die ID vorliegt. Angewendet: Sheet 340/341 Salamander (AstorMueller AG, CH) bis auf
   Weiteres verschoben (Josh).

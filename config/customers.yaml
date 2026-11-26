@@ -7,6 +7,7 @@
 #   currency      EUR | USD
 #   contact       Ansprechpartner-Stil: { name, du_sie: du|sie, lang }
 #   reference_label  Pflichtangabe im Empfängerblock (z. B. Bestellnummer, ANID, PO)
+#   handles       plattform ⇒ auf der Rechnung nur die Creator-Handles der Kampagnen-Plattform (wie Mail, Regel 13a)
 #   notes         Freitext – wird Claude bei der Erstellung gezeigt
 
 _default:
@@ -65,3 +66,8 @@ Wiresoft:
 Salamander:
   country: CH
   notes: "Rechnungsempfänger AstorMueller AG, Hünenberg (CH). VAT ID fehlt (Stand 25.11.2026) – Sheet 340/341 bis auf Weiteres verschoben (Josh). ID hier als vat_id eintragen, sobald sie vorliegt; Sheet-MwSt (19 %) passt nicht zu CH, vor Freigabe klären."
+
+Scalable Capital:
+  country: DE
+  handles: plattform
+  notes: "Auf der Rechnung immer nur das passende Creator-Handle der Kampagnen-Plattform (z. B. LinkedIn-Kampagne ⇒ nur LinkedIn), keine weiteren Handles. Wunsch Keti/Scalable, Josh 26.11.2026."
