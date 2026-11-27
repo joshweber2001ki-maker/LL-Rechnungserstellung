@@ -223,7 +223,8 @@ def compose(gruppe, nachfrage=False):
     subject = t["betreff"].format(nrs=" / ".join(x["nummer"] for x in items))
     text = "\n\n".join(paras)
     html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222">' + "".join(
-        f'<p style="margin:0 0 12px 0">{htmlmod.escape(p).replace(chr(10), "<br>")}</p>' for p in paras) + "</div>"
+        f'<p style="margin:{"0" if i == len(paras) - 1 else "0 0 12px 0"}">{htmlmod.escape(p).replace(chr(10), "<br>")}</p>'
+        for i, p in enumerate(paras)) + "</div>"  # letzter Absatz ohne Abstand – Gmail-Signatur folgt direkt
     return {"to": [gruppe["to"]], "cc": gruppe["cc"], "subject": subject, "text": text, "html": html,
             "nummern": [x["nummer"] for x in items]}
 

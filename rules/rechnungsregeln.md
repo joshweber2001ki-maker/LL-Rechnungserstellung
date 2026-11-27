@@ -386,6 +386,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 
 ## Änderungsprotokoll
 
+- 2026-11-27 · Regel 13a/15: Im Mail-HTML hat der letzte Absatz (Gruß) keinen Abstand nach unten – die Gmail-Signatur
+  folgt direkt, ohne Leerzeile (Josh). Sheet 277 Open-i aufgeschoben bis Ansprechpartner vorliegt und alles geklärt ist
+  (`cases/277.md`, Josh).
+
 - 2026-11-27 · Regel 3: Nummern ohne Bezeichnung am Ende des Felds „Rechnungsempfänger“ sind Steuer-ID (Schweizer
   UID `CHE-…`, EU-USt-IdNr.) bzw. Referenz, nie Land-/Adresszeile. Anlass: Sheet 277 Open-i/NZZ Connect (Land CH wegen
   `CHE-106.838.812` nicht erkannt) (Josh).

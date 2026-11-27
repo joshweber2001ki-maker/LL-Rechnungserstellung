@@ -199,8 +199,10 @@ DISCO = "\U0001FAA9"  # 🪩 – GmailApp zerlegt Zeichen außerhalb der BMP, da
 
 
 def to_html(paras):
-    body = "".join(f'<p style="margin:0 0 12px 0">{htmlmod.escape(p).replace(chr(10), "<br>").replace(DISCO, "&#x1FAA9;")}</p>'
-                   for p in paras)
+    # Letzter Absatz ohne Abstand nach unten: die Gmail-Signatur folgt direkt (sonst wirkt es wie eine Leerzeile zu viel)
+    body = "".join(f'<p style="margin:{"0" if i == len(paras) - 1 else "0 0 12px 0"}">'
+                   f'{htmlmod.escape(p).replace(chr(10), "<br>").replace(DISCO, "&#x1FAA9;")}</p>'
+                   for i, p in enumerate(paras))
     return f'<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222">{body}</div>'
 
 
