@@ -43,6 +43,14 @@ REF_PATTERN = re.compile(r"^[\s•·\-–*]*(Bestellnummer|Bestell-Nr\.?|PO(?: n
 # Allgemein: "<Bezeichnung>: <Wert mit Ziffer>" (Bezeichnung ohne Ziffern, max. 40 Zeichen) oder "#<Kennung>".
 GENERIC_REF_PATTERN = re.compile(r"^[\s•·\-–*]*([^\d:#•·]{2,40}?)\s*[:#]\s*(\S*\d.*)$")
 HASH_REF_PATTERN = re.compile(r"^\s*(#\S*\d\S*)\s*$")
+# Regel 3 (27.11.2026): Nummern ohne Bezeichnung am Ende des Empfängerfelds sind Steuer-/Referenznummern, keine
+# Adress- oder Landzeile. Schweizer UID (CHE-123.456.789 [MWST]) und EU-USt-IdNr. (Länderkürzel + 8–12 Zeichen) ⇒ Steuer-ID.
+BARE_VAT_PATTERN = re.compile(
+    r"^(CHE[-\s]?\d{3}[.\s]?\d{3}[.\s]?\d{3}(?:\s*(?:MWST|TVA|IVA))?"
+    r"|(?:AT|BE|BG|CY|CZ|DE|DK|EE|EL|ES|FI|FR|GB|HR|HU|IE|IT|LT|LU|LV|MT|NL|NO|PL|PT|RO|SE|SI|SK|XI)\s?(?=[0-9A-Z]*\d)[0-9A-Z]{8,12})$",
+    re.I)
+# Kennung ohne Bezeichnung: enthält Ziffern, kein Wort aus 3+ Buchstaben (sonst wäre es z. B. "3013 Bern" oder eine Straße)
+BARE_ID_PATTERN = re.compile(r"^(?=.*\d)(?!.*[A-Za-zÄÖÜäöüß]{4,})(?!\d{4,5}\s+[A-Za-zÄÖÜäöüß])[A-Za-z0-9.\-/\s]{4,}$")
 MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
 MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -87,6 +95,24 @@ def parse_recipient(raw, customers_cfg, customer_name):
             refs.append({"label": "", "value": m.group(1).strip()})
             continue
         out_lines.append(l)
+    # Regel 3 (27.11.2026): unbezeichnete Nummern am Ende des Adressblocks ⇒ Steuer-ID bzw. Referenz
+    trailing = []
+    while len(out_lines) > 1:
+        last = out_lines[-1].strip()
+        if BARE_VAT_PATTERN.match(last):
+            trailing.insert(0, ("id", last))
+        elif BARE_ID_PATTERN.match(last) and last.lower() not in COUNTRY_NAMES:
+            trailing.insert(0, ("ref", last))
+        else:
+            break
+        out_lines.pop()
+    for kind, val in trailing:
+        if kind == "id":
+            ids.append({"label": "UID" if val.upper().startswith("CHE") else "VAT", "value": val})
+            findings.append({"level": "info", "text": f"Nummer ohne Bezeichnung am Ende des Empfängerfelds als Steuer-ID gelesen: {val}."})
+        else:
+            refs.append({"label": "", "value": val})
+            findings.append({"level": "info", "text": f"Nummer ohne Bezeichnung am Ende des Empfängerfelds als Referenz übernommen: {val} – Bezeichnung ggf. im Sheet ergänzen."})
     # Land: letzte Zeile oder "…, Land"
     if out_lines:
         last = out_lines[-1]

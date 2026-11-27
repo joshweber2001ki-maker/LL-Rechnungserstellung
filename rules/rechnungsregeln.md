@@ -55,6 +55,11 @@ mehr auf der Rechnung); Creator Handle (für die Leistungsbeschreibung).
   - **Grundsatz (16.11.2026):** Jede nachvollziehbare Nummer, die im Sheet beim Rechnungsempfänger steht, kommt mit
     auf die Rechnung – auch mit unbekannter Bezeichnung (`<Bezeichnung>: <Nummer>` oder `#<Kennung>`). Solche Zeilen
     zählen nie als Adress- oder Landzeile.
+  - **Nummern ohne Bezeichnung am Ende (27.11.2026):** Unbezeichnete Zeilen mit Ziffern am Ende des Felds (z. B.
+    `CHE-106.838.812`, `ATU12345678`, `FN525900h`) sind fast immer Steuer-, Register- oder Vorgangsnummern – nie
+    Adress- oder Landzeile. Schweizer UID (`CHE-…`, ggf. mit MWST/TVA/IVA) und EU-USt-IdNr. (Länderkürzel + Ziffern)
+    ⇒ Steuer-ID; alles andere ⇒ Referenzzeile ohne Bezeichnung. Die Landzeile davor wird normal erkannt. Je Fall ein
+    Hinweis (`info`) in der Zusammenfassung. PLZ-Ort-Zeilen („3013 Bern“) und Straßen zählen nicht dazu.
 - Land fehlt und PLZ ist 5-stellig numerisch ⇒ Deutschland annehmen. Sonst: Land aus `customers.yaml`,
   sonst **Rückfrage**.
 - Steht im Feld `pending` ⇒ **keine Rechnung**, Rückfrage.
@@ -380,6 +385,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-27 · Regel 3: Nummern ohne Bezeichnung am Ende des Felds „Rechnungsempfänger“ sind Steuer-ID (Schweizer
+  UID `CHE-…`, EU-USt-IdNr.) bzw. Referenz, nie Land-/Adresszeile. Anlass: Sheet 277 Open-i/NZZ Connect (Land CH wegen
+  `CHE-106.838.812` nicht erkannt) (Josh).
 
 - 2026-11-26 · Regel 7 (übergreifend): Auf der Kundenrechnung nur die Handles der Kampagnen-Plattform, wenn eindeutig;
   sonst alle wie bisher. Scalable Capital: zusätzlich in jeder Zusammenfassung ein Hinweis, welches Handle verwendet
