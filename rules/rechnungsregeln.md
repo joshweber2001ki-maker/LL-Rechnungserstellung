@@ -264,8 +264,8 @@ in beiden Betriebsmodi.
 - Dateinamen: `Rechnung-<Nr>.pdf`, `Stornorechnung-<Nr>.pdf`, `Rechnung-<Nr>_Belege.pdf` (Belegbündel).
 - Gmail-Entwürfe (finance@): (a) an den Kunden mit Kundenrechnung, immer (Regel 13a); (b) an die Creatorin mit
   Fee-Rechnung nur im Modus `produktiv`. Nichts wird automatisch gesendet.
-- Nach Versand (Status `gesendet`, erkannt über gesendete Mail mit der Rechnungsnummer): Beleg an
-  simbadirekt (Ausgangsrechnungen) als Entwurf vorbereiten.
+- Ans Steuerbüro (simbadirekt) gehen Rechnungen **nicht einzeln** nach Versand, sondern gesammelt einmal im Monat
+  (Regel 17).
 
 ## 13a. Mail-Entwurf zur Kundenrechnung (Regel vom 10.11.2026)
 
@@ -371,6 +371,22 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
    „Abrechnungsstelle“ (links) und „Zahlstelle / Kontoverbindung“ (rechts). Wortlaut steht in `company.yaml`
    (`zahlstelle`), **anwaltliche Prüfung vor Serienanwendung von StBin Bersch empfohlen – Stand 17.11.2026 offen**.
 
+## 17. Monatsversand Ausgangsrechnungen an das Steuerbüro (Regel vom 27.11.2026)
+
+- Am **5. jedes Monats** gehen **alle** Kundenrechnungen (alle Creator-Nummernkreise, inkl. Stornorechnungen) und alle
+  Management-Fee-Rechnungen (LL-) **des Vormonats** gesammelt in **einer** Mail an simbadirekt, Postfach A
+  (Ausgangsrechnungen): `rzmd-iyyam-a@belege.simbadirekt.de`. Keine Einzelmails nach Versand.
+- Vormonat = Rechnungsdatum im Vormonat (Register). Rechnungen aus dem Altsystem ohne Datum im Register: Datum aus dem
+  Finanzsheet geschätzt (Fälligkeit − Zahlungsfrist), in der Zusammenfassung als „geschätzt“ markiert. Verworfene
+  Nummern gehen nicht mit.
+- PDFs: Register-Link (`drive_kopie`), sonst Drive-Suche nach `Rechnung-<Nr>.pdf` (Kampagnenordner vor
+  `_parallelbetrieb`). Mehrdeutig/nicht gefunden ⇒ nicht anhängen, in der Zusammenfassung mit Kandidaten nennen.
+- Es wird nur ein **Gmail-Entwurf** angelegt (Betreff `Ausgangsrechnungen <Monat> <Jahr>`, Liste der Nummern im Text,
+  PDFs als Anhang, über die Brücke `draftDrive`); Josh prüft und sendet. Ein Entwurf je Monat (Protokoll
+  `register/steuerbuero.csv`); > 20 MB ⇒ mehrere Teile.
+- Zusammenfassung an finance@: Anzahl, Lücken in den Nummernkreisen, Rechnungen ohne PDF, geschätzte Daten,
+  Dubletten. Werkzeug: `python3 -m invoice.steuerbuero`, Ablauf im Skill.
+
 ## 14. Betriebsmodus
 
 - **Rechnungsnummern laufen in beiden Modi wie produktiv** (Regel 8): Vergabe aus Finanzsheet/Register,
@@ -385,6 +401,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-27 · Neu Regel 17: Ausgangsrechnungen gehen am 5. des Monats gesammelt (alle Creator- und LL-Rechnungen des
+  Vormonats) als ein Entwurf an simbadirekt A; die Einzel-Mail an simbadirekt nach Versand (`rechnung gesendet`)
+  entfällt (Josh).
 
 - 2026-11-27 · Regel 13a/15: Im Mail-HTML hat der letzte Absatz (Gruß) keinen Abstand nach unten – die Gmail-Signatur
   folgt direkt, ohne Leerzeile (Josh). Sheet 277 Open-i aufgeschoben bis Ansprechpartner vorliegt und alles geklärt ist

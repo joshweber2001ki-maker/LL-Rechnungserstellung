@@ -193,6 +193,22 @@ Nach den Rechnungen, vor der Zusammenfassung. `git pull` und `data/sheet.json` s
    als Liste, Einträge mit `hinweis` hervorheben. Neuer Entwurf oder neue Rückfrage ⇒ `PushNotification` mit einem
    Satz je Fall. Gibt es gar nichts Überfälliges: eine Zeile „Keine überfälligen Rechnungen ohne Erinnerung“.
 
+## Monatsversand ans Steuerbüro (Regel 17) – geplante Aufgabe am 5. des Monats
+
+1. `git pull`, Brücke konfigurieren (wie oben), `data/sheet.json` frisch holen. Monat = Vormonat (`JJJJ-MM`).
+2. Gmail prüfen: `search_threads` `in:sent to:rzmd-iyyam-a@belege.simbadirekt.de subject:"Ausgangsrechnungen <Monat> <Jahr>"`
+   und `list_drafts` mit demselben Betreff. Schon gesendet oder Entwurf vorhanden ⇒ keinen neuen, nur Hinweis.
+3. `python3 -m invoice.steuerbuero liste <JJJJ-MM> --sheet-json data/sheet.json > out/steuerbuero/<JJJJ-MM>.json` lesen:
+   `items` (mit PDF), `ohne_pdf` (mit `kandidaten`), `luecken`, `anderer_monat`, `datum_geschaetzt`, `befunde`.
+4. `python3 -m invoice.steuerbuero entwurf <JJJJ-MM> --sheet-json data/sheet.json` – legt über die Brücke (`draftDrive`)
+   den Entwurf an Postfach A an und schreibt `register/steuerbuero.csv`; dann
+   `git add register && git commit -m "steuerbuero: <JJJJ-MM>" && git push`. Brücke kennt `draftDrive`/`info` nicht
+   (`unknown action`) ⇒ kein Entwurf; Liste + Hinweis „Apps Script neu bereitstellen (bridge/Code.gs)“ in die
+   Zusammenfassung. Nie per Connector-Base64 Dutzende PDFs laden.
+5. `send_message` an finance@: Betreff `Steuerbüro <Monat Jahr>: <n> Rechnungen im Entwurf[, <k> offen]`; Inhalt: Entwurf
+   (Link/ID, Teile), je Rechnung eine Zeile (Nr · Datum · Kunde · Herkunft), dann ohne PDF (mit Kandidaten),
+   Lücken, geschätzte Daten, Dubletten. Bei offenen Punkten zusätzlich `PushNotification`.
+
 ## Chat-Befehle
 
 - **`rechnung erinnerung [pruefen]`** – Schritte 1–6 sofort ausführen. **`rechnung erinnerung <Nr> freigeben`** –
@@ -219,8 +235,9 @@ Nach den Rechnungen, vor der Zusammenfassung. `git pull` und `data/sheet.json` s
   abweichende Sprache, Bestellnummer). In `cases/<N>.md` ablegen (Datum, Text) und beim Lauf für N berücksichtigen
   (`--expenses` aus der Belegliste bauen: `[{"title": "...", "net": 56.07, "gross": 66.72, "pages": "S. 3"}]`).
 - **`rechnung status [<Nr>|offen|heute]`** – Registerauszug; `offen` = Status `entwurf`/`gesendet`.
-- **`rechnung gesendet <Nr>`** – Status auf `gesendet` (Datum), simbadirekt-Entwurf vorbereiten
-  (`create_draft` an `rzmd-iyyam-a@belege.simbadirekt.de`, Anhang PDF, Betreff = Nummer).
+- **`rechnung gesendet <Nr>`** – Status auf `gesendet` (Datum). **Kein** simbadirekt-Entwurf – das Steuerbüro bekommt
+  die Rechnungen gesammelt am 5. des Folgemonats (Regel 17).
+- **`rechnung steuerbüro [<JJJJ-MM>]`** – Monatssammlung (unten) sofort für den Monat (Standard: Vormonat).
 
 ## Vergleichsmodus (Schatten) – worauf achten
 

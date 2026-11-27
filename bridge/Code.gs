@@ -7,6 +7,9 @@
  *   3. Bereitstellen → Neue Bereitstellung → Typ „Web-App", Ausführen als „Ich", Zugriff „Jeder".
  *   4. Web-App-URL + SECRET in config/bridge.yaml eintragen.
  *
+ * Änderung am Code: Bereitstellen → Bereitstellungen verwalten → Bearbeiten → Version „Neue Version“ → Bereitstellen
+ * (URL bleibt gleich). Seit 27.11.2026 neu: draftDrive, info (Monatsversand Steuerbüro, Regel 17).
+ *
  * Alle Aufrufe: POST mit JSON-Body {secret, action, ...}. Antwort JSON {ok, ...} oder {ok:false, error}.
  * Die Brücke sendet NIE Mails – sie legt nur Entwürfe an.
  */
@@ -24,11 +27,13 @@ function doPost(e) {
       case 'sheet':     out = readSheet(req); break;
       case 'upload':    out = upload(req); break;
       case 'draft':     out = draft(req); break;
+      case 'draftDrive': out = draftDrive(req); break;
       case 'find':      out = find(req); break;
       case 'list':      out = list(req); break;
       case 'append':    out = appendRows(req); break;
       case 'replace':   out = replaceRows(req); break;
       case 'trash':     out = trash(req); break;
+      case 'info':      out = info(req); break;
       default: throw new Error('unknown action: ' + req.action);
     }
   } catch (err) {
@@ -81,6 +86,33 @@ function draft(req) {
   if (req.cc && req.cc.length) opts.cc = req.cc.join(',');
   var d = GmailApp.createDraft((req.to || []).join(','), req.subject || '', req.text || '', opts);
   return { ok: true, draftId: d.getId(), messageId: d.getMessage().getId() };
+}
+
+/** {to, cc?, subject, text?, html?, fileIds:[...]} → Entwurf mit Drive-Dateien als Anhang (serverseitig, ohne Base64
+ *  im Aufruf) – z. B. Monatssammlung Ausgangsrechnungen an simbadirekt. → {ok, draftId, messageId, files, bytes} */
+function draftDrive(req) {
+  var atts = [], bytes = 0, names = [];
+  (req.fileIds || []).forEach(function (id) {
+    var f = DriveApp.getFileById(id);
+    if (f.isTrashed()) throw new Error('Datei im Papierkorb: ' + f.getName() + ' (' + id + ')');
+    var b = f.getBlob();
+    bytes += b.getBytes().length;
+    atts.push(b.setName(f.getName()));
+    names.push(f.getName());
+  });
+  if (bytes > 24 * 1024 * 1024) throw new Error('Anhänge zu groß: ' + bytes + ' Bytes');
+  var opts = { attachments: atts };
+  if (req.html) opts.htmlBody = req.html;
+  if (req.cc && req.cc.length) opts.cc = req.cc.join(',');
+  var d = GmailApp.createDraft((req.to || []).join(','), req.subject || '', req.text || '', opts);
+  return { ok: true, draftId: d.getId(), messageId: d.getMessage().getId(), files: names, bytes: bytes };
+}
+
+/** {fileId} → {ok, id, name, size, trashed, parents} – Prüfung vor dem Anhängen */
+function info(req) {
+  var f = DriveApp.getFileById(req.fileId), p = f.getParents(), parents = [];
+  while (p.hasNext()) parents.push(p.next().getName());
+  return { ok: true, id: f.getId(), name: f.getName(), size: f.getSize(), trashed: f.isTrashed(), parents: parents };
 }
 
 /** {name, parentId?, mimeType?} → {ok, files:[{id,name,parents:[names up to root]}]} – z. B. Kampagnenordner „06_Rechnungen" */
