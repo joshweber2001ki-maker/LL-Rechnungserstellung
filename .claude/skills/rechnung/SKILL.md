@@ -85,6 +85,10 @@ Für jedes Event des Tages:
    `01_Vertrag` ⇒ `parentId = '<01_Vertrag>'`, dann `read_file_content`. `bridge find 01_Vertrag` nicht verwenden: liefert
    höchstens 50 Treffer und übersieht Ordner. Leer oder kein Treffer ⇒ übriger Kampagnenordner, dann `search_files` mit
    `title contains` auf Kunde und Creatorin plus `Vertrag`/`Angebot`/`Contract`/`Offer`/`Kooperation`.
+   **Zusätzlich die Rechnungsvorgaben des Vertrags** (Regel 7a, auch AGB/„Sonstiges“/Fußzeile) gegen den Entwurf prüfen:
+   Zahlungsziel ↔ `meta.due`/Sheet „Zahlungsfrist“, Rechnungsempfänger/-adresse, Vergütung, Leistungsbezeichnung,
+   Leistungszeitraum, Job-/Bestell-/PO-Nummer, Versandweg, Teilzahlungen, Steuer/KSK. Je Abweichung ein Befund
+   „<Feld>: Rechnung <x>, Vertrag <y> (<Fundstelle>)“ – zählt als Rückfrage, PushNotification.
    Ergebnis je Event notieren: ok / Unstimmigkeit / kein Dokument / unklar. Kein Stopp, JSON nicht aus dem Vertrag ändern.
 5. Nummern (vergibt `build` selbst, Standard `--nummern auto`; Ergebnis in `befund.json` → `meta.nummern`):
    - Steht für die Zeile schon eine Nummer im Finanzsheet (`Rechnung Creator:in` / `Rechnung L&L`), wird sie übernommen

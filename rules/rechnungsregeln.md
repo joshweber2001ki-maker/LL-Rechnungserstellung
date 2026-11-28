@@ -170,8 +170,18 @@ in beiden Betriebsmodi.
   teils außerhalb, z. B. in `00_KONZEPTE`). Mehrere Fassungen: unterschriebene vor der neuesten.
 - **Abgleich:** Kunde/Kampagne, Art und Anzahl der Deliverables, Plattform, Go Live. Bei Teilrechnungen zählt, ob
   der berechnete Teil vom Vertrag gedeckt ist; dass nicht alles auf einmal berechnet wird, ist keine Abweichung.
+- **Rechnungsvorgaben (27.11.2026):** Zusätzlich wird geprüft, was der Vertrag (inkl. AGB, „Sonstiges“,
+  „Rechnungsstellung“, Fußzeile) für die Rechnung selbst verlangt, und mit dem Entwurf verglichen:
+  **Zahlungsziel** (Tage/Fälligkeit), **Rechnungsempfänger und -adresse**, **Vergütung** (Betrag, netto/brutto,
+  inkl. Agenturprovision), **Leistungsbezeichnung** (z. B. „Testimonial-Tätigkeit“), **Leistungszeitraum**,
+  **Pflichtangaben/Referenzen** (Job-/Bestell-/PO-Nummer, Kostenstelle, Ansprechpartner), **Rechnungsversand**
+  (Adresse/Portal), **Teilzahlungen/Abrechnungszeitpunkt** und **Steuer/KSK**-Vorgaben. Jede Abweichung ist ein
+  Befund mit Fundstelle (Vertragsabschnitt) und beiden Werten, z. B. „Zahlungsziel: Rechnung 30 Tage, Vertrag 60
+  Tage (BV ‚Sonstiges‘)“. Anlass: DR-2026-038 Intermate – Vertrag 60 Tage, Rechnung 30 Tage; Kunde musste nachfragen.
 - **Nur Hinweis, kein Stopp:** Der Entwurf wird trotzdem erzeugt. Die Leistungsbeschreibung kommt weiter aus den
-  Sheet-Daten (Regel 7) und wird nicht automatisch an den Vertrag angepasst.
+  Sheet-Daten (Regel 7) und wird nicht automatisch an den Vertrag angepasst; ebenso werden Zahlungsziel, Adresse usw.
+  nicht automatisch geändert – Josh entscheidet (Korrektur per `rechnung korrigieren`). Jede Abweichung bei den
+  Rechnungsvorgaben zählt im Betreff der Zusammenfassung als Rückfrage und löst eine Push-Nachricht aus.
 - **Kurze Info an Josh** in genau diesen Fällen, jeweils mit Sheet-Nummer und Dateilink, falls vorhanden:
   1. Unstimmigkeit: was steht im Sheet, was im Dokument
   2. Kein Vertrag und kein Angebot gefunden
@@ -401,6 +411,10 @@ leistendes Unternehmen). Stornos und Neudrucke älterer Rechnungen behalten das 
 ---
 
 ## Änderungsprotokoll
+
+- 2026-11-28 · Regel 7a erweitert: Vertragsabgleich prüft auch die Rechnungsvorgaben des Vertrags (Zahlungsziel,
+  Rechnungsadresse, Leistungsbezeichnung, Leistungszeitraum, Referenzen, Versandweg, Vergütung, Steuer/KSK) und meldet
+  jede Abweichung. Anlass: DR-2026-038 Intermate (60 statt 30 Tage) – ohne Storno korrigiert, Rechnungsdatum gleich (Josh).
 
 - 2026-11-27 · Neu Regel 17: Ausgangsrechnungen gehen am 5. des Monats gesammelt (alle Creator- und LL-Rechnungen des
   Vormonats) als ein Entwurf an simbadirekt A; die Einzel-Mail an simbadirekt nach Versand (`rechnung gesendet`)
